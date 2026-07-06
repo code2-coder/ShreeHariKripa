@@ -183,7 +183,7 @@ export function Home() {
               </div>
             </motion.div>
 
-            <div className="relative mb-16 group flex items-center justify-center">
+            <div className="relative mb-8 sm:mb-16 group flex items-center justify-center">
               {/* Left Scroll Button */}
               <button
                 onClick={() => scrollCategories('left')}
@@ -271,7 +271,7 @@ export function Home() {
               const subs = categories.filter(sub => sub.parentCategory === parentId && parentId);
 
               if (subs.length > 0) return (
-                <div className="flex justify-start sm:justify-center space-x-8 sm:space-x-12 overflow-x-auto pb-12 px-6 scrollbar-none -mt-6">
+                <div className="flex justify-start sm:justify-center space-x-8 sm:space-x-12 overflow-x-auto pb-6 sm:pb-12 px-6 scrollbar-none -mt-6">
                   {subs.map((sub) => (
                     <button
                       key={sub._id}
