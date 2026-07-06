@@ -29,15 +29,9 @@ class APIFilters {
                 searchOrBlock.push({ category: { $in: this.queryStr.matchedCategories } });
             }
 
-            if (kw.length <= 2) {
-                // Prefix regex search: fast for short inputs
-                this.query = this.query.find({ $or: searchOrBlock });
-            } else {
-                // Full-text search with relevance scoring for longer terms
-                // $text does a great job with stemming, but we keep the $regex for specific fields like SKUs
-                searchOrBlock.push({ $text: { $search: kw } });
-                this.query = this.query.find({ $or: searchOrBlock });
-            }
+            // Execute regex search for all inputs. 
+            // Avoid using $text inside $or unless ALL other fields in the $or array are fully indexed.
+            this.query = this.query.find({ $or: searchOrBlock });
         }
         return this;
     }
