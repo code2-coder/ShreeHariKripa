@@ -24,9 +24,21 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           let user = await User.findOne({ email });
 
           if (user) {
-            // If user exists, just ensure googleId is set
+            // If user exists, ensure googleId is set and sync their avatar
+            let updated = false;
             if (!user.googleId) {
               user.googleId = profile.id;
+              updated = true;
+            }
+            const googleAvatarUrl = profile.photos && profile.photos.length > 0 ? profile.photos[0].value : "";
+            if (googleAvatarUrl && (!user.avatar || !user.avatar.url || user.avatar.public_id === "google_avatar" || user.avatar.url !== googleAvatarUrl)) {
+              user.avatar = {
+                public_id: "google_avatar",
+                url: googleAvatarUrl,
+              };
+              updated = true;
+            }
+            if (updated) {
               await user.save({ validateBeforeSave: false });
             }
             return done(null, user);

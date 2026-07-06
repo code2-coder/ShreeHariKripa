@@ -44,8 +44,8 @@ export function Login() {
       // Fetch user profile since we only have the token
       api.get('/profile')
         .then(res => {
-          if (loginUser && res.data && res.data.data?.user) {
-            loginUser(res.data.data.user, token);
+          if (loginUser && res.data && res.data.user) {
+            loginUser(res.data.user, token);
           }
           navigate('/');
         })
