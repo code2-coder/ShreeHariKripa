@@ -135,7 +135,7 @@ const VerifyEmail = () => {
             Back to Register
           </Link>
           <div className="bg-stone-100 p-2 rounded-xl">
-            <img src="/logo_jew.png" alt="Shreeharikripa Logo" className="w-6 h-6 object-contain" />
+            <img src="/logo_jew.png" alt="Shreeharikripa Logo" className="w-12 h-12 sm:w-14 sm:h-14 object-contain" />
           </div>
         </div>
 

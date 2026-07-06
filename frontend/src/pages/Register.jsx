@@ -56,7 +56,7 @@ export function Register() {
       {/* Left Pane - Luxury Editorial Image */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-stone-900 items-end justify-start p-16">
         <img
-          src="https://images.unsplash.com/photo-1599643478514-4a4e0a6d0c2e?q=80&w=2070&auto=format&fit=crop"
+          src="/luxury_jewellery_model.png"
           alt="Luxury Jewelry"
           className="absolute inset-0 w-full h-full object-cover opacity-85"
         />
@@ -82,7 +82,7 @@ export function Register() {
             <div className="flex justify-center lg:justify-start mb-16">
               <Link to="/" className="inline-flex items-center space-x-3 group">
                 <div className="bg-stone-100 p-2 rounded-xl group-hover:bg-stone-200 transition-colors duration-300">
-                  <img src="/logo_jew.png" alt="Shreeharikripa Logo" className="w-8 h-8 object-contain" />
+                  <img src="/logo_jew.png" alt="Shreeharikripa Logo" className="w-12 h-12 sm:w-14 sm:h-14 object-contain" />
                 </div>
                 <span className="font-serif text-2xl tracking-[0.2em] uppercase text-stone-900 font-bold">
                   Shreeharikripa

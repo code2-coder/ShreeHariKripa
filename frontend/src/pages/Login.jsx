@@ -109,7 +109,7 @@ export function Login() {
       {/* Left Pane - Luxury Editorial Image */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-stone-900 items-end justify-start p-16">
         <img
-          src="/logo_jew.png"
+          src="/luxury_jewellery_model.png"
           alt="Luxury Jewelry"
           className="absolute inset-0 w-full h-full object-cover opacity-85"
         />
@@ -135,7 +135,7 @@ export function Login() {
             <div className="flex justify-center lg:justify-start mb-16">
               <Link to="/" className="inline-flex items-center space-x-3 group">
                 <div className="bg-stone-100 p-2 rounded-xl group-hover:bg-stone-200 transition-colors duration-300">
-                  <img src="/logo_jew.png" alt="Shreeharikripa Logo" className="w-8 h-8 object-contain" />
+                  <img src="/logo_jew.png" alt="Shreeharikripa Logo" className="w-12 h-12 sm:w-14 sm:h-14 object-contain" />
                 </div>
                 <span className="font-serif text-2xl tracking-[0.2em] uppercase text-stone-900 font-bold">
                   Shreeharikripa
