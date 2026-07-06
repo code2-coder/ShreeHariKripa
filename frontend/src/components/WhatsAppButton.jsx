@@ -48,6 +48,13 @@ export function WhatsAppButton() {
           animation: wa-entrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards, wa-float 2.5s ease-in-out infinite;
           will-change: transform;
         }
+        
+        @media (max-width: 768px) {
+          .wa-wrapper {
+            bottom: 85px;
+            right: 16px;
+          }
+        }
 
         .wa-btn {
           display: flex;
