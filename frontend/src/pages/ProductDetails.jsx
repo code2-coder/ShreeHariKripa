@@ -279,11 +279,11 @@ export function ProductDetails() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="flex flex-col space-y-3 lg:sticky lg:top-32 h-fit"
+            className="flex flex-col space-y-3 lg:sticky lg:top-24 h-fit -mt-6 lg:-mt-12"
           >
             {/* Main Image / Video */}
             {activeImage === 'video' && (selectedColorVariant?.videos?.[0] || product?.videos?.[0]) ? (
-              <div className="w-full relative overflow-hidden bg-gray-50 flex items-center justify-center aspect-[4/5]">
+              <div className="w-[85%] sm:w-[75%] md:w-[90%] lg:w-[80%] mx-auto relative overflow-hidden bg-gray-50 flex items-center justify-center aspect-[4/5] rounded-xl shadow-sm">
                 <video
                   src={selectedColorVariant?.videos?.[0]?.url || product?.videos?.[0]?.url}
                   autoPlay
@@ -294,7 +294,7 @@ export function ProductDetails() {
                 />
               </div>
             ) : (
-              <div className="w-full relative overflow-hidden bg-gray-50 flex items-center justify-center aspect-[4/5] group">
+              <div className="w-[85%] sm:w-[75%] md:w-[90%] lg:w-[80%] mx-auto relative overflow-hidden bg-gray-50 flex items-center justify-center aspect-[4/5] group rounded-xl shadow-sm">
                 {/* Main Image (Always visible) */}
                 <img
                   onClick={() => setIsLightboxOpen(true)}
@@ -309,7 +309,7 @@ export function ProductDetails() {
 
             {/* Sub Images Horizontal Line - Tiny Thumbnails */}
             {((selectedColorVariant?.videos?.length > 0 || product?.videos?.length > 0) || (selectedColorVariant?.images && selectedColorVariant.images.length > 1) || (product?.images && product.images.length > 1)) && (
-              <div className="relative group/thumbs">
+              <div className="relative group/thumbs w-[85%] sm:w-[75%] md:w-[90%] lg:w-[80%] mx-auto">
                 <button
                   onClick={() => scrollThumbnails('left')}
                   className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 z-10 bg-white/90 backdrop-blur shadow-md border border-gray-100 rounded-full p-1 text-gray-500 hover:text-obsidian hover:scale-110 transition-all opacity-0 group-hover/thumbs:opacity-100 hidden sm:block"
@@ -319,7 +319,7 @@ export function ProductDetails() {
 
                 <div
                   ref={thumbnailsRef}
-                  className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 pt-1 px-1 w-full scroll-smooth"
+                  className="flex gap-2 sm:gap-2.5 overflow-x-auto pb-2 pt-1 px-1 w-full scroll-smooth"
                   style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
                   {(selectedColorVariant?.images || product?.images || [])?.map((img, index) => (
@@ -327,7 +327,7 @@ export function ProductDetails() {
                       key={img.public_id || index}
                       onClick={() => setActiveImage(index)}
                       aria-pressed={activeImage === index}
-                      className={`w-16 sm:w-20 flex-shrink-0 aspect-[4/5] relative overflow-hidden bg-gray-50 transition-all duration-300 ${activeImage === index ? 'ring-1 ring-offset-2 ring-obsidian opacity-100' : 'opacity-60 hover:opacity-100'}`}
+                      className={`w-10 sm:w-12 rounded-md flex-shrink-0 aspect-[4/5] relative overflow-hidden bg-gray-50 transition-all duration-300 ${activeImage === index ? 'ring-2 ring-offset-2 ring-obsidian opacity-100' : 'opacity-60 hover:opacity-100'}`}
                     >
                       <img
                         src={getOptimizedUrl(img.url, 200)}
@@ -343,7 +343,7 @@ export function ProductDetails() {
                       onClick={() => setActiveImage('video')}
                       aria-label="View product video"
                       aria-pressed={activeImage === 'video'}
-                      className={`w-16 sm:w-20 flex-shrink-0 aspect-[4/5] relative overflow-hidden bg-gray-50 transition-all duration-300 group ${activeImage === 'video' ? 'ring-1 ring-offset-2 ring-obsidian opacity-100' : 'opacity-60 hover:opacity-100'}`}
+                      className={`w-10 sm:w-12 rounded-md flex-shrink-0 aspect-[4/5] relative overflow-hidden bg-gray-50 transition-all duration-300 group ${activeImage === 'video' ? 'ring-2 ring-offset-2 ring-obsidian opacity-100' : 'opacity-60 hover:opacity-100'}`}
                     >
                       <video src={selectedColorVariant?.videos?.[0]?.url || product?.videos?.[0]?.url} className="w-full h-full object-cover mix-blend-multiply opacity-80" />
                       <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-colors">
@@ -359,6 +359,21 @@ export function ProductDetails() {
                 >
                   <ArrowRight className="w-3 h-3" />
                 </button>
+              </div>
+            )}
+
+            {/* Minimal Specifications Below Images */}
+            {specificationEntries.length > 0 && (
+              <div className="mt-16 w-[85%] sm:w-[75%] md:w-[90%] lg:w-[80%] mx-auto">
+                <h3 className="text-sm font-black uppercase tracking-widest text-obsidian mb-3 border-b border-gray-200 pb-2">Specifications</h3>
+                <div className="flex flex-col">
+                  {specificationEntries.map((item) => (
+                    <div key={item.label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                      <span className="text-xs font-medium text-gray-500">{item.label}</span>
+                      <span className="text-xs font-semibold text-obsidian text-right">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </motion.div>
@@ -381,7 +396,7 @@ export function ProductDetails() {
           >
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="mb-8">
               <div className="mb-4 flex items-center justify-between gap-3">
-                <span className="inline-block text-[9px] uppercase tracking-[0.3em] font-bold text-[#B8934E] border-b border-[#B8934E]/30 pb-0.5">
+                <span className="inline-block text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold text-[#B8934E] border-b border-[#B8934E]/30 pb-0.5 hover:tracking-[0.25em] transition-all duration-300 cursor-default">
                   {(() => {
                     const cat = product.category?.name || product.category;
                     if (!cat || cat === "Uncategorized" || (typeof cat === "string" && cat.match(/^[0-9a-fA-F]{24}$/))) {
@@ -390,12 +405,12 @@ export function ProductDetails() {
                     return cat;
                   })()}
                 </span>
-                <span className="rounded-full bg-[#f8efe0] px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.25em] text-[#8a6b2f]">
+                <span className="rounded-full bg-[#f8efe0] px-2 py-0.5 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-[#8a6b2f] hover:bg-[#B8934E] hover:text-white transition-colors duration-300 cursor-default shadow-sm hover:shadow-md">
                   Handcrafted
                 </span>
               </div>
 
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif text-obsidian mb-4 font-bold tracking-tight leading-tight hover:text-[#B8934E] transition-colors duration-500 cursor-default">{product.name}</h1>
+              <h1 className="text-lg sm:text-xl font-serif text-obsidian mb-4 font-bold tracking-tight leading-tight hover:text-[#B8934E] transition-all duration-500 cursor-default">{product.name}</h1>
 
               <div className="flex items-center space-x-3 mb-4">
                 <div className="flex text-[#B8934E]">
@@ -403,12 +418,12 @@ export function ProductDetails() {
                     <Star key={i} className={`w-3 h-3 ${i < (product.ratings || 0) ? "fill-current" : "text-gray-200 fill-current"}`} />
                   ))}
                 </div>
-                <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">({product.numOfReviews || 0} reviews)</span>
+                <span className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest">({product.numOfReviews || 0} reviews)</span>
               </div>
 
               <div className="flex flex-wrap items-end justify-between gap-3 mb-4 border-b border-gray-100 pb-4">
                 <div className="flex items-baseline space-x-3">
-                  <span className="text-3xl lg:text-4xl font-bold text-obsidian">
+                  <span className="text-lg sm:text-xl font-bold text-obsidian">
                     {getFormattedPrice(displayPrice)}
                   </span>
                   {displayComparePrice > displayPrice && (
@@ -417,12 +432,9 @@ export function ProductDetails() {
                     </span>
                   )}
                 </div>
-                <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.25em] text-emerald-700">
-                  {displayStock > 0 ? "Ready to Ship" : "Sold Out"}
-                </div>
               </div>
 
-              <p className="text-gray-800 text-base sm:text-lg leading-relaxed font-medium">{product.description}</p>
+              <p className="text-gray-800 text-sm leading-relaxed font-medium">{product.description}</p>
             </motion.div>
 
             {product.variants && product.variants.length > 0 && (
@@ -443,10 +455,10 @@ export function ProductDetails() {
                             setQuantity(1);
                           }}
                           disabled={sizeObj.stock === 0}
-                          className={`px-6 py-2.5 font-bold text-xs sm:text-sm tracking-[0.15em] uppercase transition-all rounded border ${selectedSize?._id === sizeObj._id || (selectedSize && selectedSize.size === sizeObj.size)
-                            ? "bg-obsidian text-white border-obsidian"
+                          className={`px-4 py-1.5 font-bold text-[10px] sm:text-xs tracking-widest uppercase transition-all duration-300 rounded border hover:-translate-y-0.5 hover:shadow-sm ${selectedSize?._id === sizeObj._id || (selectedSize && selectedSize.size === sizeObj.size)
+                            ? "bg-obsidian text-white border-obsidian shadow-sm"
                             : sizeObj.stock === 0
-                              ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
+                              ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed hover:-translate-y-0 hover:shadow-none"
                               : "bg-white text-gray-800 border-gray-300 hover:border-obsidian hover:text-obsidian"
                             }`}
                         >
@@ -479,14 +491,14 @@ export function ProductDetails() {
                               setSelectedSize(null);
                             }
                           }}
-                          className={`group relative flex flex-col items-center p-2.5 rounded transition-all duration-300 w-28 ${selectedColorVariant?._id === variant._id || (selectedColorVariant && selectedColorVariant.variantName === variant.variantName)
-                            ? `border-none ring-1 ring-obsidian ring-offset-4 bg-gray-50`
+                          className={`group relative flex flex-col items-center p-1.5 rounded transition-all duration-300 w-20 hover:-translate-y-1 hover:shadow-lg ${selectedColorVariant?._id === variant._id || (selectedColorVariant && selectedColorVariant.variantName === variant.variantName)
+                            ? `border-none ring-2 ring-obsidian ring-offset-2 bg-gray-50 shadow-md`
                             : `border-transparent bg-white hover:bg-gray-50`
                             }`}
                           title={variant.variantName}
                         >
                           <div className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full border border-white/70 shadow-sm" style={{ backgroundColor: accent.swatch }} />
-                          <div className="relative w-20 h-20 mb-2 rounded-xl overflow-hidden border border-gray-100 bg-[#FAF9F6]">
+                          <div className="relative w-12 h-12 mb-1.5 rounded-lg overflow-hidden border border-gray-100 bg-[#FAF9F6]">
                             <img
                               src={getOptimizedUrl((variant.images && variant.images[0]?.url) || (product?.images && product.images[0]?.url) || product?.image, 150) || "https://placehold.co/150x150"}
                               alt={variant.variantName}
@@ -494,10 +506,10 @@ export function ProductDetails() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                           </div>
-                          <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-center truncate w-full px-1 transition-colors duration-300 ${selectedColorVariant?._id === variant._id || (selectedColorVariant && selectedColorVariant.variantName === variant.variantName) ? accent.text : "text-gray-800 group-hover:text-[#B8934E]"}`}>
+                          <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-[0.1em] text-center truncate w-full px-1 transition-colors duration-300 ${selectedColorVariant?._id === variant._id || (selectedColorVariant && selectedColorVariant.variantName === variant.variantName) ? accent.text : "text-gray-800 group-hover:text-[#B8934E]"}`}>
                             {variant.variantName}
                           </span>
-                          <span className={`text-sm font-serif font-semibold mt-1 ${accent.text}`}>
+                          <span className={`text-[10px] font-serif font-semibold mt-0.5 ${accent.text}`}>
                             {getFormattedPrice(variant.sizes?.[0]?.price || 0)}
                           </span>
                         </button>
@@ -511,12 +523,12 @@ export function ProductDetails() {
             {/* Stock Status */}
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="mb-6 flex items-center">
               {displayStock > 0 ? (
-                <div className="flex items-center space-x-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-foreground">
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                <div className="flex items-center space-x-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] text-foreground hover:tracking-[0.2em] transition-all duration-300 cursor-default">
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></div>
                   <span>In Stock ({displayStock})</span>
                 </div>
               ) : (
-                <div className="flex items-center space-x-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-red-500">
+                <div className="flex items-center space-x-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] text-red-500">
                   <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
                   <span>Out of Stock</span>
                 </div>
@@ -524,24 +536,24 @@ export function ProductDetails() {
             </motion.div>
 
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="mb-8">
-              <label className="block text-[8px] uppercase tracking-[0.3em] font-bold text-gray-400 mb-3">
+              <label className="block text-xs uppercase tracking-[0.2em] font-bold text-gray-400 mb-3">
                 Quantity
               </label>
               <div className="flex flex-col sm:flex-row items-stretch gap-4">
-                <div className="flex items-center justify-between border border-gray-200 rounded-none bg-white sm:w-28 shadow-sm">
+                <div className="flex items-center justify-between border border-gray-200 rounded-none bg-white sm:w-24 shadow-sm">
                   <button
                     onClick={decrementQuantity}
                     aria-label="Decrease quantity"
-                    className="p-3 hover:bg-gray-50 hover:text-obsidian disabled:opacity-30 transition-colors text-gray-400"
+                    className="p-2 sm:p-2.5 hover:bg-gray-50 hover:text-obsidian disabled:opacity-30 transition-colors text-gray-400"
                     disabled={quantity <= 1}
                   >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
-                  <span className="font-medium text-obsidian text-sm tracking-widest">{quantity}</span>
+                  <span className="font-medium text-obsidian text-xs tracking-widest">{quantity}</span>
                   <button
                     onClick={incrementQuantity}
                     aria-label="Increase quantity"
-                    className="p-3 hover:bg-gray-50 hover:text-obsidian disabled:opacity-30 transition-colors text-gray-400"
+                    className="p-2 sm:p-2.5 hover:bg-gray-50 hover:text-obsidian disabled:opacity-30 transition-colors text-gray-400"
                     disabled={quantity >= displayStock}
                   >
                     <Plus className="w-3.5 h-3.5" />
@@ -551,32 +563,14 @@ export function ProductDetails() {
                   onClick={handleAddToCart}
                   disabled={displayStock === 0}
                   aria-label="Add to cart"
-                  className="flex-1 bg-obsidian text-white py-4 border border-obsidian hover:bg-black hover:scale-[1.02] hover:shadow-xl transition-all duration-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed font-bold text-xs sm:text-sm uppercase tracking-[0.2em] flex items-center justify-center space-x-3 shadow-md"
+                  className="flex-1 bg-obsidian text-white py-3 border border-obsidian hover:bg-black hover:-translate-y-1 hover:shadow-[0_10px_20px_-10px_rgba(0,0,0,0.5)] active:scale-95 transition-all duration-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:active:scale-100 font-bold text-xs sm:text-sm uppercase tracking-[0.2em] flex items-center justify-center space-x-3 shadow-md group"
                 >
-                  <ShoppingBag className="w-5 h-5" />
+                  <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
                   <span>{displayStock === 0 ? "Out of Stock" : "Add to Bag"}</span>
                 </button>
               </div>
             </motion.div>
 
-            {specificationEntries.length > 0 && (
-              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="mb-6 pt-6 border-t border-gray-100">
-                <div className="mb-5">
-                  <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-obsidian">Specifications</h3>
-                </div>
-                <div className="flex flex-col border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                  {specificationEntries.map((item, index) => (
-                    <div
-                      key={item.label}
-                      className={`flex items-center justify-between group py-3.5 sm:py-4 px-5 sm:px-6 transition-all duration-300 cursor-default ${index % 2 === 0 ? 'bg-white' : 'bg-[#FAF9F6]/50'} hover:bg-[#FAF9F6]`}
-                    >
-                      <span className="text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-500 group-hover:text-[#B8934E] transition-colors w-2/5">{item.label}</span>
-                      <span className="text-sm sm:text-base font-semibold text-obsidian text-right w-3/5 group-hover:text-black transition-colors">{item.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
 
             {/* Delivery Info - Polished */}
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="border-t border-gray-100 pt-6 mt-8 space-y-6">
@@ -650,34 +644,34 @@ export function ProductDetails() {
             {/* Right: Quick Specs */}
             <div className="lg:col-span-5 rounded-[1.5rem] border border-[#f0e4c8] bg-gradient-to-br from-[#7a0f0f] via-[#8b1515] to-[#a01d1d] p-6 shadow-[0_18px_50px_-20px_rgba(120,20,20,0.55)] text-white h-fit sticky top-32">
               <div className="mb-5 flex items-center justify-between border-b border-white/15 pb-3">
-                <h3 className="text-[10px] sm:text-[11px] uppercase tracking-[0.3em] font-black text-white/90">
+                <h3 className="text-xs sm:text-sm uppercase tracking-[0.2em] font-black text-white/90">
                   At a Glance
                 </h3>
-                <div className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.25em] text-white/80">
+                <div className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/80">
                   Premium
                 </div>
               </div>
               <div className="grid gap-2 text-sm font-medium">
                 <div className="group flex items-start justify-between gap-4 rounded-xl border border-white/10 bg-white/5 px-3 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-[0_8px_24px_-10px_rgba(255,255,255,0.25)] cursor-default">
-                  <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] font-bold text-white/70">Category</span>
+                  <span className="text-[10px] sm:text-xs uppercase tracking-[0.15em] font-bold text-white/70">Category</span>
                   <span className="text-right text-sm font-black leading-snug text-white transition-transform duration-300 group-hover:scale-[1.02]">
                     {product.category?.name || product.category}
                   </span>
                 </div>
                 <div className="group flex items-start justify-between gap-4 rounded-xl border border-white/10 bg-white/5 px-3 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-[0_8px_24px_-10px_rgba(255,255,255,0.25)] cursor-default">
-                  <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] font-bold text-white/70">Product ID</span>
+                  <span className="text-[10px] sm:text-xs uppercase tracking-[0.15em] font-bold text-white/70">Product ID</span>
                   <span className="text-right text-sm font-black leading-snug text-white transition-transform duration-300 group-hover:scale-[1.02]">
                     #{product._id?.slice(-8) || product.id?.slice(-8)}
                   </span>
                 </div>
                 <div className="group flex items-start justify-between gap-4 rounded-xl border border-white/10 bg-white/5 px-3 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-[0_8px_24px_-10px_rgba(255,255,255,0.25)] cursor-default">
-                  <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] font-bold text-white/70">Availability</span>
+                  <span className="text-[10px] sm:text-xs uppercase tracking-[0.15em] font-bold text-white/70">Availability</span>
                   <span className={`text-right text-sm font-black leading-snug transition-transform duration-300 group-hover:scale-[1.02] ${displayStock > 0 ? "text-emerald-300" : "text-red-300"}`}>
                     {displayStock > 0 ? "In Stock" : "Out of Stock"}
                   </span>
                 </div>
                 <div className="group flex items-start justify-between gap-4 rounded-xl border border-white/10 bg-white/5 px-3 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-[0_8px_24px_-10px_rgba(255,255,255,0.25)] cursor-default">
-                  <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] font-bold text-white/70">Size/Variant</span>
+                  <span className="text-[10px] sm:text-xs uppercase tracking-[0.15em] font-bold text-white/70">Size/Variant</span>
                   <span className="text-right text-sm font-black leading-snug text-white transition-transform duration-300 group-hover:scale-[1.02]">
                     {selectedColorVariant?.variantName || "Standard"} {selectedSize ? `(${selectedSize.size})` : ''}
                   </span>
@@ -756,14 +750,14 @@ export function ProductDetails() {
                   const percentage = totalReviews === 0 ? 0 : Math.round((count / totalReviews) * 100);
                   return (
                     <div key={stars} className="flex items-center space-x-4">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.1em] w-12">{stars} Stars</span>
+                      <span className="text-xs font-bold text-gray-500 uppercase tracking-widest w-16">{stars} Stars</span>
                       <div className="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-obsidian transition-all duration-1000"
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
-                      <span className="text-[10px] font-bold text-obsidian w-8 text-right">{percentage}%</span>
+                      <span className="text-xs font-bold text-obsidian w-10 text-right">{percentage}%</span>
                     </div>
                   );
                 })}
@@ -784,8 +778,8 @@ export function ProductDetails() {
                     <div key={review._id} className="py-8 border-b border-gray-100 last:border-0 animate-fade-in-up" style={{ animationDelay: `${0.2 + idx * 0.1}s`, animationFillMode: 'both' }}>
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <p className="text-xs font-bold text-obsidian uppercase tracking-[0.1em]">{review.user?.name || "Verified Client"}</p>
-                          <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-widest">
+                          <p className="text-sm font-bold text-obsidian uppercase tracking-wide">{review.user?.name || "Verified Client"}</p>
+                          <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider">
                             {new Date(review.createdAt).toLocaleDateString('en-US', {
                               year: 'numeric',
                               month: 'long',
@@ -891,7 +885,7 @@ export function ProductDetails() {
           onClick={() => setIsLightboxOpen(false)}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl w-full max-w-6xl h-auto max-h-[95vh] relative flex flex-col md:flex-row overflow-hidden animate-fade-in-up"
+            className="bg-white rounded-xl shadow-2xl w-[95%] sm:w-full max-w-4xl h-auto max-h-[90vh] relative flex flex-col md:flex-row overflow-hidden animate-fade-in-up"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
@@ -904,7 +898,7 @@ export function ProductDetails() {
             </button>
 
             {/* Left Side: Main Image */}
-            <div className="w-full md:w-[65%] lg:w-[70%] bg-[#F8F8F8] flex items-center justify-center p-4 sm:p-8 min-h-[40vh] md:min-h-[70vh]">
+            <div className="w-full md:w-[60%] lg:w-[65%] bg-[#F8F8F8] flex items-center justify-center p-4 sm:p-6 min-h-[35vh] md:min-h-[60vh]">
               {activeImage === 'video' && (selectedColorVariant?.videos?.[0] || product?.videos?.[0]) ? (
                 <video
                   src={selectedColorVariant?.videos?.[0]?.url || product?.videos?.[0]?.url}
@@ -936,21 +930,21 @@ export function ProductDetails() {
             </div>
 
             {/* Right Side: Details & Thumbnails */}
-            <div className="w-full md:w-[35%] lg:w-[30%] flex flex-col p-5 sm:p-8 overflow-y-auto border-l border-gray-100 max-h-[50vh] md:max-h-[95vh]">
-              <div className="mb-6 pr-6">
-                <h2 className="text-lg sm:text-xl font-medium text-gray-900 tracking-tight mb-2">
+            <div className="w-full md:w-[40%] lg:w-[35%] flex flex-col p-4 sm:p-6 overflow-y-auto border-l border-gray-100 max-h-[45vh] md:max-h-[90vh]">
+              <div className="mb-4 pr-6">
+                <h2 className="text-base sm:text-lg font-medium text-gray-900 tracking-tight mb-2">
                   {product.name}
                 </h2>
 
                 {selectedSize && (
-                  <div className="text-sm text-gray-600 mt-3">
+                  <div className="text-xs sm:text-sm text-gray-600 mt-2">
                     <span className="font-semibold text-gray-800">Size: </span>
                     {selectedSize.size}
                   </div>
                 )}
 
                 {selectedColorVariant && (
-                  <div className="text-sm text-gray-600 mt-2">
+                  <div className="text-xs sm:text-sm text-gray-600 mt-1.5">
                     <span className="font-semibold text-gray-800">Color: </span>
                     {selectedColorVariant.variantName}
                   </div>
@@ -963,7 +957,7 @@ export function ProductDetails() {
                   {(selectedColorVariant?.videos?.length > 0 || product?.videos?.length > 0) && (
                     <button
                       onClick={() => setActiveImage('video')}
-                      className={`w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 relative overflow-hidden rounded border-2 transition-all ${activeImage === 'video' ? 'border-gray-800 shadow-md' : 'border-gray-200 hover:border-gray-400'}`}
+                      className={`w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 relative overflow-hidden rounded border-2 transition-all ${activeImage === 'video' ? 'border-gray-800 shadow-md' : 'border-gray-200 hover:border-gray-400'}`}
                     >
                       <video src={selectedColorVariant?.videos?.[0]?.url || product?.videos?.[0]?.url} className="w-full h-full object-cover opacity-80" />
                       <div className="absolute inset-0 flex items-center justify-center bg-black/10">
@@ -975,7 +969,7 @@ export function ProductDetails() {
                     <button
                       key={img.public_id || index}
                       onClick={() => setActiveImage(index)}
-                      className={`w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 relative overflow-hidden rounded border-2 transition-all p-0.5 ${activeImage === index ? 'border-gray-800 shadow-md' : 'border-gray-200 hover:border-gray-400'}`}
+                      className={`w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 relative overflow-hidden rounded border-2 transition-all p-0.5 ${activeImage === index ? 'border-gray-800 shadow-md' : 'border-gray-200 hover:border-gray-400'}`}
                     >
                       <img
                         src={getOptimizedUrl(img.url, 150)}

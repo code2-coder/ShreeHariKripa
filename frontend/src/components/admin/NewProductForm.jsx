@@ -7,6 +7,7 @@ import {
   ProductInformation,
   ProductSpecifications,
   VariantManager,
+  ParentMediaUploader,
   StickySaveBar,
   ProductFeatures
 } from './ProductFormComponents';
@@ -22,6 +23,7 @@ export default function NewProductForm({
   setAttributes
 }) {
   const [isSaving, setIsSaving] = useState(false);
+  const [productType, setProductType] = useState(editingProduct && editingProduct.variants?.length > 0 ? 'variant' : 'single');
 
   const methods = useForm({
     defaultValues: {
@@ -165,6 +167,21 @@ export default function NewProductForm({
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
           <ProductInformation categories={categories} />
 
+          {/* Product Type Toggle */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Product Type</h3>
+            <div className="flex gap-4">
+              <label className={`flex-1 flex items-center justify-center p-4 border rounded-xl cursor-pointer transition-all ${productType === 'single' ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900' : 'border-gray-200 hover:border-gray-300'}`}>
+                <input type="radio" name="productType" value="single" className="sr-only" checked={productType === 'single'} onChange={() => setProductType('single')} />
+                <span className={`font-bold ${productType === 'single' ? 'text-gray-900' : 'text-gray-500'}`}>Single Product</span>
+              </label>
+              <label className={`flex-1 flex items-center justify-center p-4 border rounded-xl cursor-pointer transition-all ${productType === 'variant' ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900' : 'border-gray-200 hover:border-gray-300'}`}>
+                <input type="radio" name="productType" value="variant" className="sr-only" checked={productType === 'variant'} onChange={() => setProductType('variant')} />
+                <span className={`font-bold ${productType === 'variant' ? 'text-gray-900' : 'text-gray-500'}`}>Product with Variants</span>
+              </label>
+            </div>
+          </div>
+
           <ProductFeatures />
 
           <ProductSpecifications
@@ -199,7 +216,12 @@ export default function NewProductForm({
             }}
           />
 
-          <VariantManager 
+          />
+
+          {productType === 'single' ? (
+            <ParentMediaUploader />
+          ) : (
+            <VariantManager 
             attributes={attributes}
             onCreateAttr={async (type, label, val) => {
               try {
@@ -230,6 +252,7 @@ export default function NewProductForm({
               }
             }}
           />
+          )}
 
           <StickySaveBar onCancel={onClose} isSaving={isSaving} />
         </form>
