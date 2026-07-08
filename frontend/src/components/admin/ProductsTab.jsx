@@ -17,7 +17,6 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
   
   // Filter States
   const [categoryFilter, setCategoryFilter] = useState("All");
-  const [statusFilter, setStatusFilter] = useState("All");
 
   const [productForm, setProductForm] = useState({
     name: "",
@@ -349,12 +348,8 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
   const filteredProducts = products.filter(p => {
     const matchesSearch = p.name?.toLowerCase().includes(globalSearch?.toLowerCase() || "") || p._id?.toLowerCase().includes(globalSearch?.toLowerCase() || "");
     const matchesCategory = categoryFilter === "All" || p.category?._id === categoryFilter || p.category === categoryFilter;
-    let matchesStatus = true;
-    if (statusFilter === "In Stock") matchesStatus = p.stock > 5;
-    else if (statusFilter === "Low Stock") matchesStatus = p.stock > 0 && p.stock <= 5;
-    else if (statusFilter === "Out of Stock") matchesStatus = p.stock === 0;
     
-    return matchesSearch && matchesCategory && matchesStatus;
+    return matchesSearch && matchesCategory;
   });
 
   return (
@@ -430,17 +425,7 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
                      <option value="All">All Categories</option>
                      {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
                   </select>
-                  
-                  <select 
-                     value={statusFilter}
-                     onChange={(e) => setStatusFilter(e.target.value)}
-                     className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 shadow-sm transition-all"
-                  >
-                     <option value="All">All Status</option>
-                     <option value="In Stock">In Stock</option>
-                     <option value="Low Stock">Low Stock</option>
-                     <option value="Out of Stock">Out of Stock</option>
-                  </select>
+
                   
                   <div className="relative flex-1 md:w-64 min-w-[200px]">
                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

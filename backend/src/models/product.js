@@ -129,6 +129,7 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
     visualEmbedding: {
       type: [Number],
       select: false,

@@ -30,7 +30,8 @@ export class ProductService {
     }
 
     // Create query
-    const apiFilters = new APIFilters(Product.find(), queryStr)
+    const baseQuery = Product.find();
+    const apiFilters = new APIFilters(baseQuery, queryStr)
       .search()
       .filters()
       .sort()
@@ -60,6 +61,7 @@ export class ProductService {
     products.forEach(p => { if (!p.features) p.features = []; });
     return products;
   }
+
 
   async getProductById(id) {
     const product = await ProductRepository.findById(id, {

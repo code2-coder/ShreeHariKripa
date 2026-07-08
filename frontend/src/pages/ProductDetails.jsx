@@ -204,7 +204,6 @@ export function ProductDetails() {
     { label: "Origin", value: product?.countryOfOrigin },
     { label: "Weight", value: product?.weight },
     { label: "Dimensions", value: product?.dimensions },
-    { label: "Handcrafted", value: product?.handmade ? "Yes" : null },
   ].filter((item) => Boolean(item.value));
 
   const getVariantAccent = (variantName = "") => {
@@ -404,9 +403,6 @@ export function ProductDetails() {
                     }
                     return cat;
                   })()}
-                </span>
-                <span className="rounded-full bg-[#f8efe0] px-2 py-0.5 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-[#8a6b2f] hover:bg-[#B8934E] hover:text-white transition-colors duration-300 cursor-default shadow-sm hover:shadow-md">
-                  Handcrafted
                 </span>
               </div>
 

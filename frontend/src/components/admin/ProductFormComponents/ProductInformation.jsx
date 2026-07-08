@@ -21,14 +21,7 @@ export default function ProductInformation({ categories }) {
           </select>
           {errors.category && <p className="text-red-500 text-xs mt-1 font-medium">{errors.category.message}</p>}
         </div>
-        <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Status</label>
-          <select {...register("status")} className="w-full border border-gray-300 rounded-xl px-4 py-3 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-gray-900 outline-none transition-all font-semibold">
-            <option value="Draft">Draft</option>
-            <option value="Published">Published</option>
-            <option value="Hidden">Hidden</option>
-          </select>
-        </div>
+
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">Display in home page</label>
           <select {...register("homeSection")} className="w-full border border-gray-300 rounded-xl px-4 py-3 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-gray-900 outline-none transition-all font-semibold">

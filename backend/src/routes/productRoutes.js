@@ -32,6 +32,7 @@ router.get(
   (req, res, next) => productController.getAdminProducts(req, res, next)
 );
 
+
 router
   .route("/admin/products/:id")
   .put(isAuthenticatedUser, authorizeRoles("admin"), (req, res, next) => productController.updateProduct(req, res, next))

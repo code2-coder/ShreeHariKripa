@@ -398,13 +398,7 @@ export function OrdersTab({ orders, formatINR, updateOrderStatus, handleDeleteOr
          </div>
       </div>
       
-      {/* Global Optimization Badge */}
-      <div className="bg-[#2B3245] rounded-xl p-4 flex items-center gap-3 text-white max-w-xl ml-auto shadow-lg border border-slate-700">
-         <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
-            <AlertCircle className="w-4 h-4 text-indigo-300" />
-         </div>
-         <p className="text-sm font-medium text-slate-300 flex-1">Search is currently optimized for global SKU tracking.</p>
-      </div>
+
     </div>
   );
 }

@@ -113,32 +113,6 @@ export default function ProductSpecifications({ attributes, onCreateAttr, onEdit
         </div>
       </div>
 
-      {/* Handmade Toggle */}
-      <div className="flex items-center justify-between p-4 bg-amber-50/60 border border-amber-100 rounded-xl">
-        <div>
-          <p className="text-sm font-bold text-gray-800">Handmade</p>
-          <p className="text-xs text-gray-500 mt-0.5">Mark if this product is handcrafted</p>
-        </div>
-        <Controller
-          name="handmade"
-          defaultValue={false}
-          render={({ field }) => (
-            <button
-              type="button"
-              onClick={() => field.onChange(!field.value)}
-              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-                field.value ? 'bg-amber-500' : 'bg-gray-300'
-              }`}
-            >
-              <span
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${
-                  field.value ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          )}
-        />
-      </div>
     </div>
   );
 }

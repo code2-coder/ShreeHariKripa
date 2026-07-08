@@ -17,7 +17,9 @@ export class ProductRepository extends BaseRepository {
       lean: true,
       ...options
     };
-    return this.find({ visualEmbedding: { $exists: true, $ne: [] } }, defaultOptions);
+    return this.find({ 
+      visualEmbedding: { $exists: true, $ne: [] }
+    }, defaultOptions);
   }
 
   async addReview(productId, review) {

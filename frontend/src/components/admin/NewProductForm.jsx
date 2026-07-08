@@ -32,7 +32,6 @@ export default function NewProductForm({
       category: '',
       price: '',
       stock: '',
-      status: 'Published',
       homeSection: '',
       images: [],
       videos: [],
@@ -50,7 +49,6 @@ export default function NewProductForm({
       shape: '',
       weight: '',
       dimensions: '',
-      handmade: false,
       countryOfOrigin: '',
     }
   });
@@ -74,7 +72,6 @@ export default function NewProductForm({
         category: editingProduct.category?._id || editingProduct.category || '',
         price: editingProduct.price || '',
         stock: editingProduct.stock || '',
-        status: editingProduct.status || 'Published',
         homeSection: editingProduct.homeSection || '',
         images: editingProduct.images || [],
         videos: editingProduct.videos || [],
@@ -92,7 +89,6 @@ export default function NewProductForm({
         shape: editingProduct.shape || '',
         weight: editingProduct.weight || '',
         dimensions: editingProduct.dimensions || '',
-        handmade: editingProduct.handmade || false,
         countryOfOrigin: editingProduct.countryOfOrigin || '',
       });
     }
@@ -214,8 +210,6 @@ export default function NewProductForm({
                 toast.error(err.response?.data?.message || 'Failed to delete');
               }
             }}
-          />
-
           />
 
           {productType === 'single' ? (
