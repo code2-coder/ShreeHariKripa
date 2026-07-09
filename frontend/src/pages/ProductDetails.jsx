@@ -1095,17 +1095,6 @@ export function ProductDetails() {
               {/* Lightbox Thumbnails */}
               {((selectedColorVariant?.videos?.length > 0 || product?.videos?.length > 0) || (selectedColorVariant?.images && selectedColorVariant.images.length > 1) || (product?.images && product.images.length > 1)) && (
                 <div className="flex flex-wrap gap-2 sm:gap-3 mt-auto md:mt-4">
-                  {(selectedColorVariant?.videos?.length > 0 || product?.videos?.length > 0) && (
-                    <button
-                      onClick={() => setActiveImage('video')}
-                      className={`w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 relative overflow-hidden rounded border-2 transition-all ${activeImage === 'video' ? 'border-gray-800 shadow-md' : 'border-gray-200 hover:border-gray-400'}`}
-                    >
-                      <video src={selectedColorVariant?.videos?.[0]?.url || product?.videos?.[0]?.url} className="w-full h-full object-cover opacity-80" />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/10">
-                        <Play className="w-5 h-5 text-white" fill="white" />
-                      </div>
-                    </button>
-                  )}
                   {(selectedColorVariant?.images || product?.images || [])?.map((img, index) => (
                     <button
                       key={img.public_id || index}
@@ -1119,6 +1108,17 @@ export function ProductDetails() {
                       />
                     </button>
                   ))}
+                  {(selectedColorVariant?.videos?.length > 0 || product?.videos?.length > 0) && (
+                    <button
+                      onClick={() => setActiveImage('video')}
+                      className={`w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 relative overflow-hidden rounded border-2 transition-all ${activeImage === 'video' ? 'border-gray-800 shadow-md' : 'border-gray-200 hover:border-gray-400'}`}
+                    >
+                      <video src={selectedColorVariant?.videos?.[0]?.url || product?.videos?.[0]?.url} className="w-full h-full object-cover opacity-80" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+                        <Play className="w-5 h-5 text-white" fill="white" />
+                      </div>
+                    </button>
+                  )}
                 </div>
               )}
             </div>
