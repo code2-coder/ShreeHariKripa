@@ -1,6 +1,6 @@
 import { useNavigate, Link } from "react-router";
 import { useState, useEffect, lazy, Suspense } from "react";
-import { Trash2, Plus, Minus, ShoppingBag, ShieldCheck, Truck, CreditCard, Banknote, ChevronRight, Loader2, ArrowRight } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, ShieldCheck, Truck, CreditCard, Banknote, ChevronRight, Loader2, ArrowRight, MapPin } from "lucide-react";
 import { Header } from "../components/Header";
 import { useSEO } from "../hooks/useSEO";
 import { useCart } from "../context/CartContext";
@@ -265,19 +265,40 @@ export function Cart() {
     <div className="min-h-screen bg-white flex flex-col">
       <Header />
 
-      <main className="flex-1 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pb-12 pt-[160px] lg:pt-[180px] w-full">
+      <main className="flex-1 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-[160px] lg:pt-[180px] w-full">
         {/* Breadcrumb / Title */}
-        <div className="mb-8 flex items-center space-x-2 text-[10px] uppercase tracking-[0.2em] text-gray-400">
-          <Link to="/" className="hover:text-black transition-colors">Home</Link>
-          <ChevronRight className="w-3 h-3" />
-          <span className="text-black font-bold">Secure Checkout</span>
+        <div className="mb-8 flex items-center space-x-2 text-[10px] uppercase tracking-[0.25em] text-gray-400">
+          <Link to="/" className="hover:text-[#B8934E] transition-colors">Home</Link>
+          <ChevronRight className="w-2.5 h-2.5" />
+          <span className="text-obsidian font-bold">Secure Checkout</span>
         </div>
 
-        <div className="mb-12 border-b border-gray-200 pb-6">
-          <h1 className="text-4xl lg:text-5xl font-serif text-obsidian font-light tracking-wide">Your Bag</h1>
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-4">
-            {cart.length} {cart.length === 1 ? 'Piece' : 'Pieces'}
-          </p>
+        <div className="mb-12 border-b border-gray-100 pb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div>
+            <h1 className="text-4xl lg:text-5xl font-serif text-obsidian font-light tracking-wide">Your Bag</h1>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.25em] mt-3 flex items-center gap-2">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#B8934E]"></span>
+              {cart.length} {cart.length === 1 ? 'Luxury Piece' : 'Luxury Pieces'} In Checkout
+            </p>
+          </div>
+          
+          {/* Step Progress Tracker */}
+          <div className="flex items-center space-x-3 text-[10px] font-bold uppercase tracking-[0.2em] font-sans md:mb-1">
+            <span className="text-[#B8934E] flex items-center gap-1.5 bg-[#FAF9F6] border border-[#B8934E]/30 px-3.5 py-2 rounded-full shadow-sm">
+              <span className="w-4 h-4 rounded-full bg-[#B8934E] text-white flex items-center justify-center text-[8px]">1</span>
+              Review Bag
+            </span>
+            <span className="w-8 h-[1px] bg-gray-200"></span>
+            <span className="text-gray-400 flex items-center gap-1.5 px-2 py-1">
+              <span className="w-4 h-4 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-[8px]">2</span>
+              Delivery Info
+            </span>
+            <span className="w-8 h-[1px] bg-gray-200"></span>
+            <span className="text-gray-400 flex items-center gap-1.5 px-2 py-1">
+              <span className="w-4 h-4 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-[8px]">3</span>
+              Payment
+            </span>
+          </div>
         </div>
 
         {cart.length === 0 ? (
@@ -308,61 +329,65 @@ export function Cart() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-            <div className="lg:col-span-8">
-              <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="lg:col-span-7">
+              <div className="space-y-6">
                 {cart.map((item) => (
-                  <div key={`${item.product._id || item.product.id}-${item.size || 'default'}`} className="bg-white border border-gray-100 rounded-xl p-4 sm:p-6 flex flex-col sm:flex-row gap-6 hover:shadow-sm transition-shadow duration-300">
-                    <Link to={`/product/${item.product._id || item.product.id}`} className="shrink-0 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 aspect-square w-28 sm:w-32 flex items-center justify-center">
+                  <div 
+                    key={`${item.product._id || item.product.id}-${item.size || 'default'}`} 
+                    className="bg-white border border-gray-100 hover:border-[#B8934E]/30 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row gap-6 hover:shadow-[0_15px_30px_-10px_rgba(184,147,78,0.08)] transition-all duration-300 group"
+                  >
+                    <Link to={`/product/${item.product._id || item.product.id}`} className="shrink-0 bg-[#FAF9F6] rounded-xl overflow-hidden border border-gray-100 aspect-square w-28 sm:w-32 flex items-center justify-center p-3 relative group-hover:border-[#B8934E]/20 transition-all duration-300">
                       <img
                         src={getOptimizedImage(item.product)}
                         alt={item.product.name}
-                        className="w-full h-full object-contain mix-blend-multiply p-2 hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-contain mix-blend-multiply hover:scale-105 transition-transform duration-500"
                       />
                     </Link>
 
                     <div className="flex-1 flex flex-col justify-between">
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="pr-4">
-                          <Link to={`/product/${item.product._id || item.product.id}`} className="text-lg font-medium text-gray-900 hover:text-gray-600 transition-colors line-clamp-2">
+                      <div className="flex justify-between items-start gap-4 mb-2">
+                        <div className="space-y-1">
+                          <Link to={`/product/${item.product._id || item.product.id}`} className="text-base sm:text-lg font-serif font-medium text-[#0B0F19] hover:text-[#800000] transition-colors line-clamp-2 leading-snug">
                             {item.product.name}
                           </Link>
-                          {item.size && (
-                            <p className="text-sm text-gray-500 mt-1">
-                              Size: <span className="font-medium text-gray-900">{item.size}</span>
+                          {item.size && item.size !== 'undefined' && item.size !== 'null' && item.size !== '' && (
+                            <p className="text-xs text-gray-500/80 mt-1.5 flex items-center gap-1.5 font-sans">
+                              <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Size:</span>
+                              <span className="font-semibold text-obsidian bg-gray-100 px-2 py-0.5 rounded text-xs">{item.size}</span>
                             </p>
                           )}
                         </div>
-                        <span className="text-xl font-medium text-gray-900 whitespace-nowrap">
+                        <span className="text-lg sm:text-xl font-serif font-semibold text-[#0B0F19] whitespace-nowrap">
                           {getFormattedPrice(item.price !== undefined ? item.price : item.product.price)}
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between mt-4">
-                        <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden bg-white">
+                      <div className="flex items-center justify-between mt-6">
+                        <div className="flex items-center border border-gray-200/80 rounded-full overflow-hidden bg-white shadow-sm">
                           <button
                             onClick={() => updateQuantity((item.product._id || item.product.id), item.size, item.quantity - 1)}
                             disabled={item.quantity <= 1}
-                            className="p-2 hover:bg-gray-50 text-gray-600 disabled:opacity-30 transition-colors"
+                            className="p-2.5 px-3 hover:bg-[#FAF9F6] text-gray-500 hover:text-black disabled:opacity-30 disabled:hover:bg-transparent transition-all"
                           >
-                            <Minus className="w-4 h-4" />
+                            <Minus className="w-3.5 h-3.5" />
                           </button>
-                          <span className="w-12 text-center text-sm font-medium text-gray-900">
+                          <span className="w-8 text-center text-xs font-bold text-[#0B0F19] font-sans">
                             {item.quantity}
                           </span>
                           <button
                             onClick={() => updateQuantity((item.product._id || item.product.id), item.size, item.quantity + 1)}
-                            className="p-2 hover:bg-gray-50 text-gray-600 transition-colors"
+                            className="p-2.5 px-3 hover:bg-[#FAF9F6] text-gray-500 hover:text-[#B8934E] transition-all"
                           >
-                            <Plus className="w-4 h-4" />
+                            <Plus className="w-3.5 h-3.5" />
                           </button>
                         </div>
 
                         <button
                           onClick={() => removeFromCart((item.product._id || item.product.id), item.size)}
-                          className="text-sm font-medium text-gray-500 hover:text-red-600 transition-colors flex items-center space-x-1.5"
+                          className="text-xs font-semibold text-gray-400 hover:text-red-600 transition-colors flex items-center space-x-1.5 py-2 px-3 hover:bg-red-50 rounded-lg group/btn"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 text-gray-400 group-hover/btn:text-red-500 transition-colors" />
                           <span className="hidden sm:inline">Remove</span>
                         </button>
                       </div>
@@ -403,11 +428,11 @@ export function Cart() {
             </div>
 
             {/* Right Column: Order Summary & Payment */}
-            <div className="lg:col-span-4">
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 sticky top-28 shadow-sm">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6 border-b border-gray-100 pb-4 flex items-center justify-between">
+            <div className="lg:col-span-5">
+              <div className="bg-[#FCFAF8] border border-[#B8934E]/20 rounded-3xl p-6 sm:p-8 sticky top-28 shadow-[0_20px_50px_-20px_rgba(184,147,78,0.12)]">
+                <h2 className="text-xl sm:text-2xl font-serif font-medium text-[#0B0F19] mb-6 border-b border-[#B8934E]/10 pb-4 flex items-center justify-between">
                   <span>Order Summary</span>
-                  <span className="text-sm font-medium text-gray-500">{cart.length} Items</span>
+                  <span className="text-xs font-bold text-[#B8934E] uppercase tracking-widest bg-[#FAF9F6] border border-[#B8934E]/20 px-2.5 py-1 rounded-full">{cart.length} Items</span>
                 </h2>
 
                 <div className="space-y-6 mb-8">
@@ -428,84 +453,85 @@ export function Cart() {
                   )}
 
                   {!canShowShippingOptions && (
-                    <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
-                      Select a delivery address to view shipping and packaging options.
+                    <div className="rounded-2xl border border-gray-150 bg-[#FAF9F6] p-5 text-sm text-gray-500 text-center flex flex-col items-center justify-center gap-2">
+                      <MapPin className="w-5 h-5 text-gray-400" />
+                      <span>Select a delivery address to view shipping and packaging options.</span>
                     </div>
                   )}
                 </div>
 
                 <div className="space-y-4 mb-8 text-sm">
                   <div className="flex justify-between items-center text-gray-600">
-                    <span>Subtotal</span>
-                    <span className="font-medium text-gray-900">{getFormattedPrice(cartTotal)}</span>
+                    <span className="font-medium">Subtotal</span>
+                    <span className="font-semibold text-obsidian text-base">{getFormattedPrice(cartTotal)}</span>
                   </div>
                   <div className="flex justify-between items-center text-gray-600">
-                    <span>Shipping</span>
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium">Shipping</span>
+                    <span className="font-semibold text-obsidian text-base">
                       {selectedShipping ? (
                         selectedShipping.isFree
-                          ? "FREE"
+                          ? <span className="text-emerald-700 font-bold uppercase text-xs tracking-wider bg-emerald-100/60 px-2 py-0.5 rounded">FREE</span>
                           : formatPrice(displayShippingAmount, currency, rates, currency)
                       ) : "—"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-gray-600">
-                    <span>Packaging</span>
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium">Packaging</span>
+                    <span className="font-semibold text-obsidian text-base">
                       {displayPackagingAmount > 0
-                        ? formatPrice(displayPackagingAmount, currency, rates, currency)
-                        : "Included"}
+                        ? <span className="text-amber-700">+{formatPrice(displayPackagingAmount, currency, rates, currency)}</span>
+                        : <span className="text-emerald-700 font-bold uppercase text-xs tracking-wider bg-emerald-100/60 px-2 py-0.5 rounded">Included</span>}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-gray-600">
-                    <span>Taxes</span>
-                    <span className="font-medium text-gray-900">Included</span>
+                    <span className="font-medium">Taxes</span>
+                    <span className="font-semibold text-[#0B0F19]">Included</span>
                   </div>
 
-                  <div className="border-t border-gray-100 pt-5 mt-5">
+                  <div className="border-t-2 border-dashed border-[#B8934E]/20 pt-5 mt-5">
                     <div className="flex justify-between items-center">
-                      <span className="text-base font-semibold text-gray-900">Total</span>
+                      <span className="text-sm font-bold uppercase tracking-wider text-gray-500">Total</span>
                       <div className="text-right">
-                        <span className="text-2xl font-bold text-gray-900 block leading-none">
+                        <span className="text-2xl sm:text-3xl font-serif font-bold text-[#0B0F19] block leading-none">
                           {formatPrice(totalAmountWithExtras, currency, rates, currency)}
                         </span>
-                        <p className="text-xs text-gray-500 mt-1">Including GST</p>
+                        <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-1.5">Including GST</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {chosenAddress && !isDeliveryAvailable && (
-                  <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-lg text-red-600 text-sm">
+                  <div className="mb-6 p-4 bg-red-50/60 border border-red-100 rounded-2xl text-red-700 text-sm leading-relaxed">
                     Delivery only available to {[isIndiaEnabled && "India", isAustraliaEnabled && "Australia"].filter(Boolean).join(" and ") || "none at this time"}. Selected country: <span className="font-semibold">{chosenAddress.country}</span>
                   </div>
                 )}
 
                 {chosenAddress && isDeliveryAvailable && isCheckingServiceability && (
-                  <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-lg text-blue-600 text-sm flex items-center space-x-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Verifying delivery serviceability...</span>
+                  <div className="mb-6 p-4 bg-blue-50/60 border border-blue-100 rounded-2xl text-blue-700 text-sm flex items-center space-x-3">
+                    <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+                    <span className="font-medium">Verifying delivery serviceability...</span>
                   </div>
                 )}
 
                 {chosenAddress && isDeliveryAvailable && !isCheckingServiceability && serviceability && !serviceability.isServiceable && (
-                  <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-lg text-red-600 text-sm">
+                  <div className="mb-6 p-4 bg-red-50/60 border border-red-100 rounded-2xl text-red-700 text-sm leading-relaxed">
                     Sorry, delivery is currently not available to pincode <span className="font-semibold">{chosenAddress.zipCode}</span>.
                   </div>
                 )}
 
                 {chosenAddress && isDeliveryAvailable && !isCheckingServiceability && serviceability && serviceability.isServiceable && paymentMethod === "COD" && !serviceability.cod && (
-                  <div className="mb-6 p-4 bg-orange-50 border border-orange-100 rounded-lg text-orange-600 text-sm">
+                  <div className="mb-6 p-4 bg-orange-50/60 border border-orange-150 rounded-2xl text-orange-700 text-sm leading-relaxed">
                     Cash on Delivery is not available for pincode <span className="font-semibold">{chosenAddress.zipCode}</span>. Please choose online payment.
                   </div>
                 )}
 
                 {/* Payment Selection */}
                 <div className="mb-8">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Payment Method</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Payment Method</h3>
                   <div className="space-y-3">
 
-                    <label className={`relative flex items-center p-4 rounded-xl cursor-pointer border transition-all duration-200 ${paymentMethod === "Stripe" ? "border-gray-900 bg-gray-50" : "border-gray-200 bg-white hover:border-gray-300"}`}>
+                    <label className={`relative flex items-center p-4 rounded-2xl cursor-pointer border transition-all duration-300 ${paymentMethod === "Stripe" ? "border-[#B8934E] bg-[#FAF9F6] ring-1 ring-[#B8934E]/20" : "border-gray-250 bg-white hover:border-[#B8934E]/40 hover:bg-[#FCFAF8]"}`}>
                       <input
                         type="radio"
                         value="Stripe"
@@ -513,19 +539,19 @@ export function Cart() {
                         onChange={() => setPaymentMethod("Stripe")}
                         className="sr-only"
                       />
-                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center mr-4 ${paymentMethod === "Stripe" ? "border-gray-900" : "border-gray-300"}`}>
-                        {paymentMethod === "Stripe" && <div className="w-2 h-2 rounded-full bg-gray-900"></div>}
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mr-4 transition-colors ${paymentMethod === "Stripe" ? "border-[#B8934E]" : "border-gray-300"}`}>
+                        {paymentMethod === "Stripe" && <div className="w-2 h-2 rounded-full bg-[#B8934E]"></div>}
                       </div>
                       <div className="flex-1">
-                        <span className="block text-sm font-medium text-gray-900">Pay Online (Secure)</span>
-                        <span className="block text-xs text-gray-500 mt-0.5">Credit/Debit Cards</span>
+                        <span className="block text-sm font-semibold text-gray-900">Pay Online (Secure)</span>
+                        <span className="block text-[11px] text-gray-400 mt-0.5">Credit/Debit Cards</span>
                       </div>
-                      <CreditCard className={`w-5 h-5 ${paymentMethod === "Stripe" ? "text-gray-900" : "text-gray-400"}`} />
+                      <CreditCard className={`w-5 h-5 ${paymentMethod === "Stripe" ? "text-[#B8934E]" : "text-gray-400"}`} />
                     </label>
 
                     {/* COD — India only */}
                     {isCODAvailable && (
-                      <label className={`relative flex items-center p-4 rounded-xl cursor-pointer border transition-all duration-200 ${paymentMethod === "COD" ? "border-gray-900 bg-gray-50" : "border-gray-200 bg-white hover:border-gray-300"}`}>
+                      <label className={`relative flex items-center p-4 rounded-2xl cursor-pointer border transition-all duration-300 ${paymentMethod === "COD" ? "border-[#B8934E] bg-[#FAF9F6] ring-1 ring-[#B8934E]/20" : "border-gray-250 bg-white hover:border-[#B8934E]/40 hover:bg-[#FCFAF8]"}`}>
                         <input
                           type="radio"
                           value="COD"
@@ -533,14 +559,14 @@ export function Cart() {
                           onChange={() => setPaymentMethod("COD")}
                           className="sr-only"
                         />
-                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center mr-4 ${paymentMethod === "COD" ? "border-gray-900" : "border-gray-300"}`}>
-                          {paymentMethod === "COD" && <div className="w-2 h-2 rounded-full bg-gray-900"></div>}
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mr-4 transition-colors ${paymentMethod === "COD" ? "border-[#B8934E]" : "border-gray-300"}`}>
+                          {paymentMethod === "COD" && <div className="w-2 h-2 rounded-full bg-[#B8934E]"></div>}
                         </div>
                         <div className="flex-1">
-                          <span className="block text-sm font-medium text-gray-900">Cash on Delivery</span>
-                          <span className="block text-xs text-gray-500 mt-0.5">Pay at your doorstep · India only</span>
+                          <span className="block text-sm font-semibold text-gray-900">Cash on Delivery</span>
+                          <span className="block text-[11px] text-gray-400 mt-0.5">Pay at your doorstep · India only</span>
                         </div>
-                        <Banknote className={`w-5 h-5 ${paymentMethod === "COD" ? "text-gray-900" : "text-gray-400"}`} />
+                        <Banknote className={`w-5 h-5 ${paymentMethod === "COD" ? "text-[#B8934E]" : "text-gray-400"}`} />
                       </label>
                     )}
                   </div>
@@ -549,27 +575,30 @@ export function Cart() {
                 <button
                   onClick={handleCheckout}
                   disabled={isCheckoutDisabled}
-                  className="w-full bg-gray-900 text-white rounded-xl font-medium text-sm py-4 hover:bg-black transition-colors flex items-center justify-center space-x-2 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed mb-6"
+                  className="w-full relative overflow-hidden bg-gradient-to-r from-[#5C1A1B] to-[#800000] text-white border border-[#B8934E]/30 rounded-2xl font-bold uppercase tracking-widest text-[11px] py-4.5 hover:shadow-[0_15px_30px_rgba(128,0,0,0.25)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center space-x-2.5 disabled:from-gray-100 disabled:to-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed disabled:shadow-none disabled:-translate-y-0 mb-6 group/checkout"
                 >
                   {isProcessing ? (
                     <div className="flex items-center space-x-2">
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Processing...</span>
+                      <span>Processing Payment...</span>
                     </div>
                   ) : (
                     <>
                       <span>{(paymentMethod === "Card" || paymentMethod === "Stripe") ? `Pay ${formatPrice(totalAmountWithExtras, currency, rates, currency)}` : `Place Order`}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-4 h-4 group-hover/checkout:translate-x-1.5 transition-transform duration-300" />
                     </>
                   )}
                 </button>
 
                 {/* Trust Badges */}
-                <div className="pt-6 border-t border-gray-100 flex justify-center text-center">
-                  <div className="flex items-center space-x-2">
-                    <ShieldCheck className="w-5 h-5 text-gray-400" />
-                    <span className="text-xs text-gray-500 font-medium">Secure Checkout</span>
+                <div className="pt-6 border-t border-gray-150 flex flex-col items-center gap-2">
+                  <div className="flex items-center space-x-2 text-[#B8934E]">
+                    <ShieldCheck className="w-5 h-5 flex-shrink-0" strokeWidth={2} />
+                    <span className="text-[10px] text-obsidian font-bold uppercase tracking-widest">Secure Checkout Guarantee</span>
                   </div>
+                  <p className="text-[10px] text-gray-400 font-medium text-center">
+                    100% Insured Delivery · Safe Credit & Debit Payments
+                  </p>
                 </div>
 
               </div>

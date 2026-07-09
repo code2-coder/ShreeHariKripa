@@ -12,14 +12,14 @@ export const AddressBook = ({ addresses, selectedAddressId, onSelect, onAdd, onE
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">Delivery Address</h2>
-          <p className="text-sm text-gray-500 mt-1">Select or add a new destination</p>
+          <h2 className="text-2xl font-serif font-medium text-[#0B0F19]">Delivery Address</h2>
+          <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-bold">Select or add a new destination</p>
         </div>
         <button
           onClick={onAdd}
-          className="flex items-center space-x-2 text-sm font-medium text-gray-900 hover:text-black transition-colors group"
+          className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-[#800000] hover:text-[#5C1A1B] transition-colors group"
         >
-          <div className="p-1.5 rounded-full border border-gray-200 group-hover:border-gray-400 transition-colors">
+          <div className="p-1.5 rounded-full border border-[#800000]/30 group-hover:border-[#800000] transition-colors bg-red-50/50">
             <Plus className="w-4 h-4" />
           </div>
           <span>Add New</span>
@@ -27,15 +27,15 @@ export const AddressBook = ({ addresses, selectedAddressId, onSelect, onAdd, onE
       </div>
 
       {(!addresses || addresses.length === 0) ? (
-        <div className="bg-gray-50 rounded-2xl border border-gray-100 p-12 text-center flex flex-col items-center">
+        <div className="bg-[#FAF9F6] rounded-2xl border border-gray-150 p-12 text-center flex flex-col items-center">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm border border-gray-100">
             <MapPin className="w-6 h-6 text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No Saved Addresses</h3>
+          <h3 className="text-lg font-serif font-bold text-gray-900 mb-2">No Saved Addresses</h3>
           <p className="text-gray-500 mb-6 text-sm">You haven't saved any delivery destinations yet.</p>
           <button
             onClick={onAdd}
-            className="bg-gray-900 text-white font-medium px-6 py-3 hover:bg-black transition-colors rounded-xl"
+            className="bg-gradient-to-r from-[#5C1A1B] to-[#800000] text-white text-xs font-bold uppercase tracking-widest px-6 py-3.5 hover:shadow-lg transition-all rounded-xl border border-[#B8934E]/20"
           >
             Add New Address
           </button>
@@ -47,50 +47,50 @@ export const AddressBook = ({ addresses, selectedAddressId, onSelect, onAdd, onE
             return (
               <div
                 key={address._id}
-                className={`relative p-5 rounded-2xl border transition-all duration-200 cursor-pointer overflow-hidden ${
+                className={`relative p-5 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden ${
                   isSelected
-                    ? 'border-gray-900 bg-gray-50 shadow-sm'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
+                    ? 'border-[#B8934E] bg-[#FAF9F6] ring-1 ring-[#B8934E]/25 shadow-md scale-[1.01]'
+                    : 'border-gray-200 bg-white hover:border-[#B8934E]/40 hover:bg-[#FCFAF8]'
                 }`}
                 onClick={() => onSelect(address)}
               >
                 {/* Checkmark for selection */}
                 {isSelected && (
                   <div className="absolute top-4 right-4 flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5 text-gray-900" />
+                    <CheckCircle className="w-5 h-5 text-[#B8934E]" />
                   </div>
                 )}
 
                 <div className="pr-10">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="font-semibold text-gray-900 text-base">{address.fullName}</h3>
+                  <div className="flex items-center space-x-3 mb-3">
+                    <h3 className="font-serif font-semibold text-[#0B0F19] text-base leading-tight">{address.fullName}</h3>
                     {address.title && (
-                      <span className="bg-white border border-gray-200 text-gray-600 text-[10px] uppercase font-bold px-2 py-0.5 rounded">
+                      <span className="bg-white border border-[#B8934E]/30 text-[#B8934E] text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md">
                         {address.title}
                       </span>
                     )}
                     {address.isDefault && (
-                      <span className="bg-gray-900 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded">
+                      <span className="bg-[#800000] text-white text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md shadow-sm">
                         Default
                       </span>
                     )}
                   </div>
                   
-                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                  <p className="text-sm text-gray-500 mb-4 leading-relaxed font-sans font-medium">
                     {address.address}, {address.city}
                     {address.state && `, ${address.state}`} <br />
                     {address.country} - {address.zipCode}
                   </p>
                   
-                  <div className="text-sm text-gray-900 flex flex-col space-y-1">
+                  <div className="text-sm text-gray-900 flex flex-col space-y-1.5 border-t border-gray-100 pt-3">
                     <div className="flex items-center">
-                      <span className="text-gray-500 w-12 text-xs">Phone:</span>
-                      <span className="font-medium">{address.phoneNo}</span>
+                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider w-16">Phone:</span>
+                      <span className="font-semibold text-obsidian">{address.phoneNo}</span>
                     </div>
                     {address.altPhoneNo && (
                       <div className="flex items-center">
-                        <span className="text-gray-500 w-12 text-xs">Alt:</span>
-                        <span className="font-medium">{address.altPhoneNo}</span>
+                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider w-16">Alt:</span>
+                        <span className="font-semibold text-obsidian">{address.altPhoneNo}</span>
                       </div>
                     )}
                   </div>
@@ -100,32 +100,32 @@ export const AddressBook = ({ addresses, selectedAddressId, onSelect, onAdd, onE
                 <div className="absolute bottom-3 right-3" onClick={(e) => e.stopPropagation()}>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-200 transition-colors">
+                      <button className="p-2 text-gray-400 hover:text-[#B8934E] rounded-full hover:bg-gray-100 transition-colors">
                         <MoreVertical className="w-4 h-4" />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-100 shadow-lg rounded-xl py-1">
+                    <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-100 shadow-xl rounded-2xl py-1 z-30">
                       <DropdownMenuItem 
                         onClick={() => onEdit(address)}
-                        className="cursor-pointer py-2.5 px-4 text-sm font-medium text-gray-700 focus:bg-gray-50 transition-colors"
+                        className="cursor-pointer py-2.5 px-4 text-xs font-bold uppercase tracking-wider text-gray-700 focus:bg-gray-50 transition-colors"
                       >
-                        <Edit className="w-4 h-4 mr-2" />
+                        <Edit className="w-3.5 h-3.5 mr-2.5 text-gray-400" />
                         Edit Address
                       </DropdownMenuItem>
                       {!address.isDefault && (
                         <DropdownMenuItem 
                           onClick={() => onSetDefault(address._id)}
-                          className="cursor-pointer py-2.5 px-4 text-sm font-medium text-gray-700 focus:bg-gray-50 transition-colors"
+                          className="cursor-pointer py-2.5 px-4 text-xs font-bold uppercase tracking-wider text-gray-700 focus:bg-gray-50 transition-colors"
                         >
-                          <CheckCircle className="w-4 h-4 mr-2" />
+                          <CheckCircle className="w-3.5 h-3.5 mr-2.5 text-[#B8934E]" />
                           Set as Default
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem 
                         onClick={() => onDelete(address._id)}
-                        className="cursor-pointer py-2.5 px-4 text-sm font-medium text-red-600 focus:bg-red-50 focus:text-red-700 transition-colors"
+                        className="cursor-pointer py-2.5 px-4 text-xs font-bold uppercase tracking-wider text-red-600 focus:bg-red-50 focus:text-red-700 transition-colors"
                       >
-                        <Trash2 className="w-4 h-4 mr-2" />
+                        <Trash2 className="w-3.5 h-3.5 mr-2.5 text-red-400" />
                         Delete Address
                       </DropdownMenuItem>
                     </DropdownMenuContent>

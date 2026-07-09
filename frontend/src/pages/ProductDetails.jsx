@@ -155,7 +155,7 @@ export function ProductDetails() {
 
   const handleAddToCart = () => {
     if (product) {
-      const variantDesc = selectedColorVariant?.variantName + (selectedSize ? ` - ${selectedSize.size}` : '');
+      const variantDesc = [selectedColorVariant?.variantName, selectedSize?.size].filter(Boolean).join(" - ");
       addToCart(product, quantity, variantDesc, selectedSize?.price || displayPrice);
       toast.success(`${quantity} x ${product.name} ${variantDesc ? `(${variantDesc})` : ''} added to cart!`);
     }

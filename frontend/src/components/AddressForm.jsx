@@ -122,27 +122,27 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 shadow-sm">
-      <div className="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-        <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-          <MapPin className="w-5 h-5 mr-3 text-gray-400" />
+    <div className="bg-[#FCFAF8] rounded-3xl border border-[#B8934E]/10 p-6 sm:p-8 shadow-[0_15px_40px_-20px_rgba(184,147,78,0.08)]">
+      <div className="flex justify-between items-center mb-8 border-b border-[#B8934E]/10 pb-4">
+        <h2 className="text-xl sm:text-2xl font-serif font-medium text-[#0B0F19] flex items-center">
+          <MapPin className="w-5 h-5 mr-3 text-[#B8934E]" strokeWidth={2} />
           {initialData ? 'Edit Address' : 'Add New Address'}
         </h2>
         {onCancel && (
           <button
             onClick={onCancel}
-            className="p-2 text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 text-gray-400 hover:text-[#B8934E] bg-white hover:bg-gray-100 rounded-full border border-gray-100 transition-colors shadow-sm"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {/* Full Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
               Full Name *
             </label>
             <input
@@ -151,14 +151,14 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
               required
               value={formData.fullName}
               onChange={handleChange}
-              className="w-full bg-white border border-gray-300 px-4 py-3 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all text-sm"
+              className="w-full bg-white border border-gray-250 px-4 py-3.5 rounded-xl focus:ring-1 focus:ring-[#B8934E]/60 focus:border-[#B8934E] outline-none transition-all duration-300 text-sm placeholder:text-gray-300"
               placeholder="John Doe"
             />
           </div>
 
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
               Address Label
             </label>
             <input
@@ -166,14 +166,14 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
               name="title"
               value={formData.title}
               onChange={handleChange}
-              className="w-full bg-white border border-gray-300 px-4 py-3 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all text-sm"
+              className="w-full bg-white border border-gray-250 px-4 py-3.5 rounded-xl focus:ring-1 focus:ring-[#B8934E]/60 focus:border-[#B8934E] outline-none transition-all duration-300 text-sm placeholder:text-gray-300"
               placeholder="Home, Office..."
             />
           </div>
 
           {/* Phone Number */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
               Mobile Number *
             </label>
             <input
@@ -182,14 +182,14 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
               required
               value={formData.phoneNo}
               onChange={handleChange}
-              className="w-full bg-white border border-gray-300 px-4 py-3 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all text-sm"
+              className="w-full bg-white border border-gray-250 px-4 py-3.5 rounded-xl focus:ring-1 focus:ring-[#B8934E]/60 focus:border-[#B8934E] outline-none transition-all duration-300 text-sm placeholder:text-gray-300"
               placeholder="+1234567890"
             />
           </div>
 
           {/* Alt Phone Number */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
               Alternate Number
             </label>
             <input
@@ -197,14 +197,14 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
               name="altPhoneNo"
               value={formData.altPhoneNo}
               onChange={handleChange}
-              className="w-full bg-white border border-gray-300 px-4 py-3 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all text-sm"
+              className="w-full bg-white border border-gray-250 px-4 py-3.5 rounded-xl focus:ring-1 focus:ring-[#B8934E]/60 focus:border-[#B8934E] outline-none transition-all duration-300 text-sm placeholder:text-gray-300"
               placeholder="Secondary contact"
             />
           </div>
 
           {/* Address Line */}
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
               Street Address *
             </label>
             <input
@@ -213,14 +213,14 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
               required
               value={formData.address}
               onChange={handleChange}
-              className="w-full bg-white border border-gray-300 px-4 py-3 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all text-sm"
+              className="w-full bg-white border border-gray-250 px-4 py-3.5 rounded-xl focus:ring-1 focus:ring-[#B8934E]/60 focus:border-[#B8934E] outline-none transition-all duration-300 text-sm placeholder:text-gray-300"
               placeholder="Flat, House no., Building, Apartment"
             />
           </div>
 
           {/* Country */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
               Country *
             </label>
             <select
@@ -228,7 +228,7 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
               required
               value={countryCode}
               onChange={handleCountryChange}
-              className="w-full bg-white border border-gray-300 px-4 py-3 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all text-sm cursor-pointer"
+              className="w-full bg-white border border-gray-250 px-4 py-3.5 rounded-xl focus:ring-1 focus:ring-[#B8934E]/60 focus:border-[#B8934E] outline-none transition-all duration-300 text-sm cursor-pointer"
             >
               <option value="IN">India</option>
               <option value="AU">Australia</option>
@@ -237,7 +237,7 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
 
           {/* State */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
               State / Province *
             </label>
             <select
@@ -245,7 +245,7 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
               required
               value={stateCode}
               onChange={handleStateChange}
-              className="w-full bg-white border border-gray-300 px-4 py-3 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all text-sm cursor-pointer disabled:bg-gray-50 disabled:text-gray-400"
+              className="w-full bg-white border border-gray-250 px-4 py-3.5 rounded-xl focus:ring-1 focus:ring-[#B8934E]/60 focus:border-[#B8934E] outline-none transition-all duration-300 text-sm cursor-pointer disabled:bg-gray-50 disabled:text-gray-400"
               disabled={!countryCode}
             >
               <option value="">Select State</option>
@@ -259,7 +259,7 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
 
           {/* City */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
               City *
             </label>
             <select
@@ -267,7 +267,7 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
               required
               value={formData.city}
               onChange={handleCityChange}
-              className="w-full bg-white border border-gray-300 px-4 py-3 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all text-sm cursor-pointer disabled:bg-gray-50 disabled:text-gray-400"
+              className="w-full bg-white border border-gray-250 px-4 py-3.5 rounded-xl focus:ring-1 focus:ring-[#B8934E]/60 focus:border-[#B8934E] outline-none transition-all duration-300 text-sm cursor-pointer disabled:bg-gray-50 disabled:text-gray-400"
               disabled={!stateCode}
             >
               <option value="">Select City</option>
@@ -281,7 +281,7 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
 
           {/* Zip Code */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
               ZIP / Postal Code *
             </label>
             <input
@@ -291,29 +291,29 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
               value={formData.zipCode}
               onChange={handleChange}
               maxLength={isIndiaAddress ? 6 : 4}
-              className={`w-full bg-white border px-4 py-3 rounded-lg outline-none transition-all text-sm ${serviceability && !serviceability.isServiceable
+              className={`w-full bg-white border px-4 py-3.5 rounded-xl outline-none transition-all duration-300 text-sm placeholder:text-gray-300 ${serviceability && !serviceability.isServiceable
                 ? 'border-red-300 focus:ring-1 focus:ring-red-500 focus:border-red-500'
-                : 'border-gray-300 focus:ring-1 focus:ring-gray-900 focus:border-gray-900'
+                : 'border-gray-250 focus:ring-1 focus:ring-[#B8934E]/60 focus:border-[#B8934E]'
                 }`}
               placeholder={isIndiaAddress ? "6-digit Pincode" : "Postal Code"}
             />
             {/* Serviceability Feedback */}
             <div className="mt-2 h-4">
               {isChecking && (
-                <div className="flex items-center text-xs text-blue-600">
-                  <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                <div className="flex items-center text-xs text-blue-600 font-sans">
+                  <Loader2 className="w-3 h-3 mr-1.5 animate-spin text-blue-600" />
                   Verifying pincode...
                 </div>
               )}
               {!isChecking && serviceability && serviceability.isServiceable && (
-                <div className="flex items-center text-xs text-green-600">
-                  <CheckCircle2 className="w-3 h-3 mr-1" />
+                <div className="flex items-center text-xs text-emerald-700 font-sans font-semibold">
+                  <CheckCircle2 className="w-3 h-3 mr-1.5 text-emerald-600" />
                   Delivery available to this pincode
                 </div>
               )}
               {!isChecking && serviceability && !serviceability.isServiceable && (
-                <div className="flex items-center text-xs text-red-600">
-                  <XCircle className="w-3 h-3 mr-1" />
+                <div className="flex items-center text-xs text-red-600 font-sans font-semibold">
+                  <XCircle className="w-3 h-3 mr-1.5 text-red-500" />
                   Delivery not available for this pincode
                 </div>
               )}
@@ -322,16 +322,16 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
         </div>
 
         {/* Set as Default Checkbox */}
-        <label className="flex items-center space-x-3 cursor-pointer group mt-6 pt-2">
+        <label className="flex items-center space-x-3 cursor-pointer group mt-6 pt-2 select-none">
           <div
-            className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${formData.isDefault
-              ? 'bg-gray-900 border-gray-900'
-              : 'bg-white border-gray-300 group-hover:border-gray-400'
+            className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-300 ${formData.isDefault
+              ? 'bg-[#800000] border-[#800000] shadow-sm'
+              : 'bg-white border-gray-300 group-hover:border-[#B8934E]'
               }`}
           >
             {formData.isDefault && (
-              <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
+              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path>
               </svg>
             )}
           </div>
@@ -342,7 +342,7 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
             checked={formData.isDefault}
             onChange={handleChange}
           />
-          <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">Set as default address</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-gray-500 group-hover:text-gray-900 transition-colors">Set as default address</span>
         </label>
 
         <div className="pt-6 flex gap-4">
@@ -350,7 +350,7 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 bg-white border border-gray-300 text-gray-700 font-medium text-sm py-3.5 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-colors"
+              className="flex-1 bg-white border border-gray-200 text-gray-500 font-bold uppercase tracking-wider text-xs py-4 rounded-xl hover:bg-[#FCFAF8] hover:border-gray-350 hover:text-obsidian transition-all duration-300"
             >
               Cancel
             </button>
@@ -358,7 +358,7 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
           <button
             type="submit"
             disabled={serviceability && !serviceability.isServiceable}
-            className="flex-[2] bg-gray-900 hover:bg-black text-white font-medium text-sm py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed"
+            className="flex-[2] bg-gradient-to-r from-[#5C1A1B] to-[#800000] text-white border border-[#B8934E]/30 font-bold uppercase tracking-widest text-[11px] py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center space-x-2.5 disabled:from-gray-100 disabled:to-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed disabled:shadow-none disabled:-translate-y-0"
           >
             <Save className="w-4 h-4" />
             <span>Save Address</span>
