@@ -210,7 +210,7 @@ export function OrdersTab({ orders, formatINR, updateOrderStatus, handleDeleteOr
                                  </td>
                                  <td className="px-6 py-5 whitespace-nowrap">
                                     <span className="text-slate-800 font-black text-sm font-mono tracking-wider">
-                                      #{order._id.substring(order._id.length - 8).toUpperCase()}
+                                      {order._id.substring(order._id.length - 8).toUpperCase()}
                                     </span>
                                  </td>
                                  <td className="px-6 py-5">
