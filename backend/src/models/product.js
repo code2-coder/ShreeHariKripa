@@ -203,6 +203,12 @@ const productSchema = new mongoose.Schema(
         },
       },
     ],
+    status: {
+      type: String,
+      enum: ["draft", "published"],
+      default: "draft",
+      required: [true, "Product status is required"],
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -218,5 +224,6 @@ productSchema.index({ category: 1, price: 1 });
 productSchema.index({ price: 1 });
 productSchema.index({ createdAt: -1 });
 productSchema.index({ name: 'text' });
+productSchema.index({ status: 1 });
 
 export default mongoose.model("Product", productSchema);

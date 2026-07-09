@@ -32,6 +32,14 @@ export default function ProductInformation({ categories }) {
           </select>
         </div>
         <div>
+          <label className="block text-sm font-bold text-gray-700 mb-2">Status *</label>
+          <select {...register("status", { required: "Status is required" })} className="w-full border border-gray-300 rounded-xl px-4 py-3 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-gray-900 outline-none transition-all font-semibold">
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
+          {errors.status && <p className="text-red-500 text-xs mt-1 font-medium">{errors.status.message}</p>}
+        </div>
+        <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">Base Selling Price</label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₹</span>

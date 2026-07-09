@@ -12,13 +12,14 @@ export class ProductRepository extends BaseRepository {
 
   async findWithVisualEmbeddings(options = {}) {
     const defaultOptions = {
-      select: "+visualEmbedding name price description images video category ratings stock numOfReviews",
+      select: "+visualEmbedding name price description images video category ratings stock numOfReviews status",
       populate: { path: "category", select: "name" },
       lean: true,
       ...options
     };
     return this.find({ 
-      visualEmbedding: { $exists: true, $ne: [] }
+      visualEmbedding: { $exists: true, $ne: [] },
+      status: "published"
     }, defaultOptions);
   }
 

@@ -30,7 +30,7 @@ export class ProductService {
     }
 
     // Create query
-    const baseQuery = Product.find();
+    const baseQuery = Product.find({ status: "published" });
     const apiFilters = new APIFilters(baseQuery, queryStr)
       .search()
       .filters()
@@ -38,13 +38,13 @@ export class ProductService {
       .pagination(resPerPage);
 
     const products = await apiFilters.query
-      .select("name price description images video category ratings stock variants numOfReviews homeSection features")
+      .select("name price description images video category ratings stock variants numOfReviews homeSection features status")
       .populate("category", "name")
       .lean();
 
     products.forEach(p => { if (!p.features) p.features = []; });
 
-    const totalProducts = await Product.countDocuments();
+    const totalProducts = await Product.countDocuments({ status: "published" });
 
     return {
       products,
@@ -72,7 +72,7 @@ export class ProductService {
       lean: true
     });
 
-    if (!product) {
+    if (!product || product.status !== "published") {
       throw new Error("Product not found");
     }
 
@@ -82,6 +82,7 @@ export class ProductService {
 
   async createProduct(productData, userId) {
     productData.user = userId;
+    productData.status = productData.status || "draft";
     if (productData.features) {
       productData.features = this.sanitizeFeatures(productData.features);
     }
@@ -92,6 +93,10 @@ export class ProductService {
     const product = await ProductRepository.findById(id);
     if (!product) {
       throw new Error("Product not found");
+    }
+
+    if (updateData.status !== undefined) {
+      updateData.status = updateData.status || "draft";
     }
 
     const { images, videos } = updateData;

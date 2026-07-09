@@ -17,12 +17,14 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
   
   // Filter States
   const [categoryFilter, setCategoryFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   const [productForm, setProductForm] = useState({
     name: "",
     description: "",
     price: 0,
     stock: 0,
+    status: "draft",
     category: "",
     seller: "Shreeharikripa",
     images: [],
@@ -245,16 +247,15 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
     };
     videoElement.src = URL.createObjectURL(file);
   };
-
   const handleAddProduct = () => {
       setShowProductForm(true);
       setEditingProduct(null);
       setProductForm({ 
         name: "", description: "", price: 0, stock: 0, category: categories[0]?._id || "", seller: "Shreeharikripa", images: [], video: null,
-        productType: "Rings", style: "", earringStyle: "", nosepinStyle: "", pendantStyle: "", ringStyle: "", material: "", metalColor: "", purity: "", metalTypeColor: "", availableInStore: false, readyToShip: false, onSale: false, variants: [], hasSizes: false, moreDetails: ""
+        productType: "Rings", style: "", earringStyle: "", nosepinStyle: "", pendantStyle: "", ringStyle: "", material: "", metalColor: "", purity: "", metalTypeColor: "", availableInStore: false, readyToShip: false, onSale: false, variants: [], hasSizes: false, moreDetails: "", status: "draft"
       });
   };
-
+ 
   const handleEditProduct = (product) => {
       setShowProductForm(true);
       setEditingProduct(product);
@@ -282,7 +283,8 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
         onSale: product.onSale || false,
         variants: product.variants || [],
         hasSizes: product.variants && product.variants.length > 0,
-        moreDetails: product.moreDetails || ""
+        moreDetails: product.moreDetails || "",
+        status: product.status || "draft"
       });
   };
 
@@ -345,11 +347,23 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
       }
   };
 
+  const handleQuickStatusChange = async (id, newStatus) => {
+      try {
+          const { data } = await api.put(`/admin/products/${id}`, { status: newStatus });
+          setProducts(products.map(p => p._id === id ? data.product : p));
+          toast.success(`Product status updated to ${newStatus}`);
+      } catch (error) {
+          toast.error(error.response?.data?.message || "Failed to update status");
+          console.error(error);
+      }
+  };
+ 
   const filteredProducts = products.filter(p => {
     const matchesSearch = p.name?.toLowerCase().includes(globalSearch?.toLowerCase() || "") || p._id?.toLowerCase().includes(globalSearch?.toLowerCase() || "");
     const matchesCategory = categoryFilter === "All" || p.category?._id === categoryFilter || p.category === categoryFilter;
-    
-    return matchesSearch && matchesCategory;
+    const matchesStatus = statusFilter === "All" || (p.status || "draft") === statusFilter.toLowerCase();
+     
+    return matchesSearch && matchesCategory && matchesStatus;
   });
 
   return (
@@ -426,6 +440,16 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
                      {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
                   </select>
 
+                  <select 
+                     value={statusFilter}
+                     onChange={(e) => setStatusFilter(e.target.value)}
+                     className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 shadow-sm transition-all"
+                  >
+                     <option value="All">All Statuses</option>
+                     <option value="Draft">Draft</option>
+                     <option value="Published">Published</option>
+                  </select>
+
                   
                   <div className="relative flex-1 md:w-64 min-w-[200px]">
                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -470,6 +494,11 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
                                     ) : (
                                        <span className="bg-gray-900/80 backdrop-blur-md text-white text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-lg shadow-sm">In Stock</span>
                                     )}
+                                    {(product.status || "draft") === "published" ? (
+                                       <span className="bg-emerald-600/95 backdrop-blur-md text-white text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-lg shadow-sm">Published</span>
+                                    ) : (
+                                       <span className="bg-gray-500/90 backdrop-blur-md text-white text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-lg shadow-sm">Draft</span>
+                                    )}
                                  </div>
 
                                  {/* Hover Actions */}
@@ -486,7 +515,17 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
                               {/* Content Section */}
                               <div className="p-5 flex-1 flex flex-col bg-white">
                                  <h4 className="font-bold text-gray-900 text-[15px] mb-1.5 line-clamp-2 leading-tight" title={product.name}>{product.name}</h4>
-                                 <p className="text-[11px] text-gray-400 mb-4 font-bold uppercase tracking-widest font-mono">SKU: {product._id.substring(product._id.length - 8)}</p>
+                                 <div className="flex items-center justify-between mb-4">
+                                    <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest font-mono">SKU: {product._id.substring(product._id.length - 8)}</p>
+                                    <select
+                                       value={product.status || "draft"}
+                                       onChange={(e) => handleQuickStatusChange(product._id, e.target.value)}
+                                       className="text-[11px] font-bold px-2.5 py-1 rounded-xl bg-gray-50 border border-gray-200 text-gray-700 focus:outline-none cursor-pointer hover:bg-gray-100 hover:text-gray-900 transition-all font-sans shadow-sm"
+                                    >
+                                       <option value="draft">Draft</option>
+                                       <option value="published">Published</option>
+                                    </select>
+                                 </div>
                                  
                                  {product.variants && product.variants.length > 0 && (
                                     <div className="flex flex-wrap gap-2 mb-5">
