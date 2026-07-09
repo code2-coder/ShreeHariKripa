@@ -594,124 +594,126 @@ export function ProductDetails() {
             </motion.div>
 
             {/* Delivery Availability Check */}
-            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="border-t border-gray-100 pt-6 mt-8">
-              <div className="flex items-center gap-2 mb-4">
-                <MapPin className="w-4 h-4 text-[#B8934E]" />
-                <h4 className="font-bold text-obsidian text-sm uppercase tracking-wider">Delivery Availability</h4>
-              </div>
-              
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="pincode-input" className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
-                    ZIP / Postal Code *
-                  </label>
-                  
-                  <div className="relative flex items-center border border-gray-200 hover:border-obsidian focus-within:border-obsidian rounded-lg transition-all duration-300 bg-white group shadow-sm p-1">
-                    <input
-                      id="pincode-input"
-                      type="text"
-                      placeholder="Enter ZIP / Postal Code"
-                      value={zipCode}
-                      onChange={(e) => setZipCode(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && zipCode.trim() && !isChecking) {
-                          handleCheckAvailability();
-                        }
-                      }}
-                      className="flex-1 bg-transparent border-0 px-3 py-2 text-xs outline-none transition-all text-obsidian font-medium placeholder:text-gray-300"
-                    />
-                    <button
-                      onClick={handleCheckAvailability}
-                      disabled={isChecking || !zipCode.trim()}
-                      className="px-5 py-2 bg-obsidian text-white text-[10px] uppercase tracking-[0.2em] font-bold hover:bg-black transition-all duration-300 rounded-md disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed flex items-center justify-center min-w-[130px] h-[34px]"
-                    >
-                      {isChecking ? (
-                        <div className="flex items-center gap-1.5">
-                          <span className="h-3 w-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                          <span>Checking...</span>
-                        </div>
-                      ) : (
-                        "Check"
-                      )}
-                    </button>
-                  </div>
+            {currency === 'INR' && (
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="border-t border-gray-100 pt-6 mt-8">
+                <div className="flex items-center gap-2 mb-4">
+                  <MapPin className="w-4 h-4 text-[#B8934E]" />
+                  <h4 className="font-bold text-obsidian text-sm uppercase tracking-wider">Delivery Availability</h4>
                 </div>
-
-                {checked && availability && (
-                  <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-50/60 to-emerald-50/10 border border-emerald-100 shadow-sm animate-fade-in-up relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100/10 rounded-full blur-2xl pointer-events-none"></div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center space-x-2 text-emerald-800 font-bold text-xs uppercase tracking-wider">
-                        <span className="flex h-2 w-2 relative">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        <span>✅ Available</span>
-                      </div>
-                      <button
-                        onClick={() => {
-                          setZipCode("");
-                          setChecked(false);
-                          setAvailability(null);
+                
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="pincode-input" className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                      ZIP / Postal Code *
+                    </label>
+                    
+                    <div className="relative flex items-center border border-gray-200 hover:border-obsidian focus-within:border-obsidian rounded-lg transition-all duration-300 bg-white group shadow-sm p-1">
+                      <input
+                        id="pincode-input"
+                        type="text"
+                        placeholder="Enter ZIP / Postal Code"
+                        value={zipCode}
+                        onChange={(e) => setZipCode(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && zipCode.trim() && !isChecking) {
+                            handleCheckAvailability();
+                          }
                         }}
-                        className="text-[10px] font-bold text-[#B8934E] hover:text-obsidian uppercase tracking-widest transition-colors cursor-pointer border-b border-[#B8934E]/30 hover:border-obsidian pb-0.5"
+                        className="flex-1 bg-transparent border-0 px-3 py-2 text-xs outline-none transition-all text-obsidian font-medium placeholder:text-gray-300"
+                      />
+                      <button
+                        onClick={handleCheckAvailability}
+                        disabled={isChecking || !zipCode.trim()}
+                        className="px-5 py-2 bg-obsidian text-white text-[10px] uppercase tracking-[0.2em] font-bold hover:bg-black transition-all duration-300 rounded-md disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed flex items-center justify-center min-w-[130px] h-[34px]"
                       >
-                        Change
+                        {isChecking ? (
+                          <div className="flex items-center gap-1.5">
+                            <span className="h-3 w-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                            <span>Checking...</span>
+                          </div>
+                        ) : (
+                          "Check"
+                        )}
                       </button>
                     </div>
-                    <p className="text-xs text-emerald-700 font-medium mb-3">
-                      ✓ Delivery is available to your location{availability.city && availability.state && availability.city !== "Unknown" ? ` (${availability.city}, ${availability.state})` : ""}.
-                    </p>
-                    <div className="border-t border-emerald-100/45 pt-3">
-                      <p className="text-[10px] font-bold text-[#B8934E] uppercase tracking-widest mb-3 flex items-center gap-1">
-                        Estimated Delivery Times:
+                  </div>
+
+                  {checked && availability && (
+                    <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-50/60 to-emerald-50/10 border border-emerald-100 shadow-sm animate-fade-in-up relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100/10 rounded-full blur-2xl pointer-events-none"></div>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-2 text-emerald-800 font-bold text-xs uppercase tracking-wider">
+                          <span className="flex h-2 w-2 relative">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                          </span>
+                          <span>✅ Available</span>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setZipCode("");
+                            setChecked(false);
+                            setAvailability(null);
+                          }}
+                          className="text-[10px] font-bold text-[#B8934E] hover:text-obsidian uppercase tracking-widest transition-colors cursor-pointer border-b border-[#B8934E]/30 hover:border-obsidian pb-0.5"
+                        >
+                          Change
+                        </button>
+                      </div>
+                      <p className="text-xs text-emerald-700 font-medium mb-3">
+                        ✓ Delivery is available to your location{availability.city && availability.state && availability.city !== "Unknown" ? ` (${availability.city}, ${availability.state})` : ""}.
                       </p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-emerald-700 font-medium">
-                        <div className="flex items-start gap-2.5 bg-white/40 p-2.5 rounded-lg border border-emerald-100/30">
-                          <Truck className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
-                          <div>
-                            <p className="font-bold text-emerald-800 text-[10px] uppercase tracking-wider">Standard Delivery</p>
-                            <p className="mt-0.5 text-[11px]">3–5 Business Days</p>
+                      <div className="border-t border-emerald-100/45 pt-3">
+                        <p className="text-[10px] font-bold text-[#B8934E] uppercase tracking-widest mb-3 flex items-center gap-1">
+                          Estimated Delivery Times:
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-emerald-700 font-medium">
+                          <div className="flex items-start gap-2.5 bg-white/40 p-2.5 rounded-lg border border-emerald-100/30">
+                            <Truck className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                            <div>
+                              <p className="font-bold text-emerald-800 text-[10px] uppercase tracking-wider">Standard Delivery</p>
+                              <p className="mt-0.5 text-[11px]">3–5 Business Days</p>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex items-start gap-2.5 bg-white/40 p-2.5 rounded-lg border border-emerald-100/30">
-                          <Zap className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
-                          <div>
-                            <p className="font-bold text-emerald-800 text-[10px] uppercase tracking-wider">Express Delivery</p>
-                            <p className="mt-0.5 text-[11px]">1–2 Business Days</p>
+                          <div className="flex items-start gap-2.5 bg-white/40 p-2.5 rounded-lg border border-emerald-100/30">
+                            <Zap className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                            <div>
+                              <p className="font-bold text-emerald-800 text-[10px] uppercase tracking-wider">Express Delivery</p>
+                              <p className="mt-0.5 text-[11px]">1–2 Business Days</p>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {checked && !availability && (
-                  <div className="p-4 rounded-xl bg-gradient-to-br from-red-50/60 to-red-50/10 border border-red-100 shadow-sm animate-fade-in-up relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-red-100/10 rounded-full blur-2xl pointer-events-none"></div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center space-x-2 text-red-800 font-bold text-xs uppercase tracking-wider">
-                        <span className="flex h-2 w-2 rounded-full bg-red-500"></span>
-                        <span>❌ Not Available</span>
+                  {checked && !availability && (
+                    <div className="p-4 rounded-xl bg-gradient-to-br from-red-50/60 to-red-50/10 border border-red-100 shadow-sm animate-fade-in-up relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-red-100/10 rounded-full blur-2xl pointer-events-none"></div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-2 text-red-800 font-bold text-xs uppercase tracking-wider">
+                          <span className="flex h-2 w-2 rounded-full bg-red-500"></span>
+                          <span>❌ Not Available</span>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setZipCode("");
+                            setChecked(false);
+                            setAvailability(null);
+                          }}
+                          className="text-[10px] font-bold text-[#B8934E] hover:text-obsidian uppercase tracking-widest transition-colors cursor-pointer border-b border-[#B8934E]/30 hover:border-obsidian pb-0.5"
+                        >
+                          Try Again
+                        </button>
                       </div>
-                      <button
-                        onClick={() => {
-                          setZipCode("");
-                          setChecked(false);
-                          setAvailability(null);
-                        }}
-                        className="text-[10px] font-bold text-[#B8934E] hover:text-obsidian uppercase tracking-widest transition-colors cursor-pointer border-b border-[#B8934E]/30 hover:border-obsidian pb-0.5"
-                      >
-                        Try Again
-                      </button>
+                      <p className="text-xs text-red-700 font-medium leading-relaxed">
+                        Delivery is not available to this location. Please verify the code or test with another area.
+                      </p>
                     </div>
-                    <p className="text-xs text-red-700 font-medium leading-relaxed">
-                      Delivery is not available to this location. Please verify the code or test with another area.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </motion.div>
+                  )}
+                </div>
+              </motion.div>
+            )}
 
             {/* Delivery Info - Polished */}
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="border-t border-gray-100 pt-6 mt-8 space-y-6">

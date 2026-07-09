@@ -149,7 +149,6 @@ export function Footer() {
             <ul className="space-y-4">
               {(categories || [])
                 .filter(c => !c.parentCategory)
-                .slice(0, 8)
                 .map((cat) => (
                 <li key={cat._id}>
                   <Link to={`/shop?category=${encodeURIComponent(cat.name)}`} className="text-[#A3A3A3] text-[14px] hover:text-[#B8934E] transition-colors duration-300 flex items-center group gap-3 w-fit">
