@@ -45,7 +45,7 @@ export function Newsletter() {
           <div className="w-full lg:w-5/12 relative h-[18rem] sm:h-[22rem] lg:h-auto flex items-center justify-center p-0 lg:p-0 bg-black/10 z-10 overflow-hidden">
              <div className="absolute inset-0 bg-gradient-to-t from-[#3B0000]/80 via-transparent to-transparent pointer-events-none lg:bg-gradient-to-r lg:from-transparent lg:to-[#4A0000]/80 z-10"></div>
              <img 
-               src="/luxury_jewellery_model.png" 
+               src="/luxury_jewellery_model.jpeg" 
                alt="Luxury Jewellery Collection" 
                className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-105 group-hover:opacity-100 transition-all duration-1000"
              />

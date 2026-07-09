@@ -56,7 +56,7 @@ export function Register() {
       {/* Left Pane - Luxury Editorial Image */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-stone-900 items-end justify-start p-16">
         <img
-          src="/luxury_jewellery_model.png"
+          src="/luxury_jewellery_model.jpeg"
           alt="Luxury Jewelry"
           className="absolute inset-0 w-full h-full object-cover opacity-85"
         />
