@@ -13,20 +13,26 @@ process.on("uncaughtException", (err) => {
   console.error(`UNCAUGHT EXCEPTION: ${err.message}`);
   console.error(err.stack);
   console.log("Shutting down due to uncaught exception...");
-  process.exit(1);
+  setTimeout(() => {
+    process.exit(1);
+  }, 200);
 });
 
 import app from "./app.js";
 import { connectDB } from "./database/connection.js";
+import { seedPages } from "./database/pageSeeder.js";
 
 // Connect to MongoDB
-connectDB();
+connectDB().then(() => {
+  seedPages();
+});
 
 // Start the server
-const PORT = Number(process.env.PORT) || 8080;
-const HOST = process.env.HOST || "0.0.0.0";
+const PORT = Number(process.env.PORT) || 8085;
+const HOST = process.env.HOST; // Default to undefined (allows dual-stack :: wildcard binding for Windows localhost)
 const server = app.listen(PORT, HOST, () => {
-  console.log(`Server is running on ${HOST}:${PORT} in ${process.env.NODE_ENV || "development"} mode.`);
+  const displayHost = HOST || "localhost";
+  console.log(`Server is running on ${displayHost}:${PORT} in ${process.env.NODE_ENV || "development"} mode.`);
 });
 
 // Handle Unhandled Promise Rejections
@@ -36,9 +42,13 @@ process.on("unhandledRejection", (err) => {
   console.log("Shutting down server due to Unhandled Promise Rejection...");
   if (server) {
     server.close(() => {
-      process.exit(1);
+      setTimeout(() => {
+        process.exit(1);
+      }, 200);
     });
   } else {
-    process.exit(1);
+    setTimeout(() => {
+      process.exit(1);
+    }, 200);
   }
 });

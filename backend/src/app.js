@@ -25,6 +25,7 @@ import attributeRoutes from "./routes/attributeRoutes.js";
 import returnRoutes from "./routes/returnRoutes.js";
 import shipmentRoutes from "./routes/shipmentRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import pageRoutes from "./routes/pageRoutes.js";
 import rateLimit from "express-rate-limit";
 import hpp from "hpp";
 
@@ -140,6 +141,7 @@ app.use("/api/v1", attributeRoutes);
 app.use("/api/v1", returnRoutes);
 app.use("/api/v1", shipmentRoutes);
 app.use("/api/v1", uploadRoutes);
+app.use("/api/v1", pageRoutes);
 
 // Handle unmatched API routes
 app.all(/^\/api\/.*/, (req, res, next) => {

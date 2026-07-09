@@ -31,6 +31,7 @@ import {
       { id: "banners", label: "Banners", icon: ImageIcon },
       { id: "ad-posters", label: "Ads Posters", icon: FileText },
       { id: "categories", label: "Categories", icon: Tags },
+      { id: "pages", label: "Manage Terms & Conditions", icon: FileText },
     ];
   
     const navContent = (

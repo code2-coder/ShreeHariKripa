@@ -15,6 +15,7 @@ import { BannersTab } from "../components/admin/BannersTab";
 import { CategoriesTab } from "../components/admin/CategoriesTab";
 import { AdPostersTab } from "../components/admin/AdPostersTab";
 import { AdminSettingsPanel } from "../components/AdminSettingsPanel";
+import { PagesTab } from "../components/admin/PagesTab";
 
 export function Admin() {
   const { user, isAdmin } = useAuth();
@@ -236,6 +237,10 @@ export function Admin() {
                    setCategories={setCategories} 
                    globalSearch={globalSearch}
                 />
+              )}
+
+              {activeTab === "pages" && (
+                <PagesTab />
               )}
 
               {activeTab === "settings" && (
