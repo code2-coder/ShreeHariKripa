@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Plus, Edit, Trash2, Image as ImageIcon, X, LayoutGrid, List, Tag, AlertCircle, Film, Package, Sparkles } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Image as ImageIcon, X, LayoutGrid, List, Tag, AlertCircle, Film, Package } from "lucide-react";
 import { toast } from "sonner";
 import api from "../../api/axios";
 import { CreatableSelect } from "./CreatableSelect";
@@ -9,7 +9,6 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
   const [showProductForm, setShowProductForm] = useState(false);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [isIndexing, setIsIndexing] = useState(false);
   const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'list'
 
   const [newSizeName, setNewSizeName] = useState("");
@@ -143,50 +142,7 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
       return `${type.toLowerCase().replace(/\s+/g, '')}Style`;
   };
 
-  const handleIndexAI = async () => {
-    if (!window.confirm("This will analyze all product images and generate AI visual embeddings for the search engine. Proceed?")) return;
-    setIsIndexing(true);
-    const toastId = toast.loading("Loading MobileNet AI Model...");
-    
-    try {
-       const mobilenet = await import('@tensorflow-models/mobilenet');
-       const tf = await import('@tensorflow/tfjs');
-       await tf.ready();
-       const model = await mobilenet.load({version: 2, alpha: 1.0});
-       let successCount = 0;
-       
-       for (let i = 0; i < products.length; i++) {
-          const product = products[i];
-          if (product.images && product.images.length > 0) {
-             toast.loading(`Indexing ${i + 1}/${products.length}: ${product.name}...`, { id: toastId });
-             
-             try {
-                const img = new Image();
-                img.crossOrigin = "anonymous";
-                img.src = product.images[0].url;
-                await new Promise((resolve, reject) => { 
-                   img.onload = resolve; 
-                   img.onerror = reject; 
-                });
-                
-                const activation = model.infer(img, true);
-                const embeddingData = Array.from(activation.dataSync());
-                
-                await api.put(`/admin/products/${product._id}`, { visualEmbedding: embeddingData });
-                successCount++;
-             } catch(err) {
-                console.error("Skipping", product.name, err);
-             }
-          }
-       }
-       toast.success(`Successfully AI-indexed ${successCount} products!`, { id: toastId });
-    } catch (e) {
-       console.error("Indexing failed", e);
-       toast.error("AI Indexing failed.", { id: toastId });
-    } finally {
-       setIsIndexing(false);
-    }
-  };
+
 
   const compressImage = (file) => {
     return new Promise((resolve) => {
@@ -361,7 +317,17 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
   const filteredProducts = products.filter(p => {
     const matchesSearch = p.name?.toLowerCase().includes(globalSearch?.toLowerCase() || "") || p._id?.toLowerCase().includes(globalSearch?.toLowerCase() || "");
     const matchesCategory = categoryFilter === "All" || p.category?._id === categoryFilter || p.category === categoryFilter;
-    const matchesStatus = statusFilter === "All" || (p.status || "draft") === statusFilter.toLowerCase();
+    
+    let matchesStatus = true;
+    if (statusFilter === "Draft") {
+      matchesStatus = (p.status || "draft") === "draft";
+    } else if (statusFilter === "Published") {
+      matchesStatus = (p.status || "draft") === "published";
+    } else if (statusFilter === "Out of Stock") {
+      matchesStatus = p.stock === 0;
+    } else if (statusFilter === "Low Stock") {
+      matchesStatus = p.stock > 0 && p.stock <= 5;
+    }
      
     return matchesSearch && matchesCategory && matchesStatus;
   });
@@ -375,14 +341,6 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
             <p className="text-[15px] font-medium text-gray-500 mt-2">Manage your inventory, pricing, and product visibility.</p>
          </div>
          <div className="flex items-center gap-3">
-            <button 
-               onClick={handleIndexAI} 
-               disabled={isIndexing} 
-               className="flex items-center gap-2.5 px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:text-gray-900 transition-all text-sm font-semibold shadow-sm hover:shadow active:scale-95"
-            >
-               <Sparkles className="w-4 h-4 text-gray-400" />
-               {isIndexing ? "Indexing..." : "Index AI"}
-            </button>
             <button 
                onClick={handleAddProduct} 
                className="flex items-center gap-2.5 px-6 py-3 bg-gray-900 hover:bg-black text-white rounded-xl transition-all text-sm font-semibold shadow-sm hover:shadow-md active:scale-95"
@@ -445,9 +403,11 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
                      onChange={(e) => setStatusFilter(e.target.value)}
                      className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 shadow-sm transition-all"
                   >
-                     <option value="All">All Statuses</option>
+                     <option value="All">All Status</option>
                      <option value="Draft">Draft</option>
                      <option value="Published">Published</option>
+                     <option value="Out of Stock">Out of Stock</option>
+                     <option value="Low Stock">Low Stock</option>
                   </select>
 
                   
