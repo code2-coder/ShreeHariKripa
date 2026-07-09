@@ -48,7 +48,7 @@ export function Header() {
   const { user, logout, isAdmin } = useAuth();
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
-  const { getFormattedPrice, currency, setCurrency } = useCurrency();
+  const { getFormattedPrice, currency, setCurrency, settings } = useCurrency();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [liveResults, setLiveResults] = useState([]);
@@ -498,7 +498,10 @@ export function Header() {
           
           {/* Middle Mobile Delivery Badge (Centered) */}
           <div className="lg:hidden absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[60] flex items-center justify-center pointer-events-auto">
-            <Select value={currency === 'INR' ? 'India' : currency === 'AUD' ? 'Australia' : 'India'} onValueChange={(val) => setCurrency(val === 'India' ? 'INR' : 'AUD')}>
+            <Select 
+              value={currency === 'INR' ? 'India' : 'Australia'} 
+              onValueChange={(val) => setCurrency(val === 'India' ? 'INR' : (settings?.australiaCurrency || 'AUD'))}
+            >
               <SelectTrigger className="flex items-center bg-transparent border-none border-transparent hover:border-transparent p-0 transition-all duration-500 focus:ring-0 focus-visible:ring-0 focus-visible:outline-none outline-none w-auto h-auto cursor-pointer group/delivery shadow-none hover:shadow-none bg-none">
                 <SelectValue>
                   <div className="flex items-center gap-1.5 relative z-10">
@@ -509,10 +512,10 @@ export function Header() {
                       </span>
                       <div className="flex items-center gap-1.5 mt-[1px]">
                         <div className="w-4 h-4 rounded-[3px] overflow-hidden shadow-sm flex-shrink-0 group-hover/delivery:scale-105 transition-transform duration-300">
-                          <img src={currency === 'INR' ? '/india.webp' : currency === 'AUD' ? '/aus.webp' : '/india.webp'} alt={currency} className="w-full h-full object-cover" />
+                          <img src={currency === 'INR' ? '/india.webp' : '/aus.webp'} alt={currency} className="w-full h-full object-cover" />
                         </div>
                         <span className="text-sm font-black text-obsidian uppercase tracking-wider group-hover/delivery:text-[#B8934E] transition-colors leading-none mt-[1px]">
-                          {currency === 'INR' ? 'India' : currency === 'AUD' ? 'Australia' : 'India'}
+                          {currency === 'INR' ? 'India' : 'Australia'}
                         </span>
                       </div>
                     </div>
@@ -521,28 +524,32 @@ export function Header() {
               </SelectTrigger>
               <SelectContent align="center" className="bg-white/95 backdrop-blur-2xl border-[#B8934E]/10 rounded-2xl shadow-[0_20px_40px_-10px_rgba(184,147,78,0.15)] overflow-hidden p-1 min-w-[140px] z-[120]">
                 <div className="px-3 py-2 text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1 border-b border-gray-50 text-center">Delivery in</div>
-                <SelectItem value="India" className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 hover:text-obsidian rounded-xl transition-all duration-300 py-2 px-3 data-[state=checked]:bg-[#FAF9F6] data-[state=checked]:text-[#B8934E] group/item mb-1">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-6 h-6 rounded-md overflow-hidden drop-shadow-sm group-hover/item:scale-110 transition-transform duration-300">
-                      <img src="/india.webp" alt="India" className="w-full h-full object-cover" />
+                {settings?.isIndiaEnabled !== false && (
+                  <SelectItem value="India" className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 hover:text-obsidian rounded-xl transition-all duration-300 py-2 px-3 data-[state=checked]:bg-[#FAF9F6] data-[state=checked]:text-[#B8934E] group/item mb-1">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-6 h-6 rounded-md overflow-hidden drop-shadow-sm group-hover/item:scale-110 transition-transform duration-300">
+                        <img src="/india.webp" alt="India" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <span className="font-bold text-gray-700 group-hover/item:text-obsidian transition-colors text-xs uppercase tracking-wider leading-tight">India</span>
+                        <span className="text-[9px] text-gray-400 font-medium">INR (₹)</span>
+                      </div>
                     </div>
-                    <div className="flex flex-col items-start">
-                      <span className="font-bold text-gray-700 group-hover/item:text-obsidian transition-colors text-xs uppercase tracking-wider leading-tight">India</span>
-                      <span className="text-[9px] text-gray-400 font-medium">INR (₹)</span>
+                  </SelectItem>
+                )}
+                {settings?.isAustraliaEnabled !== false && (
+                  <SelectItem value="Australia" className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 hover:text-obsidian rounded-xl transition-all duration-300 py-2 px-3 data-[state=checked]:bg-[#FAF9F6] data-[state=checked]:text-[#B8934E] group/item mb-1">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-6 h-6 rounded-md overflow-hidden drop-shadow-sm group-hover/item:scale-110 transition-transform duration-300">
+                        <img src="/aus.webp" alt="Australia" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <span className="font-bold text-gray-700 group-hover/item:text-obsidian transition-colors text-xs uppercase tracking-wider leading-tight">Australia</span>
+                        <span className="text-[9px] text-gray-400 font-medium">{settings?.australiaCurrency || 'AUD'}</span>
+                      </div>
                     </div>
-                  </div>
-                </SelectItem>
-                <SelectItem value="Australia" className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 hover:text-obsidian rounded-xl transition-all duration-300 py-2 px-3 data-[state=checked]:bg-[#FAF9F6] data-[state=checked]:text-[#B8934E] group/item mb-1">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-6 h-6 rounded-md overflow-hidden drop-shadow-sm group-hover/item:scale-110 transition-transform duration-300">
-                      <img src="/aus.webp" alt="Australia" className="w-full h-full object-cover" />
-                    </div>
-                    <div className="flex flex-col items-start">
-                      <span className="font-bold text-gray-700 group-hover/item:text-obsidian transition-colors text-xs uppercase tracking-wider leading-tight">Australia</span>
-                      <span className="text-[9px] text-gray-400 font-medium">AUD ($)</span>
-                    </div>
-                  </div>
-                </SelectItem>
+                  </SelectItem>
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -841,8 +848,10 @@ export function Header() {
             {/* Delivery & Currency Selects */}
             <div className="hidden lg:flex items-center space-x-2 xl:space-x-3">
               
-              {/* Delivery Select */}
-              <Select value={currency === 'INR' ? 'India' : currency === 'AUD' ? 'Australia' : 'India'} onValueChange={(val) => setCurrency(val === 'India' ? 'INR' : 'AUD')}>
+              <Select 
+                value={currency === 'INR' ? 'India' : 'Australia'} 
+                onValueChange={(val) => setCurrency(val === 'India' ? 'INR' : (settings?.australiaCurrency || 'AUD'))}
+              >
                 <SelectTrigger className="flex items-center bg-transparent border-none border-transparent hover:border-transparent p-0 transition-all duration-500 focus:ring-0 focus-visible:ring-0 focus-visible:outline-none outline-none w-auto h-auto cursor-pointer group/delivery shadow-none hover:shadow-none bg-none">
                   <SelectValue>
                     <div className="flex items-center gap-1.5 relative z-10">
@@ -853,10 +862,10 @@ export function Header() {
                         </span>
                         <div className="flex items-center gap-1.5 mt-[2px]">
                           <div className="w-4 h-4 rounded-[3px] overflow-hidden shadow-sm flex-shrink-0 group-hover/delivery:scale-105 transition-transform duration-300">
-                            <img src={currency === 'INR' ? '/india.webp' : currency === 'AUD' ? '/aus.webp' : '/india.webp'} alt={currency} className="w-full h-full object-cover" />
+                            <img src={currency === 'INR' ? '/india.webp' : '/aus.webp'} alt={currency} className="w-full h-full object-cover" />
                           </div>
                           <span className="text-[13px] font-black text-obsidian uppercase tracking-wider group-hover/delivery:text-[#B8934E] transition-colors leading-none mt-[1px]">
-                            {currency === 'INR' ? 'India' : currency === 'AUD' ? 'Australia' : 'India'}
+                            {currency === 'INR' ? 'India' : 'Australia'}
                           </span>
                         </div>
                       </div>
@@ -865,22 +874,26 @@ export function Header() {
                 </SelectTrigger>
                 <SelectContent align="end" className="bg-white/95 backdrop-blur-2xl border-[#B8934E]/10 rounded-2xl shadow-[0_20px_40px_-10px_rgba(184,147,78,0.15)] overflow-hidden p-1 min-w-[140px] z-[120]">
                   <div className="px-3 py-2 text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1 border-b border-gray-50">Delivery in</div>
-                  <SelectItem value="India" className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 hover:text-obsidian rounded-xl transition-all duration-300 py-2 px-3 data-[state=checked]:bg-[#FAF9F6] data-[state=checked]:text-[#B8934E] group/item mb-1">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-md overflow-hidden drop-shadow-sm group-hover/item:scale-110 transition-transform duration-300">
-                        <img src="/india.webp" alt="India" className="w-full h-full object-cover" />
+                  {settings?.isIndiaEnabled !== false && (
+                    <SelectItem value="India" className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 hover:text-obsidian rounded-xl transition-all duration-300 py-2 px-3 data-[state=checked]:bg-[#FAF9F6] data-[state=checked]:text-[#B8934E] group/item mb-1">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-md overflow-hidden drop-shadow-sm group-hover/item:scale-110 transition-transform duration-300">
+                          <img src="/india.webp" alt="India" className="w-full h-full object-cover" />
+                        </div>
+                        <span className="font-bold text-gray-700 group-hover/item:text-obsidian transition-colors text-xs uppercase tracking-wider">India (INR)</span>
                       </div>
-                      <span className="font-bold text-gray-700 group-hover/item:text-obsidian transition-colors text-xs uppercase tracking-wider">India</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="Australia" className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 hover:text-obsidian rounded-xl transition-all duration-300 py-2 px-3 data-[state=checked]:bg-[#FAF9F6] data-[state=checked]:text-[#B8934E] group/item mb-1">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-md overflow-hidden drop-shadow-sm group-hover/item:scale-110 transition-transform duration-300">
-                        <img src="/aus.webp" alt="Australia" className="w-full h-full object-cover" />
+                    </SelectItem>
+                  )}
+                  {settings?.isAustraliaEnabled !== false && (
+                    <SelectItem value="Australia" className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 hover:text-obsidian rounded-xl transition-all duration-300 py-2 px-3 data-[state=checked]:bg-[#FAF9F6] data-[state=checked]:text-[#B8934E] group/item mb-1">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-md overflow-hidden drop-shadow-sm group-hover/item:scale-110 transition-transform duration-300">
+                          <img src="/aus.webp" alt="Australia" className="w-full h-full object-cover" />
+                        </div>
+                        <span className="font-bold text-gray-700 group-hover/item:text-obsidian transition-colors text-xs uppercase tracking-wider">Australia ({settings?.australiaCurrency || 'AUD'})</span>
                       </div>
-                      <span className="font-bold text-gray-700 group-hover/item:text-obsidian transition-colors text-xs uppercase tracking-wider">Australia</span>
-                    </div>
-                  </SelectItem>
+                    </SelectItem>
+                  )}
                 </SelectContent>
               </Select>
 

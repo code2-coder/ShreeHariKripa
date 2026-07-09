@@ -21,7 +21,7 @@ const Footer = lazy(() => import("../components/Footer").then(m => ({ default: m
 export function Cart() {
   const { cart, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();
   const { user } = useAuth();
-  const { getFormattedPrice, currency, getConvertedPrice, rates } = useCurrency();
+  const { getFormattedPrice, currency, getConvertedPrice, rates, settings } = useCurrency();
   const navigate = useNavigate();
 
   useSEO("Secure Checkout | Shreeharikripa", `Complete your purchase securely. ${cart.length} luxury items waiting in your cart.`);
@@ -195,7 +195,11 @@ export function Cart() {
   const chosenAddress = addresses.find(a => a._id === selectedAddressId);
   const country = chosenAddress ? (chosenAddress.country || "").toLowerCase() : "";
   const isIndiaAddress = country === "india";
-  const isDeliveryAvailable = ["india", "australia"].includes(country) || !chosenAddress;
+  const isIndiaEnabled = settings?.isIndiaEnabled !== false;
+  const isAustraliaEnabled = settings?.isAustraliaEnabled !== false;
+  const isDeliveryAvailable = (country === "india" && isIndiaEnabled) || 
+                              (country === "australia" && isAustraliaEnabled) || 
+                              !chosenAddress;
   const convertedCartTotal = getConvertedPrice(cartTotal);
   const cartTotalAUD = convertPrice(cartTotal, "AUD", rates, DEFAULT_CURRENCY);
   const displayShippingAmountAUD = selectedShipping?.price ?? 0;
@@ -473,7 +477,7 @@ export function Cart() {
 
                 {chosenAddress && !isDeliveryAvailable && (
                   <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-lg text-red-600 text-sm">
-                    Delivery only available to Australia and India. Selected country: <span className="font-semibold">{chosenAddress.country}</span>
+                    Delivery only available to {[isIndiaEnabled && "India", isAustraliaEnabled && "Australia"].filter(Boolean).join(" and ") || "none at this time"}. Selected country: <span className="font-semibold">{chosenAddress.country}</span>
                   </div>
                 )}
 

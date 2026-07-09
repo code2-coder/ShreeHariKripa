@@ -50,6 +50,21 @@ export const AdminSettingsPanel = ({ onSaved = null }) => {
         setFormData(updatedData);
     };
 
+    const handleCheckboxChange = (e, path) => {
+        const { checked } = e.target;
+        const keys = path.split('.');
+        const updatedData = { ...formData };
+
+        let obj = updatedData;
+        for (let i = 0; i < keys.length - 1; i++) {
+            if (!obj[keys[i]]) obj[keys[i]] = {};
+            obj = obj[keys[i]];
+        }
+
+        obj[keys[keys.length - 1]] = checked;
+        setFormData(updatedData);
+    };
+
     const handleSave = async () => {
         try {
             setSaving(true);
@@ -298,6 +313,63 @@ export const AdminSettingsPanel = ({ onSaved = null }) => {
                             <option value="EUR">Euro (€)</option>
                             <option value="GBP">British Pound (£)</option>
                         </select>
+                    </div>
+                </div>
+            </div>
+
+            {/* Country & Currency Settings */}
+            <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-gray-700 border-b pb-2">
+                    🌍 Country & Currency Settings
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-stone-50/50 p-5 rounded-xl border border-gray-200">
+                    <div className="space-y-3">
+                        <span className="block text-sm font-semibold text-gray-700">Enabled Target Countries</span>
+                        <div className="flex flex-col gap-2">
+                            <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                                <input
+                                    type="checkbox"
+                                    checked={formData.isIndiaEnabled !== false}
+                                    onChange={(e) => handleCheckboxChange(e, 'isIndiaEnabled')}
+                                    className="w-4 h-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500"
+                                />
+                                <span className="text-sm font-medium text-gray-750">🇮🇳 India (INR)</span>
+                            </label>
+                            <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                                <input
+                                    type="checkbox"
+                                    checked={formData.isAustraliaEnabled !== false}
+                                    onChange={(e) => handleCheckboxChange(e, 'isAustraliaEnabled')}
+                                    className="w-4 h-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500"
+                                />
+                                <span className="text-sm font-medium text-gray-750">🇦🇺 Australia (AUD)</span>
+                            </label>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                            Uncheck a country to completely hide it from the storefront header selector.
+                        </p>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                            Australia Display Currency Override
+                        </label>
+                        <select
+                            value={formData.australiaCurrency || 'AUD'}
+                            onChange={(e) => handleInputChange(e, 'australiaCurrency')}
+                            className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm font-medium text-gray-700"
+                        >
+                            <option value="AUD">Australian Dollar (A$)</option>
+                            <option value="USD">US Dollar ($)</option>
+                            <option value="INR">Indian Rupee (₹)</option>
+                            <option value="EUR">Euro (€)</option>
+                            <option value="GBP">British Pound (£)</option>
+                            <option value="AED">UAE Dirham (د.إ)</option>
+                        </select>
+                        <p className="text-xs text-gray-500">
+                            Select the currency used when buyers switch to Australia.
+                        </p>
                     </div>
                 </div>
             </div>

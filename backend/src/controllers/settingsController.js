@@ -37,6 +37,9 @@ export const updateSettings = catchAsyncErrors(async (req, res, next) => {
         packagingText,
         defaultCurrency,
         taxRate,
+        isAustraliaEnabled,
+        isIndiaEnabled,
+        australiaCurrency,
     } = req.body;
 
     let settings = await Settings.findOne();
@@ -98,6 +101,15 @@ export const updateSettings = catchAsyncErrors(async (req, res, next) => {
     }
     if (taxRate !== undefined) {
         settings.taxRate = taxRate;
+    }
+    if (isAustraliaEnabled !== undefined) {
+        settings.isAustraliaEnabled = isAustraliaEnabled;
+    }
+    if (isIndiaEnabled !== undefined) {
+        settings.isIndiaEnabled = isIndiaEnabled;
+    }
+    if (australiaCurrency !== undefined) {
+        settings.australiaCurrency = australiaCurrency;
     }
 
     await settings.save();

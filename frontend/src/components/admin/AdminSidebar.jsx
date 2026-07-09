@@ -12,7 +12,8 @@ import {
     Plus,
     ListFilter,
     RotateCcw,
-    Truck
+    Truck,
+    Coins
   } from "lucide-react";
   import { useState } from "react";
   import { useNavigate, useLocation, Link } from "react-router";
@@ -32,6 +33,7 @@ import {
       { id: "ad-posters", label: "Ads Posters", icon: FileText },
       { id: "categories", label: "Categories", icon: Tags },
       { id: "pages", label: "Manage Terms & Conditions", icon: FileText },
+      { id: "currency", label: "Currency Settings", icon: Coins },
     ];
   
     const navContent = (

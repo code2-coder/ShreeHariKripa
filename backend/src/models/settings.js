@@ -67,6 +67,18 @@ const settingsSchema = new mongoose.Schema(
             type: Number,
             default: 0.1, // 10% tax
         },
+        isAustraliaEnabled: {
+            type: Boolean,
+            default: true,
+        },
+        isIndiaEnabled: {
+            type: Boolean,
+            default: true,
+        },
+        australiaCurrency: {
+            type: String,
+            default: "AUD",
+        },
     },
     { timestamps: true }
 );

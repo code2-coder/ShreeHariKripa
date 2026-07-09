@@ -16,6 +16,7 @@ import { CategoriesTab } from "../components/admin/CategoriesTab";
 import { AdPostersTab } from "../components/admin/AdPostersTab";
 import { AdminSettingsPanel } from "../components/AdminSettingsPanel";
 import { PagesTab } from "../components/admin/PagesTab";
+import { CurrencyTab } from "../components/admin/CurrencyTab";
 
 export function Admin() {
   const { user, isAdmin } = useAuth();
@@ -241,6 +242,10 @@ export function Admin() {
 
               {activeTab === "pages" && (
                 <PagesTab />
+              )}
+
+              {activeTab === "currency" && (
+                <CurrencyTab />
               )}
 
               {activeTab === "settings" && (

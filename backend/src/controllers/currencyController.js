@@ -1,22 +1,15 @@
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
+import CurrencySetting from "../models/currencySetting.js";
 
-// In-memory cache for exchange rates
-let exchangeRatesCache = {
-  rates: null,
-  timestamp: null,
-};
-
-const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour
-
-// Fallback rates for reliability (last known good rates)
+// Fallback rates for reliability
 const FALLBACK_RATES = {
-  INR: 1,
+  INR: 1.0,
   USD: 0.012,
   EUR: 0.011,
   GBP: 0.0095,
   AED: 0.044,
-  AUD: 0.015, // ₹1 ≈ A$0.015
+  AUD: 0.0165,
 };
 
 //
@@ -25,59 +18,53 @@ const FALLBACK_RATES = {
 export const getExchangeRates = catchAsyncErrors(async (req, res, next) => {
   const baseCurrency = req.query.base || "INR";
 
-  // Only cache if base currency is INR (our default). Otherwise fetch direct.
-  if (baseCurrency === "INR") {
-    const now = Date.now();
-    if (exchangeRatesCache.rates && exchangeRatesCache.timestamp && (now - exchangeRatesCache.timestamp < CACHE_DURATION_MS)) {
-      return res.status(200).json({
-        success: true,
-        cached: true,
-        timestamp: exchangeRatesCache.timestamp,
-        rates: exchangeRatesCache.rates,
+  try {
+    let settings = await CurrencySetting.findOne();
+    if (!settings) {
+      settings = await CurrencySetting.create({
+        baseCurrency: "INR",
+        rates: {
+          INR: 1.0,
+          AUD: 0.0165,
+          USD: 0.012,
+          EUR: 0.011,
+          GBP: 0.0095,
+          AED: 0.044,
+        },
+        updatedBy: "System Initializer",
       });
     }
-  }
 
-  try {
-    const response = await fetch(`https://open.er-api.com/v6/latest/${baseCurrency}`);
-    const data = await response.json();
+    const baseRates = Object.fromEntries(settings.rates);
 
-    if (data.result === "success" && data.rates) {
-      if (baseCurrency === "INR") {
-        exchangeRatesCache.rates = data.rates;
-        exchangeRatesCache.timestamp = Date.now();
-      }
-
+    if (baseCurrency === "INR") {
       return res.status(200).json({
         success: true,
         cached: false,
         timestamp: Date.now(),
-        rates: data.rates,
-      });
-    } else {
-      throw new Error("Failed to fetch exchange rates");
-    }
-  } catch (error) {
-    console.error("Exchange Rate API Error:", error);
-
-    // If API fails, try to return stale cache
-    if (baseCurrency === "INR" && exchangeRatesCache.rates) {
-      return res.status(200).json({
-        success: true,
-        cached: true,
-        stale: true,
-        timestamp: exchangeRatesCache.timestamp,
-        rates: exchangeRatesCache.rates,
+        rates: baseRates,
       });
     }
 
-    // Last resort: use fallback rates
-    console.warn("Using fallback exchange rates");
+    const baseRate = baseRates[baseCurrency];
+    if (!baseRate) {
+      return next(new ErrorHandler(`Unsupported base currency: ${baseCurrency}`, 400));
+    }
+
+    const calculatedRates = {};
+    for (const cur of Object.keys(baseRates)) {
+      calculatedRates[cur] = Number((baseRates[cur] / baseRate).toFixed(6));
+    }
+
     return res.status(200).json({
       success: true,
-      cached: true,
+      rates: calculatedRates,
+    });
+  } catch (error) {
+    console.error("Exchange Rate DB Fetch Error:", error);
+    return res.status(200).json({
+      success: true,
       fallback: true,
-      timestamp: Date.now(),
       rates: FALLBACK_RATES,
     });
   }
@@ -105,45 +92,44 @@ export const convertPrice = catchAsyncErrors(async (req, res, next) => {
   }
 
   try {
-    const response = await fetch(`https://open.er-api.com/v6/latest/${baseCurrency}`);
-    const data = await response.json();
-
-    if (data.result === "success" && data.rates[targetCurrency]) {
-      const rate = data.rates[targetCurrency];
-      const convertedAmount = amount * rate;
-
-      return res.status(200).json({
-        success: true,
-        originalAmount: amount,
-        baseCurrency,
-        targetCurrency,
-        rate,
-        convertedAmount,
-        rounded: Math.round(convertedAmount * 100) / 100,
+    let settings = await CurrencySetting.findOne();
+    if (!settings) {
+      settings = await CurrencySetting.create({
+        baseCurrency: "INR",
+        rates: {
+          INR: 1.0,
+          AUD: 0.0165,
+          USD: 0.012,
+          EUR: 0.011,
+          GBP: 0.0095,
+          AED: 0.044,
+        },
+        updatedBy: "System Initializer",
       });
-    } else {
-      throw new Error("Target currency not supported or API failed");
     }
+
+    const baseRates = Object.fromEntries(settings.rates);
+    const fromRate = baseRates[baseCurrency];
+    const toRate = baseRates[targetCurrency];
+
+    if (!fromRate || !toRate) {
+      return next(new ErrorHandler(`Unsupported currency pair: ${baseCurrency} to ${targetCurrency}`, 400));
+    }
+
+    const rate = toRate / fromRate;
+    const convertedAmount = amount * rate;
+
+    return res.status(200).json({
+      success: true,
+      originalAmount: amount,
+      baseCurrency,
+      targetCurrency,
+      rate,
+      convertedAmount,
+      rounded: Math.round(convertedAmount * 100) / 100,
+    });
   } catch (error) {
-    console.error("Price Conversion Error:", error);
-
-    // Use fallback rate if available
-    if (FALLBACK_RATES[targetCurrency]) {
-      const rate = FALLBACK_RATES[targetCurrency] / FALLBACK_RATES[baseCurrency];
-      const convertedAmount = amount * rate;
-
-      return res.status(200).json({
-        success: true,
-        originalAmount: amount,
-        baseCurrency,
-        targetCurrency,
-        rate,
-        convertedAmount,
-        rounded: Math.round(convertedAmount * 100) / 100,
-        fallback: true,
-      });
-    }
-
+    console.error("Price Conversion DB Error:", error);
     return next(new ErrorHandler("Error converting price", 500));
   }
 });

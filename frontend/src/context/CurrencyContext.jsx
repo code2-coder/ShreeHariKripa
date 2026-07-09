@@ -13,7 +13,7 @@ export const useCurrency = () => {
 };
 
 export const CurrencyProvider = ({ children }) => {
-  const { currency, setCurrency, rates, isLoading } = useCurrencyDetection();
+  const { currency, setCurrency, rates, isLoading, settings } = useCurrencyDetection();
 
   // Helper method for components to format prices easily
   const getFormattedPrice = React.useCallback((priceInINR) => {
@@ -32,7 +32,8 @@ export const CurrencyProvider = ({ children }) => {
     isLoading,
     getFormattedPrice,
     getConvertedPrice,
-  }), [currency, setCurrency, rates, isLoading, getFormattedPrice, getConvertedPrice]);
+    settings,
+  }), [currency, setCurrency, rates, isLoading, getFormattedPrice, getConvertedPrice, settings]);
 
   return (
     <CurrencyContext.Provider value={contextValue}>
