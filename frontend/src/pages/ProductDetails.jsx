@@ -20,6 +20,7 @@ import {
   X,
   MapPin,
   Zap,
+  Headphones,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { toast } from "sonner";
@@ -741,17 +742,19 @@ export function ProductDetails() {
                   <div className="flex items-start space-x-3">
                     <Truck className="w-5 h-5 text-obsidian mt-0.5" />
                     <div>
-                      <p className="font-bold text-obsidian text-sm uppercase tracking-wider">Complimentary Delivery</p>
+                      <p className="font-bold text-obsidian text-sm uppercase tracking-wider">Insured Shipping</p>
                       <p className="text-sm text-gray-800 font-medium mt-1">
-                        On orders above A$99. Expected arrival in 5-7 business days.
+                        Fast, fully insured worldwide delivery right to your doorstep.
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <Package className="w-5 h-5 text-obsidian mt-0.5" />
+                    <Headphones className="w-5 h-5 text-obsidian mt-0.5" />
                     <div>
-                      <p className="font-bold text-obsidian text-sm uppercase tracking-wider">Packaging Details</p>
-                      <PackagingInfo text={packagingText} showIcon={false} className="!bg-transparent !border-0 !p-0 !shadow-none !text-sm !text-gray-800 font-medium mt-1 leading-relaxed" />
+                      <p className="font-bold text-obsidian text-sm uppercase tracking-wider">24/7 Dedicated Support</p>
+                      <p className="text-sm text-gray-800 font-medium mt-1">
+                        Our luxury concierge team is always here to assist you.
+                      </p>
                     </div>
                   </div>
                 </>

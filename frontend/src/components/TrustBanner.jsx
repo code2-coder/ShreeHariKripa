@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Gem, Sparkles, ShieldCheck, Truck, RefreshCw, Headphones } from 'lucide-react';
+import { Gem, Sparkles, ShieldCheck, RefreshCw, Gift, Crown } from 'lucide-react';
 
 const trustCards = [
   {
@@ -19,9 +19,9 @@ const trustCards = [
     description: "Advanced encryption and trusted payment gateways ensure safe purchases."
   },
   {
-    icon: Truck,
-    title: "Insured Shipping",
-    description: "Fast, fully insured worldwide delivery right to your doorstep."
+    icon: Gift,
+    title: "Thoughtful Spiritual Gifts",
+    description: "A meaningful gift for Janmashtami, housewarming ceremonies, weddings, and religious occasions."
   },
   {
     icon: RefreshCw,
@@ -29,9 +29,9 @@ const trustCards = [
     description: "Hassle-free 14-day return and exchange policy for your peace of mind."
   },
   {
-    icon: Headphones,
-    title: "24/7 Dedicated Support",
-    description: "Our luxury concierge team is always here to assist you."
+    icon: Crown,
+    title: "Temple-Inspired Designs",
+    description: "Inspired by centuries-old temple traditions, our collections reflect authentic Indian craftsmanship and divine elegance."
   }
 ];
 
