@@ -1,11 +1,12 @@
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-import app from "./app.js";
-import { connectDB } from "./database/connection.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Load environment variables from server/.env first before importing app or connection
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 // Handle Uncaught exceptions
 process.on("uncaughtException", (err) => {
@@ -15,8 +16,8 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-// Load environment variables from server/.env
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+import app from "./app.js";
+import { connectDB } from "./database/connection.js";
 
 // Connect to MongoDB
 connectDB();

@@ -54,7 +54,26 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+
+      // Allow any localhost/127.0.0.1 port in development mode
+      const isLocalhost = origin.startsWith("http://localhost:") || 
+                          origin.startsWith("http://127.0.0.1:") || 
+                          origin === "http://localhost" || 
+                          origin === "http://127.0.0.1";
+
+      if ((process.env.NODE_ENV || "development") === "development" && isLocalhost) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
