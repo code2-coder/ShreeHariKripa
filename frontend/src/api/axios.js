@@ -31,6 +31,21 @@ api.interceptors.request.use(async (config) => {
   return Promise.reject(error);
 });
 
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -46,22 +61,54 @@ api.interceptors.response.use(
     } else if (error.response.status >= 500 && !isSilentRoute) {
       toast.error('Server Error: Our team has been notified.');
     } else if (error.response.status === 401 && !originalRequest._retry && originalRequest.url !== '/refresh-token' && originalRequest.url !== '/login') {
-      originalRequest._retry = true;
-      try {
-        const { data } = await api.post('/refresh-token');
-        // sendResponse spreads data at top-level: { success, message, token }
-        const newToken = data?.token || data?.data?.token;
-        if (newToken) {
-          localStorage.setItem('token', newToken);
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
-          return api(originalRequest);
-        }
-      } catch (refreshError) {
-        // If refresh fails, clear everything and redirect to login
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '/login?session_expired=true';
+      if (isRefreshing) {
+        return new Promise(function(resolve, reject) {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(token => {
+            originalRequest.headers.Authorization = 'Bearer ' + token;
+            return api(originalRequest);
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
       }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      const storedRefreshToken = localStorage.getItem('refreshToken');
+
+      return new Promise((resolve, reject) => {
+        api.post('/refresh-token', { refreshToken: storedRefreshToken })
+          .then(({ data }) => {
+            const newToken = data?.token || data?.data?.token;
+            const newRefreshToken = data?.refreshToken || data?.data?.refreshToken;
+            if (newToken) {
+              localStorage.setItem('token', newToken);
+              if (newRefreshToken) {
+                localStorage.setItem('refreshToken', newRefreshToken);
+              }
+              originalRequest.headers.Authorization = `Bearer ${newToken}`;
+              processQueue(null, newToken);
+              resolve(api(originalRequest));
+            } else {
+              processQueue(new Error('No token returned'));
+              reject(error);
+            }
+          })
+          .catch((refreshError) => {
+            processQueue(refreshError);
+            localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+            window.location.href = '/login?session_expired=true';
+            reject(refreshError);
+          })
+          .finally(() => {
+            isRefreshing = false;
+          });
+      });
     }
     return Promise.reject(error);
   }

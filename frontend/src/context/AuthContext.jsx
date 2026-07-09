@@ -12,8 +12,8 @@ export function AuthProvider({ children }) {
     dispatch(fetchProfile());
   }, [dispatch]);
 
-  const loginUser = React.useCallback((userData, token) => {
-    dispatch(setAuthCredentials({ user: userData, token }));
+  const loginUser = React.useCallback((userData, token, refreshToken) => {
+    dispatch(setAuthCredentials({ user: userData, token, refreshToken }));
   }, [dispatch]);
 
   const logout = React.useCallback(async () => {

@@ -10,9 +10,11 @@ export const loginUser = createAsyncThunk(
       if (response.data.success) {
         // sendResponse spreads at top-level: { success, message, user, token }
         const token = response.data.token;
+        const refreshToken = response.data.refreshToken;
         const user = response.data.user;
         if (token) localStorage.setItem("token", token);
-        return { user, token };
+        if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
+        return { user, token, refreshToken };
       }
       return rejectWithValue(response.data.message || "Login failed");
     } catch (error) {
@@ -59,6 +61,7 @@ export const fetchProfile = createAsyncThunk(
       // This prevents logout on temporary connectivity issues or server restarts
       if (error.response?.status === 401) {
         localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
         return rejectWithValue("SESSION_EXPIRED");
       }
       // For network/500 errors keep the token — don't log out
@@ -73,9 +76,11 @@ export const logoutUser = createAsyncThunk(
     try {
       await api.post("/logout");
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
       return null;
     } catch (error) {
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
       return rejectWithValue(error.message);
     }
   }
@@ -94,12 +99,13 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setAuthCredentials: (state, action) => {
-      const { user, token } = action.payload;
+      const { user, token, refreshToken } = action.payload;
       state.user = user;
       state.token = token;
       state.isAuthenticated = !!user;
       state.loading = false;
-      localStorage.setItem("token", token);
+      if (token) localStorage.setItem("token", token);
+      if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
     },
     clearAuth: (state) => {
       state.user = null;
@@ -107,6 +113,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.loading = false;
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
     }
   },
   extraReducers: (builder) => {

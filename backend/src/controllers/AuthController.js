@@ -74,7 +74,8 @@ export class AuthController {
 
       return sendResponse(res, 200, true, "Login successful", {
         user: result.user,
-        token: result.accessToken
+        token: result.accessToken,
+        refreshToken: result.refreshToken
       });
     } catch (error) {
       // AuthService throws plain Error with no statusCode → default to 401 for auth errors
@@ -94,7 +95,8 @@ export class AuthController {
       setCookies(res, result.accessToken, result.refreshToken);
 
       return sendResponse(res, 200, true, "Token refreshed successfully", {
-        token: result.accessToken
+        token: result.accessToken,
+        refreshToken: result.refreshToken
       });
     } catch (error) {
       next(error);
@@ -263,7 +265,7 @@ export class AuthController {
 
       setCookies(res, accessToken, refreshToken);
 
-      res.redirect(`${clientUrl}/login?token=${accessToken}`);
+      res.redirect(`${clientUrl}/login?token=${accessToken}&refreshToken=${refreshToken}`);
     } catch (error) {
       console.error("Google Callback Error:", error);
       res.redirect(`${clientUrl}/login?error=Server error`);

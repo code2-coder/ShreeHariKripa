@@ -33,10 +33,14 @@ export function Login() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
+    const refreshToken = params.get('refreshToken');
     const error = params.get('error');
 
     if (token) {
       localStorage.setItem('token', token);
+      if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken);
+      }
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
       toast.success('Successfully logged in with Google!');
@@ -45,7 +49,7 @@ export function Login() {
       api.get('/profile')
         .then(res => {
           if (loginUser && res.data && res.data.user) {
-            loginUser(res.data.user, token);
+            loginUser(res.data.user, token, refreshToken);
           }
           navigate('/');
         })
@@ -81,15 +85,17 @@ export function Login() {
 
       // sendResponse spreads data at top-level: { success, message, user, token }
       const token = resData.token;
+      const refreshToken = resData.refreshToken;
       const user = resData.user;
 
       toast.success(resData.message || 'Login successful!');
 
       if (token && user) {
-        if (loginUser) loginUser(user, token);
+        if (loginUser) loginUser(user, token, refreshToken);
         navigate('/');
       } else if (token) {
         localStorage.setItem('token', token);
+        if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
         window.location.href = '/';
       } else {
         // Fallback: reload to let AuthContext re-fetch profile via cookie
