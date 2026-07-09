@@ -14,8 +14,7 @@ import {
   Truck,
   Sparkles,
   Send,
-  ChevronRight,
-  MessageCircle
+  ChevronRight
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useCategory } from '../context/CategoryContext';
@@ -76,16 +75,16 @@ export function Footer() {
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-4 text-[#E5E5E5] text-[14px] font-light">
                 <MapPin className="w-5 h-5 text-[#B8934E] mt-0.5 shrink-0" />
-                <span>123 Heritage Lane, Jewellery District, Jaipur, Rajasthan 302001</span>
+                <span>Vrindavan, District Mathura Uttar Pradesh, India 281121</span>
               </li>
-              <li className="flex items-center gap-4 text-[#E5E5E5] text-[14px] font-light">
-                <Phone className="w-5 h-5 text-[#B8934E] shrink-0" />
-                <a href="tel:+919876543210" className="hover:text-[#B8934E] transition-colors">+91 98765 43210</a>
+              <li className="flex items-start gap-4 text-[#E5E5E5] text-[14px] font-light">
+                <Phone className="w-5 h-5 text-[#B8934E] mt-0.5 shrink-0" />
+                <div className="flex flex-col gap-1">
+                  <a href="tel:+919152350955" className="hover:text-[#B8934E] transition-colors">India: +91 91523 50955</a>
+                  <a href="tel:+61493600549" className="hover:text-[#B8934E] transition-colors">Australia: +61 493600549</a>
+                </div>
               </li>
-              <li className="flex items-center gap-4 text-[#E5E5E5] text-[14px] font-light">
-                <MessageCircle className="w-5 h-5 text-[#B8934E] shrink-0" />
-                <a href="https://wa.me/919152350955" target="_blank" rel="noopener noreferrer" className="hover:text-[#B8934E] transition-colors">WhatsApp: +91 91523 50955</a>
-              </li>
+
               <li className="flex items-center gap-4 text-[#E5E5E5] text-[14px] font-light">
                 <Mail className="w-5 h-5 text-[#B8934E] shrink-0" />
                 <a href="mailto:info@shreeharikripa.com" className="hover:text-[#B8934E] transition-colors">info@shreeharikripa.com</a>

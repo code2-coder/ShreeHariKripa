@@ -107,8 +107,8 @@ export function ContactUs() {
                 <div>
                   <h4 className="text-sm font-bold text-obsidian uppercase tracking-widest mb-2">Visit Us</h4>
                   <p className="text-gray-600 font-light text-sm leading-relaxed">
-                    123 Heritage Lane, Jewellery District,<br />
-                    Jaipur, Rajasthan 302001, India
+                    Vrindavan, District Mathura,<br />
+                    Uttar Pradesh, India 281121
                   </p>
                 </div>
               </div>
@@ -117,10 +117,13 @@ export function ContactUs() {
                 <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 flex-shrink-0 text-[#B8934E]">
                   <Phone className="w-5 h-5" />
                 </div>
-                <div>
+                 <div className="flex flex-col">
                   <h4 className="text-sm font-bold text-obsidian uppercase tracking-widest mb-2">Call Us</h4>
-                  <a href="tel:+919876543210" className="text-gray-600 font-light text-sm hover:text-[#B8934E] transition-colors">
-                    +91 98765 43210
+                  <a href="tel:+919152350955" className="text-gray-600 font-light text-sm hover:text-[#B8934E] transition-colors mb-1">
+                    India: +91 91523 50955
+                  </a>
+                  <a href="tel:+61493600549" className="text-gray-600 font-light text-sm hover:text-[#B8934E] transition-colors">
+                    Australia: +61 493600549
                   </a>
                 </div>
               </div>
