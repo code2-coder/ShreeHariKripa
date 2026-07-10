@@ -10,6 +10,7 @@ const emptyAddress = {
   landmark: "", city: "", state: "", country: "India", pincode: "",
 };
 
+
 export const AdminShippingCreate = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
@@ -17,6 +18,7 @@ export const AdminShippingCreate = () => {
   const [saving, setSaving] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState("");
   const [form, setForm] = useState({
+    shipmentId: "",
     customerName: "", customerPhone: "", customerEmail: "",
     shippingAddress: { ...emptyAddress },
     courierProvider: "", trackingNumber: "", awbNumber: "",
@@ -41,21 +43,26 @@ export const AdminShippingCreate = () => {
     const order = orders.find((o) => o._id === orderId);
     if (!order) return;
 
+    // Prefer user's default saved address for richer data (includes state, landmark, altPhone, etc.)
+    const userAddresses = order.user?.addresses || [];
+    const defaultAddr = userAddresses.find((a) => a.isDefault) || userAddresses[0] || null;
+
     setForm((prev) => ({
       ...prev,
+      shipmentId: prev.shipmentId, // keep existing generated ID
       customerName: order.shippingInfo?.fullName || order.user?.name || "",
       customerPhone: order.shippingInfo?.phoneNo || order.user?.phoneNumber || "",
       customerEmail: order.user?.email || "",
       shippingAddress: {
-        fullName: order.shippingInfo?.fullName || "",
-        mobileNumber: order.shippingInfo?.phoneNo || "",
-        addressLine1: order.shippingInfo?.address || "",
+        fullName:    defaultAddr?.fullName    || order.shippingInfo?.fullName    || "",
+        mobileNumber: defaultAddr?.phoneNo   || order.shippingInfo?.phoneNo     || "",
+        addressLine1: defaultAddr?.address   || order.shippingInfo?.address     || "",
         addressLine2: "",
         landmark: "",
-        city: order.shippingInfo?.city || "",
-        state: "",
-        country: order.shippingInfo?.country || "India",
-        pincode: order.shippingInfo?.zipCode || "",
+        city:     defaultAddr?.city          || order.shippingInfo?.city        || "",
+        state:    defaultAddr?.state         || "",
+        country:  defaultAddr?.country       || order.shippingInfo?.country     || "India",
+        pincode:  defaultAddr?.zipCode       || order.shippingInfo?.zipCode     || "",
       },
       paymentType: order.paymentMethod === "COD" ? "Cash on Delivery" : "Prepaid",
       shippingMethod: order.shippingMethod || "standard",
@@ -108,11 +115,33 @@ export const AdminShippingCreate = () => {
                 <option value="">Choose an order...</option>
                 {orders.map((o) => (
                   <option key={o._id} value={o._id}>
-                    {String(o._id).slice(-8)} — {o.shippingInfo?.fullName} — ₹{o.totalAmount?.toLocaleString("en-IN")}
+                    {String(o._id).slice(-8).toUpperCase()} — {o.shippingInfo?.fullName} — ₹{o.totalAmount?.toLocaleString("en-IN")}
                   </option>
                 ))}
               </select>
             </div>
+            {selectedOrderId && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                <div>
+                  <label className={labelClass}>Order ID (System Generated)</label>
+                  <div className="flex flex-col">
+                    <div className="w-full bg-slate-100 border border-slate-200 text-sm rounded-xl px-4 py-2.5 text-slate-600 font-mono font-bold flex items-center select-all shadow-inner">
+                      #{selectedOrderId.slice(-8).toUpperCase()}
+                    </div>
+                    <span className="text-[10px] text-slate-400 mt-1 font-mono">Full Ref: {selectedOrderId}</span>
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>Shipment ID *</label>
+                  <input 
+                    value={form.shipmentId} 
+                    onChange={(e) => updateField("shipmentId", e.target.value)} 
+                    placeholder="Enter Shipment ID manually"
+                    className={`${inputClass} font-mono font-bold`}
+                  />
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div><label className={labelClass}>Customer Name</label><input value={form.customerName} onChange={(e) => updateField("customerName", e.target.value)} className={inputClass} /></div>
               <div><label className={labelClass}>Customer Phone</label><input value={form.customerPhone} onChange={(e) => updateField("customerPhone", e.target.value)} className={inputClass} /></div>

@@ -407,7 +407,7 @@ export const AdminShippingList = () => {
                           </td>
                         )}
                         <td className="px-4 py-3 font-mono text-xs font-semibold text-gray-900">{s.shipmentId}</td>
-                        <td className="px-4 py-3 font-mono text-xs text-gray-600">{String(s.order?._id || s.order).slice(-8)}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-gray-600">{String(s.order?._id || s.order).slice(-8).toUpperCase()}</td>
                         <td className="px-4 py-3">
                           <p className="font-medium text-gray-900">{s.customerName}</p>
                           <p className="text-xs text-gray-500">{s.customerPhone}</p>
@@ -442,6 +442,8 @@ export const AdminShippingList = () => {
               </table>
             </div>
           </div>
+          {/* Spacer to provide 300px vertical scroll room below the table */}
+          <div style={{ height: "300px" }} aria-hidden="true" />
         </main>
       </div>
 

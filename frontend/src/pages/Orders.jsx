@@ -188,7 +188,7 @@ export function Orders() {
                 <div className="p-6 sm:p-8 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-3 mb-1">
-                      <h3 className="font-semibold text-gray-900 text-lg">Order #{order.id.slice(-8).toUpperCase()}</h3>
+                      <h3 className="font-semibold text-gray-900 text-lg">Order {order.id.slice(-8).toUpperCase()}</h3>
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 border w-fit ${
                           order.status === 'delivered' ? 'bg-green-50 text-green-700 border-green-200' :
@@ -235,20 +235,26 @@ export function Orders() {
                     </div>
                     
                     {order.trackingId ? (
-                      <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 shadow-sm flex flex-col justify-center">
-                         <div className="mb-4">
-                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Tracking ID</p>
-                            <p className="text-gray-900 font-mono font-medium text-lg">{order.trackingId}</p>
-                         </div>
-                         {order.trackingUrl && (
-                            <button 
-                               onClick={() => window.open(order.trackingUrl, '_blank')}
-                               className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-900 hover:bg-black text-white text-sm font-medium rounded-lg transition-colors"
-                            >
-                               <Truck className="w-4 h-4" />
-                               Track Package
-                            </button>
-                         )}
+                      <div className="bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm flex flex-col justify-center text-white">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Truck className="w-4 h-4 text-emerald-400" />
+                          <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">Live Tracking</span>
+                        </div>
+                        <div className="mb-3">
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tracking Number</p>
+                          <p className="text-white font-mono font-bold text-base">{order.trackingId}</p>
+                        </div>
+                        {order.trackingUrl ? (
+                          <button 
+                            onClick={() => window.open(order.trackingUrl, '_blank')}
+                            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold rounded-lg transition-colors mt-1"
+                          >
+                            <Truck className="w-4 h-4" />
+                            Track Package
+                          </button>
+                        ) : (
+                          <p className="text-xs text-gray-400 mt-1">Use the tracking number on your courier's website.</p>
+                        )}
                       </div>
                     ) : (
                       <div className="bg-gray-50 border border-gray-100 rounded-xl p-5 flex flex-col justify-center items-center text-center">

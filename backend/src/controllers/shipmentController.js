@@ -169,8 +169,13 @@ export const getAllShipments = catchAsyncErrors(async (req, res) => {
 
 // GET orders available for shipment creation
 export const getOrdersForShipment = catchAsyncErrors(async (req, res) => {
-  const orders = await Order.find()
-    .populate("user", "name email phoneNumber")
+  // Find all order IDs that already have an active (non-archived) shipment
+  const existingShipments = await Shipment.find({ isArchived: false }).select("order").lean();
+  const shippedOrderIds = existingShipments.map((s) => String(s.order));
+
+  // Exclude orders that already have a shipment
+  const orders = await Order.find({ _id: { $nin: shippedOrderIds } })
+    .populate("user", "name email phoneNumber addresses")
     .sort({ createdAt: -1 })
     .limit(200);
 
@@ -193,10 +198,20 @@ export const createShipment = catchAsyncErrors(async (req, res, next) => {
   const dateError = validateDates(req.body);
   if (dateError) return next(new ErrorHandler(dateError, 400));
 
-  const { orderId, trackingNumber, awbNumber, courierProvider } = req.body;
+  const { orderId, trackingNumber, awbNumber, courierProvider, shipmentId } = req.body;
 
   const order = await Order.findById(orderId).populate("user", "name email phoneNumber");
   if (!order) return next(new ErrorHandler("Order not found", 404));
+
+  let finalShipmentId = shipmentId?.trim();
+  if (finalShipmentId) {
+    const existingShipmentId = await Shipment.findOne({ shipmentId: finalShipmentId, isArchived: false });
+    if (existingShipmentId) {
+      return next(new ErrorHandler("Shipment ID already exists", 400));
+    }
+  } else {
+    finalShipmentId = generateShipmentId();
+  }
 
   if (trackingNumber) {
     const existing = await Shipment.findOne({ trackingNumber, isArchived: false });
@@ -216,7 +231,7 @@ export const createShipment = catchAsyncErrors(async (req, res, next) => {
 
   const now = new Date();
   const shipmentData = {
-    shipmentId: generateShipmentId(),
+    shipmentId: finalShipmentId,
     order: orderId,
     customerName: req.body.customerName || order.shippingInfo?.fullName || order.user?.name,
     customerPhone: req.body.customerPhone || order.shippingInfo?.phoneNo,
@@ -286,7 +301,18 @@ export const updateShipment = catchAsyncErrors(async (req, res, next) => {
   if (!shipment) return next(new ErrorHandler("Shipment not found", 404));
   if (shipment.isArchived) return next(new ErrorHandler("Cannot edit archived shipment", 400));
 
-  const { trackingNumber, awbNumber, courierProvider } = req.body;
+  const { trackingNumber, awbNumber, courierProvider, shipmentId } = req.body;
+
+  if (shipmentId && shipmentId !== shipment.shipmentId) {
+    const existing = await Shipment.findOne({
+      shipmentId,
+      isArchived: false,
+      _id: { $ne: shipment._id },
+    });
+    if (existing) return next(new ErrorHandler("Shipment ID already exists", 400));
+    logActivity(shipment, "Shipment ID Changed", req.user, shipment.shipmentId, shipmentId);
+    shipment.shipmentId = shipmentId;
+  }
 
   if (trackingNumber && trackingNumber !== shipment.trackingNumber) {
     const existing = await Shipment.findOne({
@@ -376,6 +402,39 @@ export const updateShipmentStatus = catchAsyncErrors(async (req, res, next) => {
 
   logActivity(shipment, "Status Updated", req.user, previousStatus, status);
   await shipment.save();
+
+  // ─── Sync tracking info to Order once shipment is active ───────────────
+  const TRACKING_ACTIVE_STATUSES = [
+    "Picked Up", "Dispatched", "In Transit", "Arrived at Hub",
+    "Out for Delivery", "Delivery Failed", "Delivery Attempted",
+    "Customer Unavailable", "Rescheduled", "Delivered",
+  ];
+
+  if (TRACKING_ACTIVE_STATUSES.includes(status) && shipment.order) {
+    const trackingId = shipment.trackingNumber || shipment.awbNumber || shipment.shipmentId;
+    // Build a simple tracking URL using courier name + tracking number if available
+    let trackingUrl = null;
+    if (shipment.courierName && shipment.trackingNumber) {
+      const courierName = shipment.courierName.toLowerCase();
+      if (courierName.includes("delhivery")) {
+        trackingUrl = `https://www.delhivery.com/track/package/${shipment.trackingNumber}`;
+      } else if (courierName.includes("bluedart")) {
+        trackingUrl = `https://www.bluedart.com/tracking?trackFor=0&track=${shipment.trackingNumber}`;
+      } else if (courierName.includes("dtdc")) {
+        trackingUrl = `https://www.dtdc.in/tracking.asp?podNo=${shipment.trackingNumber}`;
+      } else if (courierName.includes("ekart")) {
+        trackingUrl = `https://ekartlogistics.com/shipmenttrack/${shipment.trackingNumber}`;
+      }
+    }
+
+    await Order.findByIdAndUpdate(shipment.order, {
+      trackingId,
+      ...(trackingUrl ? { trackingUrl } : {}),
+      orderStatus: status === "Delivered" ? "Delivered" : "Shipped",
+      ...(status === "Delivered" ? { deliveredAt: statusDate } : {}),
+    });
+  }
+  // ────────────────────────────────────────────────────────────────────────
 
   const populated = await populateShipment(Shipment.findById(shipment._id));
   res.status(200).json({ success: true, shipment: populated });

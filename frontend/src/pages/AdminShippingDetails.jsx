@@ -53,6 +53,7 @@ export const AdminShippingDetails = () => {
       const s = shipRes.data.shipment;
       setShipment(s);
       setEditForm({
+        shipmentId: s.shipmentId || "",
         customerName: s.customerName, customerPhone: s.customerPhone, customerEmail: s.customerEmail,
         courierProvider: s.courierProvider?._id || s.courierProvider || "",
         trackingNumber: s.trackingNumber || "", awbNumber: s.awbNumber || "",
@@ -163,6 +164,10 @@ export const AdminShippingDetails = () => {
           <main className="flex-1 max-w-4xl mx-auto w-full p-6 md:p-8 space-y-6">
             <Section title="Customer & Courier" icon={User}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="text-xs font-semibold text-gray-500 uppercase mb-1 block">Shipment ID</label>
+                  <input value={editForm.shipmentId} onChange={(e) => setEditForm({ ...editForm, shipmentId: e.target.value })} className={`${inputClass} font-mono font-bold`} />
+                </div>
                 <div><label className="text-xs font-semibold text-gray-500 uppercase mb-1 block">Customer Name</label>
                   <input value={editForm.customerName} onChange={(e) => setEditForm({ ...editForm, customerName: e.target.value })} className={inputClass} /></div>
                 <div><label className="text-xs font-semibold text-gray-500 uppercase mb-1 block">Phone</label>
@@ -233,7 +238,7 @@ export const AdminShippingDetails = () => {
             </Section>
 
             <Section title="Order Information" icon={Package}>
-              <InfoRow label="Order ID" value={String(order?._id || order).slice(-12)} />
+              <InfoRow label="Order ID" value={String(order?._id || order).slice(-8).toUpperCase()} />
               <InfoRow label="Order Value" value={order?.totalAmount ? `₹${order.totalAmount.toLocaleString("en-IN")}` : "—"} />
               <InfoRow label="Payment Method" value={order?.paymentMethod} />
               {order?.orderItems?.length > 0 && (

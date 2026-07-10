@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { 
   Search, Trash2, ChevronDown, ChevronUp, MapPin, Phone, Mail, Package, AlertCircle, 
-  Download, Truck, CheckCircle2, AlertTriangle, Filter, ChevronLeft, ChevronRight, X, Navigation
+  Download, Truck, CheckCircle2, AlertTriangle, Filter, ChevronLeft, ChevronRight, X
 } from "lucide-react";
 import api from "../../api/axios";
 import { toast } from "sonner";
@@ -9,27 +9,7 @@ import { toast } from "sonner";
 export function OrdersTab({ orders, formatINR, updateOrderStatus, handleDeleteOrder, globalSearch, setGlobalSearch }) {
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [statusFilter, setStatusFilter] = useState("All Orders");
-  const [trackingInputs, setTrackingInputs] = useState({});
-  const [trackingUrlInputs, setTrackingUrlInputs] = useState({});
 
-  const handleTrackingUpdate = async (orderId) => {
-    try {
-      const trackingId = trackingInputs[orderId] !== undefined ? trackingInputs[orderId] : (orders.find(o => o._id === orderId)?.trackingId || "");
-      const trackingUrl = trackingUrlInputs[orderId] !== undefined ? trackingUrlInputs[orderId] : (orders.find(o => o._id === orderId)?.trackingUrl || "");
-      
-      await api.put(`/admin/orders/${orderId}`, { trackingId, trackingUrl });
-      toast.success("Tracking info updated successfully!");
-      
-      // Update local state without refetching all
-      const orderIndex = orders.findIndex(o => o._id === orderId);
-      if(orderIndex > -1) {
-         orders[orderIndex].trackingId = trackingId;
-         orders[orderIndex].trackingUrl = trackingUrl;
-      }
-    } catch (error) {
-      toast.error("Failed to update tracking info");
-    }
-  };
 
   const pendingCount = orders.filter(o => o.orderStatus === "Pending" || o.orderStatus === "Processing").length;
   const inTransitCount = orders.filter(o => o.orderStatus === "Shipped").length;
@@ -275,40 +255,6 @@ export function OrdersTab({ orders, formatINR, updateOrderStatus, handleDeleteOr
                                                    <div className="pt-3 mt-3 border-t border-slate-100 text-slate-600 flex items-center font-medium bg-slate-50 p-2 rounded-lg">
                                                       <Phone className="w-4 h-4 mr-2 text-slate-400" />
                                                       {order.shippingInfo?.phoneNo}
-                                                   </div>
-                                                   
-                                                   <div className="mt-6 space-y-3">
-                                                      <div>
-                                                         <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Tracking ID</label>
-                                                         <div className="relative">
-                                                            <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
-                                                            <input 
-                                                               type="text"
-                                                               placeholder="Enter tracking ID..."
-                                                               value={trackingInputs[order._id] !== undefined ? trackingInputs[order._id] : (order.trackingId || '')}
-                                                               onChange={(e) => setTrackingInputs({...trackingInputs, [order._id]: e.target.value})}
-                                                               className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                                            />
-                                                         </div>
-                                                      </div>
-                                                      <div className="flex gap-2 items-end">
-                                                         <div className="relative flex-1">
-                                                            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Tracking Link (URL)</label>
-                                                            <input 
-                                                               type="url"
-                                                               placeholder="https://www.delhivery.com/..."
-                                                               value={trackingUrlInputs[order._id] !== undefined ? trackingUrlInputs[order._id] : (order.trackingUrl || '')}
-                                                               onChange={(e) => setTrackingUrlInputs({...trackingUrlInputs, [order._id]: e.target.value})}
-                                                               className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                                            />
-                                                         </div>
-                                                         <button 
-                                                            onClick={() => handleTrackingUpdate(order._id)}
-                                                            className="px-4 py-2 h-[38px] bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors"
-                                                         >
-                                                            Save
-                                                         </button>
-                                                      </div>
                                                    </div>
                                                 </div>
                                              </div>
