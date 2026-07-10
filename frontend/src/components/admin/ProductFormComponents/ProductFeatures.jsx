@@ -56,7 +56,7 @@ function SortableFeature({ feature, index, onUpdate, onDelete, onEnter }) {
 }
 
 export default function ProductFeatures() {
-  const { setValue, watch } = useFormContext();
+  const { setValue, watch, register, formState: { errors } } = useFormContext();
   const watchedFeatures = watch('features');
   const [features, setFeatures] = useState([]);
   const [error, setError] = useState('');
@@ -66,6 +66,15 @@ export default function ProductFeatures() {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   );
+
+  useEffect(() => {
+    register("features", {
+      validate: (val) => {
+        const valid = val ? val.filter(f => f.trim().length > 0) : [];
+        return valid.length > 0 || "At least one Product Feature is required";
+      }
+    });
+  }, [register]);
 
   useEffect(() => {
     if (Array.isArray(watchedFeatures)) {
@@ -160,7 +169,7 @@ export default function ProductFeatures() {
         <div className="p-1.5 bg-amber-50 rounded-lg">
           <ListChecks className="w-4 h-4 text-amber-600" />
         </div>
-        <h3 className="text-lg font-bold text-gray-900">Product Features</h3>
+        <h3 className="text-lg font-bold text-gray-900">Product Features *</h3>
       </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -185,6 +194,9 @@ export default function ProductFeatures() {
         </SortableContext>
       </DndContext>
 
+      {errors.features && (
+        <p className="text-red-500 text-xs mt-2 font-medium">{errors.features.message}</p>
+      )}
       {error && (
         <p className="text-red-500 text-xs mt-2 font-medium">{error}</p>
       )}

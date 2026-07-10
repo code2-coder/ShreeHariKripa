@@ -110,9 +110,23 @@ export default function NewProductForm({
       return;
     }
 
+    // Validate product features
+    const validFeatures = data.features ? data.features.filter(f => f.trim().length > 0) : [];
+    if (validFeatures.length === 0) {
+      toast.error("At least one Product Feature is required");
+      return;
+    }
+
     // Clean payload based on productType toggled mode
     if (productType === 'single') {
       data.variants = [];
+      
+      // Validate parent media images
+      if (!data.images || data.images.length === 0) {
+        toast.error("At least one product image is required in Parent Media");
+        return;
+      }
+
       if (data.sizes && data.sizes.length > 0) {
         let minPrice = Infinity;
         let totalStock = 0;
@@ -125,6 +139,15 @@ export default function NewProductForm({
         data.price = minPrice === Infinity ? 0 : minPrice;
         data.stock = totalStock;
       } else {
+        // Validate base price and stock for single product without sizes
+        if (data.price === undefined || data.price === '' || isNaN(data.price) || Number(data.price) <= 0) {
+          toast.error("Base Selling Price is required and must be greater than 0");
+          return;
+        }
+        if (data.stock === undefined || data.stock === '' || isNaN(data.stock) || Number(data.stock) < 0) {
+          toast.error("Stock is required and must be 0 or more");
+          return;
+        }
         data.price = Number(data.price) || 0;
         data.stock = Number(data.stock) || 0;
       }
@@ -151,6 +174,14 @@ export default function NewProductForm({
           data.images = data.variants[0].images;
         }
       } else {
+        if (data.price === undefined || data.price === '' || isNaN(data.price) || Number(data.price) <= 0) {
+          toast.error("Base Selling Price is required and must be greater than 0");
+          return;
+        }
+        if (data.stock === undefined || data.stock === '' || isNaN(data.stock) || Number(data.stock) < 0) {
+          toast.error("Stock is required and must be 0 or more");
+          return;
+        }
         data.price = Number(data.price) || 0;
         data.stock = Number(data.stock) || 0;
       }

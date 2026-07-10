@@ -44,13 +44,19 @@ export default function ProductInformation({ categories }) {
           {errors.status && <p className="text-red-500 text-xs mt-1 font-medium">{errors.status.message}</p>}
         </div>
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Base Selling Price</label>
+          <label className="block text-sm font-bold text-gray-700 mb-2">
+            Base Selling Price {!isVariationMode && "*"}
+          </label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₹</span>
             <input 
               type="number" 
               readOnly={isVariationMode}
-              {...register("price", { valueAsNumber: true })} 
+              {...register("price", { 
+                required: !isVariationMode ? "Base Selling Price is required" : false, 
+                valueAsNumber: true,
+                min: !isVariationMode ? { value: 0.01, message: "Price must be greater than 0" } : undefined
+              })} 
               placeholder="0" 
               className={`w-full border border-gray-300 rounded-xl pl-8 pr-4 py-3 outline-none transition-all font-semibold ${
                 isVariationMode 
@@ -59,14 +65,24 @@ export default function ProductInformation({ categories }) {
               }`} 
             />
           </div>
-          {isVariationMode && <p className="text-[10px] text-[#B8934E] mt-1 font-bold tracking-wide uppercase">Calculated from size/variant prices</p>}
+          {isVariationMode ? (
+            <p className="text-[10px] text-[#B8934E] mt-1 font-bold tracking-wide uppercase">Calculated from size/variant prices</p>
+          ) : (
+            errors.price && <p className="text-red-500 text-xs mt-1 font-medium">{errors.price.message}</p>
+          )}
         </div>
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Stock</label>
+          <label className="block text-sm font-bold text-gray-700 mb-2">
+            Stock {!isVariationMode && "*"}
+          </label>
           <input 
             type="number" 
             readOnly={isVariationMode}
-            {...register("stock", { valueAsNumber: true })} 
+            {...register("stock", { 
+              required: !isVariationMode ? "Stock is required" : false, 
+              valueAsNumber: true,
+              min: !isVariationMode ? { value: 0, message: "Stock cannot be negative" } : undefined
+            })} 
             placeholder="0" 
             className={`w-full border border-gray-300 rounded-xl px-4 py-3 outline-none transition-all font-semibold ${
               isVariationMode 

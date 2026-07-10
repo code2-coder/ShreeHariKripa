@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { X, UploadCloud, Video, Play } from 'lucide-react';
 import api from "../../../api/axios";
 
 export default function ParentMediaUploader() {
-  const { watch, setValue } = useFormContext();
+  const { watch, setValue, register, formState: { errors } } = useFormContext();
+  
+  useEffect(() => {
+    register("images", {
+      validate: (val) => (val && val.length > 0) || "At least one product image is required in Parent Media"
+    });
+  }, [register]);
+
   const images = watch('images') || [];
   const videos = watch('videos') || [];
   const [isUploading, setIsUploading] = useState(false);
@@ -72,7 +79,7 @@ export default function ParentMediaUploader() {
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm mb-6">
-      <h3 className="text-lg font-bold text-gray-900 mb-4">Parent Media</h3>
+      <h3 className="text-lg font-bold text-gray-900 mb-4">Parent Media *</h3>
       
       {/* IMAGES */}
       <div className="mb-6">
@@ -105,6 +112,9 @@ export default function ParentMediaUploader() {
             <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'image')} disabled={isUploading} />
           </label>
         </div>
+        {errors.images && (
+          <p className="text-red-500 text-xs mt-1 font-medium">{errors.images.message}</p>
+        )}
       </div>
 
       {/* VIDEOS */}
