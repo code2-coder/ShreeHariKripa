@@ -1,7 +1,8 @@
 import { ShoppingBag, Heart, Share2 } from "lucide-react";
 import { Link } from "react-router";
-import { useCart } from "../context/CartContext";
-import { useWishlist } from "../context/WishlistContext";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../redux/slices/cartSlice";
+import { toggleWishlist, selectIsInWishlist } from "../redux/slices/wishlistSlice";
 import { useCurrency } from "../context/CurrencyContext";
 import { toast } from "sonner";
 import { memo, useState } from "react";
@@ -10,11 +11,9 @@ export const ProductCard = memo(function ProductCard({ product }) {
   const hasVariants = product.variants && product.variants.length > 0;
   const [selectedVariant] = useState(hasVariants ? product.variants[0] : null);
 
-  const { addToCart } = useCart();
-  const { toggleWishlist, isInWishlist } = useWishlist();
+  const dispatch = useDispatch();
+  const isWished = useSelector((state) => selectIsInWishlist(state, product._id || product.id));
   const { getFormattedPrice } = useCurrency();
-
-  const isWished = isInWishlist(product._id || product.id);
   
   // Extract correct variant/size properties
   const variantSize = selectedVariant?.sizes?.[0] || product.sizes?.[0];
@@ -25,7 +24,7 @@ export const ProductCard = memo(function ProductCard({ product }) {
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(product, 1, currentSizeName, currentPrice);
+    dispatch(addToCart({ product, quantity: 1, size: currentSizeName, price: currentPrice }));
     toast.success(`${product.name} ${currentSizeName ? `(${currentSizeName})` : ''} added to bag!`);
   };
 
@@ -134,7 +133,7 @@ export const ProductCard = memo(function ProductCard({ product }) {
             onClick={(e) => {
                e.preventDefault();
                e.stopPropagation();
-               toggleWishlist(product);
+               dispatch(toggleWishlist(product));
             }}
             aria-pressed={isWished}
             aria-label={isWished ? 'Remove from wishlist' : 'Add to wishlist'}

@@ -56,7 +56,10 @@ This guide covers deploying the full-stack MERN application with Vercel for the 
 
 5. **Set Environment Variables**
    Add your environment variables in Vercel:
-   - `VITE_API_URL`: Your Render backend URL.
+   - `VITE_API_URL`: Your Render backend URL (e.g., `https://your-backend-url.onrender.com`).
+   
+   > [!WARNING]
+   > **Vercel API Rewrite Warning**: The repository contains [vercel.json](file:///e:/VaibhavPawar/CodeFusionProjects/ShreeHariKripa/frontend/vercel.json) which has a rewrite rule mapping `/api/:match*` to `https://shreeharikripa.onrender.com`. If your backend is deployed under a different Render domain, you **MUST** update the destination URL in `vercel.json` to your correct Render URL, or configure `VITE_API_URL` with your absolute backend URL.
 
 6. **Deploy**
    Click "Deploy". Vercel will build and deploy your React app.

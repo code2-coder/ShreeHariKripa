@@ -2,15 +2,17 @@ import axios from 'axios';
 import { toast } from 'sonner';
 
 const getBaseUrl = () => {
-  // If we are running in production on the live domain, ALWAYS force the Render backend URL
-  // This prevents Vercel from intercepting the request and returning index.html
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl) {
+    return envUrl.endsWith('/api/v1') ? envUrl : `${envUrl}/api/v1`;
+  }
+
+  // Fallback defaults
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
     return 'https://shreeharikripa.onrender.com/api/v1';
   }
   
-  const url = import.meta.env.VITE_API_URL;
-  if (!url) return 'https://shreeharikripa.onrender.com/api/v1';
-  return url.endsWith('/api/v1') ? url : `${url}/api/v1`;
+  return 'http://localhost:8085/api/v1';
 };
 
 const api = axios.create({
