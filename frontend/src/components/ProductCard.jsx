@@ -99,37 +99,37 @@ export const ProductCard = memo(function ProductCard({ product }) {
           loading="lazy"
           decoding="async"
           className={`w-full h-full object-cover transition-all duration-700 ease-out ${
-            hasSecondaryImage ? "group-hover:opacity-0" : "group-hover:scale-105"
+            hasSecondaryImage ? "md:group-hover:opacity-0" : "group-hover:scale-105"
           }`}
         />
 
-        {/* Secondary Image (cross-fades on hover) */}
+        {/* Secondary Image (cross-fades on hover - Desktop Only) */}
         {hasSecondaryImage && (
           <img
             src={secondaryImage}
             alt={`${product.name} - alternate view`}
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out opacity-0 group-hover:opacity-100 group-hover:scale-105"
+            className="hidden md:block absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out opacity-0 group-hover:opacity-100 group-hover:scale-105"
           />
         )}
 
         {/* Luxury Badges (Pills) */}
-        <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
+        <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20 flex flex-col gap-1 md:gap-2">
           {currentStock < 10 && currentStock > 0 && (
-            <span className="text-[#AA8C2C] bg-[#FCFAF8]/95 border border-[#AA8C2C]/30 backdrop-blur-md px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.18em] shadow-sm rounded-full">
+            <span className="text-[#AA8C2C] bg-[#FCFAF8]/95 border border-[#AA8C2C]/30 backdrop-blur-md px-2 md:px-2.5 py-0.5 md:py-1 text-[8px] md:text-[9px] font-bold uppercase tracking-[0.18em] shadow-sm rounded-full">
               Limited
             </span>
           )}
           {currentStock === 0 && (
-            <span className="text-white bg-stone-900/90 backdrop-blur-md px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.18em] shadow-sm rounded-full">
+            <span className="text-white bg-stone-900/90 backdrop-blur-md px-2 md:px-2.5 py-0.5 md:py-1 text-[8px] md:text-[9px] font-bold uppercase tracking-[0.18em] shadow-sm rounded-full">
               Sold Out
             </span>
           )}
         </div>
 
         {/* Glassmorphic Floating Quick Actions */}
-        <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:translate-x-4 md:group-hover:translate-x-0 transition-all duration-300">
+        <div className="absolute top-2 right-2 md:top-4 md:right-4 z-20 flex flex-col gap-1.5 md:gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:translate-x-4 md:group-hover:translate-x-0 transition-all duration-300">
           <button
             onClick={(e) => {
                e.preventDefault();
@@ -138,21 +138,21 @@ export const ProductCard = memo(function ProductCard({ product }) {
             }}
             aria-pressed={isWished}
             aria-label={isWished ? 'Remove from wishlist' : 'Add to wishlist'}
-            className="p-2.5 bg-white/80 hover:bg-white text-stone-700 hover:text-rose-600 border border-white/20 shadow-md backdrop-blur-md rounded-full transition-all duration-300 transform active:scale-90 hover:scale-105 flex items-center justify-center"
+            className="p-1.5 md:p-2.5 bg-white/80 hover:bg-white text-stone-700 hover:text-rose-600 border border-white/20 shadow-md backdrop-blur-md rounded-full transition-all duration-300 transform active:scale-90 hover:scale-105 flex items-center justify-center cursor-pointer"
           >
-            <Heart className={`w-4 h-4 transition-colors duration-200 ${isWished ? "fill-rose-600 text-rose-600" : "text-stone-700"}`} />
+            <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 transition-colors duration-200 ${isWished ? "fill-rose-600 text-rose-600" : "text-stone-700"}`} />
           </button>
 
           <button
             onClick={handleShare}
             aria-label="Share product"
-            className="p-2.5 bg-white/80 hover:bg-white text-stone-700 hover:text-[#AA8C2C] border border-white/20 shadow-md backdrop-blur-md rounded-full transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
+            className="p-1.5 md:p-2.5 bg-white/80 hover:bg-white text-stone-700 hover:text-[#AA8C2C] border border-white/20 shadow-md backdrop-blur-md rounded-full transition-all duration-300 transform hover:scale-105 flex items-center justify-center cursor-pointer"
           >
-            <Share2 className="w-4 h-4" />
+            <Share2 className={`w-3.5 h-3.5 md:w-4 md:h-4`} />
           </button>
         </div>
         
-        {/* Floating Quick Add Button (Sliding Glassmorphism) */}
+        {/* Floating Quick Add Button (Sliding Glassmorphism - Desktop Only) */}
         <div className="absolute bottom-4 left-0 right-0 translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out hidden md:block z-20 pointer-events-none group-hover:pointer-events-auto px-4">
           <button
             onClick={handleAddToCart}
@@ -167,25 +167,25 @@ export const ProductCard = memo(function ProductCard({ product }) {
       </Link>
 
       {/* Product Info */}
-      <div className="pt-5 pb-6 px-5 flex flex-col flex-grow bg-white text-center">
-        <p className="text-[#AA8C2C] text-[10px] mb-2 font-bold uppercase tracking-[0.25em]">
+      <div className="pt-3 pb-4 md:pt-5 md:pb-6 px-3.5 md:px-5 flex flex-col flex-grow bg-white text-center">
+        <p className="text-[#AA8C2C] text-[9px] md:text-[10px] mb-1 md:mb-2 font-bold uppercase tracking-[0.2em] md:tracking-[0.25em]">
           {product.category?.name || "Collection"}
         </p>
         
-        <Link to={`/product/${product._id || product.id}`} className="focus:outline-none w-full mb-2 inline-block">
-          <h3 className="font-serif text-stone-850 hover:text-[#AA8C2C] text-[15px] md:text-base font-normal leading-snug transition-colors duration-300 line-clamp-2 px-1">
+        <Link to={`/product/${product._id || product.id}`} className="focus:outline-none w-full mb-1.5 md:mb-2 inline-block">
+          <h3 className="font-serif text-stone-850 hover:text-[#AA8C2C] text-[13px] sm:text-sm md:text-base font-normal leading-snug transition-colors duration-300 line-clamp-2 px-1">
             {product.name}
           </h3>
         </Link>
 
         {/* Ratings & Reviews Stars Display */}
         {product.ratings !== undefined && product.ratings > 0 && (
-          <div className="flex items-center justify-center gap-1.5 mb-3">
+          <div className="flex items-center justify-center gap-1 mb-2 md:mb-3">
             <div className="flex text-amber-500 gap-0.5">
               {[...Array(5)].map((_, i) => (
                 <svg
                   key={i}
-                  className={`w-3.5 h-3.5 ${
+                  className={`w-3 h-3 md:w-3.5 md:h-3.5 ${
                     i < Math.round(product.ratings) ? "fill-current" : "text-stone-200"
                   }`}
                   viewBox="0 0 20 20"
@@ -195,26 +195,25 @@ export const ProductCard = memo(function ProductCard({ product }) {
                 </svg>
               ))}
             </div>
-            <span className="text-[10px] text-stone-400 font-medium font-sans mt-0.5">
+            <span className="text-[9px] md:text-[10px] text-stone-400 font-medium font-sans mt-0.5">
               ({product.numOfReviews || 0})
             </span>
           </div>
         )}
 
-        <div className="mt-auto flex flex-col items-center justify-center gap-3.5 w-full">
-          <span className="text-stone-900 font-semibold tracking-wide text-sm md:text-base">
+        <div className="mt-auto flex items-center justify-between w-full pt-1.5 md:pt-3">
+          <span className="text-stone-900 font-semibold tracking-wide text-xs sm:text-sm md:text-base text-left">
             {currentPrice != null ? getFormattedPrice(currentPrice) : "Price Unavailable"}
           </span>
           
-          {/* Mobile Add to Bag (since overlay is hidden on mobile) */}
+          {/* Mobile Add to Bag (Circular Action Icon next to Price) */}
           <button
             onClick={handleAddToCart}
             disabled={currentStock === 0}
-            className="md:hidden w-full py-3 bg-[#800000] text-white hover:bg-[#5a0000] transition-all disabled:opacity-50 flex items-center justify-center gap-2 font-semibold text-[10px] tracking-[0.2em] uppercase rounded-xl cursor-pointer"
+            className="md:hidden w-8 h-8 rounded-full bg-stone-900 hover:bg-[#800000] text-white flex items-center justify-center transition-all duration-300 disabled:bg-stone-200 disabled:text-stone-400 disabled:cursor-not-allowed cursor-pointer shrink-0"
             aria-label="Add to bag"
           >
-             <ShoppingBag className="w-4 h-4" />
-             <span>{currentStock === 0 ? "Out of Stock" : "Add to Bag"}</span>
+             <ShoppingBag className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
