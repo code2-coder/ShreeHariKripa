@@ -29,7 +29,7 @@ const TRACKING_ACTIVE_STATUSES = [
 const buildCourierTrackingUrl = (courierName, trackingNumber) => {
   if (!courierName || !trackingNumber) return null;
   const name = courierName.toLowerCase();
-  if (name.includes("delhivery")) return `https://www.delhivery.com/track/package/${trackingNumber}`;
+  if (name.includes("delhivery")) return `https://www.delhivery.com/`;
   if (name.includes("bluedart"))  return `https://www.bluedart.com/tracking?trackFor=0&track=${trackingNumber}`;
   if (name.includes("dtdc"))      return `https://www.dtdc.in/tracking.asp?podNo=${trackingNumber}`;
   if (name.includes("ekart"))     return `https://ekartlogistics.com/shipmenttrack/${trackingNumber}`;
@@ -50,6 +50,9 @@ const syncTrackingToOrder = async (shipment, overrideStatus) => {
   const updatePayload = {};
   if (trackingId) updatePayload.trackingId = trackingId;
   if (trackingUrl) updatePayload.trackingUrl = trackingUrl;
+  if (shipment.awbNumber) updatePayload.awbNumber = shipment.awbNumber;
+  if (shipment.courierName) updatePayload.courierName = shipment.courierName;
+  
   if (shouldMarkShipped) updatePayload.orderStatus = isDelivered ? "Delivered" : "Shipped";
   if (isDelivered) updatePayload.deliveredAt = new Date();
 

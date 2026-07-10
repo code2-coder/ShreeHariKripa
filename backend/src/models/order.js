@@ -145,6 +145,14 @@ const orderSchema = new mongoose.Schema(
     trackingUrl: {
       type: String,
     },
+
+    awbNumber: {
+      type: String,
+    },
+
+    courierName: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

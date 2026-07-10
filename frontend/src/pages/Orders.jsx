@@ -39,6 +39,8 @@ export function Orders() {
           total: o.totalAmount,
           trackingId: o.trackingId,
           trackingUrl: o.trackingUrl,
+          awbNumber: o.awbNumber,
+          courierName: o.courierName,
           shippingInfo: o.shippingInfo,
           items: o.orderItems.map(item => ({
             id: item._id,
@@ -240,9 +242,23 @@ export function Orders() {
                           <Truck className="w-4 h-4 text-emerald-400" />
                           <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">Live Tracking</span>
                         </div>
-                        <div className="mb-3">
-                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tracking Number</p>
-                          <p className="text-white font-mono font-bold text-base">{order.trackingId}</p>
+                        <div className="mb-3 space-y-2">
+                          {order.courierName && (
+                            <div>
+                              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Courier Provider</p>
+                              <p className="text-white font-medium text-sm">{order.courierName}</p>
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Tracking Number</p>
+                            <p className="text-white font-mono font-bold text-base">{order.trackingId}</p>
+                          </div>
+                          {order.awbNumber && (
+                            <div>
+                              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">AWB Number</p>
+                              <p className="text-white font-mono font-medium text-sm">{order.awbNumber}</p>
+                            </div>
+                          )}
                         </div>
                         {order.trackingUrl ? (
                           <button 
