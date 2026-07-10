@@ -2,7 +2,11 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 
 export default function ProductInformation({ categories }) {
-  const { register, formState: { errors } } = useFormContext();
+  const { register, watch, formState: { errors } } = useFormContext();
+
+  const variants = watch("variants") || [];
+  const sizes = watch("sizes") || [];
+  const isVariationMode = variants.length > 0 || sizes.length > 0;
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm mb-6">
@@ -43,13 +47,38 @@ export default function ProductInformation({ categories }) {
           <label className="block text-sm font-bold text-gray-700 mb-2">Base Selling Price</label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₹</span>
-            <input type="number" {...register("price", { valueAsNumber: true })} placeholder="0" className="w-full border border-gray-300 rounded-xl pl-8 pr-4 py-3 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-gray-900 outline-none transition-all font-semibold" />
+            <input 
+              type="number" 
+              readOnly={isVariationMode}
+              {...register("price", { valueAsNumber: true })} 
+              placeholder="0" 
+              className={`w-full border border-gray-300 rounded-xl pl-8 pr-4 py-3 outline-none transition-all font-semibold ${
+                isVariationMode 
+                  ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200' 
+                  : 'bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-gray-900'
+              }`} 
+            />
           </div>
+          {isVariationMode && <p className="text-[10px] text-[#B8934E] mt-1 font-bold tracking-wide uppercase">Calculated from size/variant prices</p>}
         </div>
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">Stock</label>
-          <input type="number" {...register("stock", { valueAsNumber: true })} placeholder="0" className="w-full border border-gray-300 rounded-xl px-4 py-3 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-gray-900 outline-none transition-all font-semibold" />
-          {errors.stock && <p className="text-red-500 text-xs mt-1 font-medium">{errors.stock.message}</p>}
+          <input 
+            type="number" 
+            readOnly={isVariationMode}
+            {...register("stock", { valueAsNumber: true })} 
+            placeholder="0" 
+            className={`w-full border border-gray-300 rounded-xl px-4 py-3 outline-none transition-all font-semibold ${
+              isVariationMode 
+                ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200' 
+                : 'bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-gray-900'
+            }`} 
+          />
+          {isVariationMode ? (
+            <p className="text-[10px] text-[#B8934E] mt-1 font-bold tracking-wide uppercase">Calculated from size/variant stocks</p>
+          ) : (
+            errors.stock && <p className="text-red-500 text-xs mt-1 font-medium">{errors.stock.message}</p>
+          )}
         </div>
         <div className="md:col-span-2">
           <label className="block text-sm font-bold text-gray-700 mb-2">Full Description *</label>

@@ -362,7 +362,7 @@ export function Header() {
             Top Suggestions
           </div>
           {liveResults.map(product => {
-            const variantPrice = product.variants?.[0]?.sizes?.[0]?.price;
+            const variantPrice = product.variants?.[0]?.sizes?.[0]?.price || product.sizes?.[0]?.price;
             const displayPrice = variantPrice !== undefined ? variantPrice : product.price;
 
             return (
@@ -1097,7 +1097,7 @@ export function Header() {
                   ) : (
                     <div className="flex justify-center gap-8 xl:gap-10">
                       {(categoryProducts[activeDropdown] || []).map((prod, i) => {
-                        const variantPrice = prod.variants?.[0]?.sizes?.[0]?.price;
+                        const variantPrice = prod.variants?.[0]?.sizes?.[0]?.price || prod.sizes?.[0]?.price;
                         const displayPrice = variantPrice !== undefined ? variantPrice : prod.price;
 
                         return (

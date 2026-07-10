@@ -38,7 +38,7 @@ export class ProductService {
       .pagination(resPerPage);
 
     const products = await apiFilters.query
-      .select("name price description images video category ratings stock variants numOfReviews homeSection features status")
+      .select("name price description images video category ratings stock variants sizes numOfReviews homeSection features status")
       .populate("category", "name")
       .lean();
 

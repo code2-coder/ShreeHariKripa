@@ -16,8 +16,8 @@ export const ProductCard = memo(function ProductCard({ product }) {
 
   const isWished = isInWishlist(product._id || product.id);
   
-  // Extract correct variant properties
-  const variantSize = selectedVariant?.sizes?.[0];
+  // Extract correct variant/size properties
+  const variantSize = selectedVariant?.sizes?.[0] || product.sizes?.[0];
   const currentStock = variantSize ? variantSize.stock : product.stock;
   const currentPrice = variantSize?.price ?? product.price;
   const currentSizeName = variantSize ? variantSize.size : null;

@@ -5,3 +5,4 @@ export { default as StickySaveBar } from './StickySaveBar';
 export { default as SizeManagerModal } from './SizeManagerModal';
 export { default as ProductSpecifications } from './ProductSpecifications';
 export { default as ProductFeatures } from './ProductFeatures';
+export { default as RootSizeManager } from './RootSizeManager';

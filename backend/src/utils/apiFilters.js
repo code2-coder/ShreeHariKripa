@@ -21,6 +21,7 @@ class APIFilters {
                 { features: { $regex: regex } },
                 { 'variants.sku': { $regex: regex } },
                 { 'variants.sizes.sku': { $regex: regex } },
+                { 'sizes.sku': { $regex: regex } },
                 { 'variants.colorName': { $regex: regex } }
             ];
 
@@ -67,7 +68,10 @@ class APIFilters {
         if (this.queryStr.sizes) {
             const sizes = this.queryStr.sizes.split(',').map(s => s.trim());
             if (sizes.length > 0 && sizes[0] !== '') {
-                filterObj['variants.sizes.size'] = { $in: sizes };
+                filterObj['$or'] = [
+                    { 'variants.sizes.size': { $in: sizes } },
+                    { 'sizes.size': { $in: sizes } }
+                ];
             }
         }
 

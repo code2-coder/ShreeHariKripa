@@ -9,7 +9,8 @@ import {
   VariantManager,
   ParentMediaUploader,
   StickySaveBar,
-  ProductFeatures
+  ProductFeatures,
+  RootSizeManager
 } from './ProductFormComponents';
 
 export default function NewProductForm({
@@ -37,6 +38,7 @@ export default function NewProductForm({
       images: [],
       videos: [],
       variants: [],
+      sizes: [],
       features: [],
       // Product Specifications
       material: '',
@@ -67,6 +69,11 @@ export default function NewProductForm({
         };
       });
 
+      const cleanSizes = (editingProduct.sizes || []).map(size => {
+        const { _id, id, ...rest } = size;
+        return rest;
+      });
+
       methods.reset({
         name: editingProduct.name || '',
         description: editingProduct.description || '',
@@ -78,6 +85,7 @@ export default function NewProductForm({
         images: editingProduct.images || [],
         videos: editingProduct.videos || [],
         variants: cleanVariants,
+        sizes: cleanSizes,
         features: editingProduct.features || [],
         // Product Specifications
         material: editingProduct.material || '',
@@ -102,30 +110,50 @@ export default function NewProductForm({
       return;
     }
 
-    // Auto-calculate base price and stock from nested sizes for legacy support
-    if (data.variants && data.variants.length > 0) {
-      let minPrice = Infinity;
-      let totalStock = 0;
-      data.variants.forEach(variant => {
-        if (variant.sizes && variant.sizes.length > 0) {
-          variant.sizes.forEach(size => {
-            const price = Number(size.price) || 0;
-            const stock = Number(size.stock) || 0;
-            if (price < minPrice && price > 0) minPrice = price;
-            totalStock += stock;
-          });
-        }
-      });
-      data.price = minPrice === Infinity ? 0 : minPrice;
-      data.stock = totalStock;
-
-      // Copy first variant's images to root for legacy components (like ProductCard)
-      if (data.variants[0].images && data.variants[0].images.length > 0) {
-        data.images = data.variants[0].images;
+    // Clean payload based on productType toggled mode
+    if (productType === 'single') {
+      data.variants = [];
+      if (data.sizes && data.sizes.length > 0) {
+        let minPrice = Infinity;
+        let totalStock = 0;
+        data.sizes.forEach(size => {
+          const price = Number(size.price) || 0;
+          const stock = Number(size.stock) || 0;
+          if (price < minPrice && price > 0) minPrice = price;
+          totalStock += stock;
+        });
+        data.price = minPrice === Infinity ? 0 : minPrice;
+        data.stock = totalStock;
+      } else {
+        data.price = Number(data.price) || 0;
+        data.stock = Number(data.stock) || 0;
       }
     } else {
-      data.price = data.price || 0;
-      data.stock = data.stock || 0;
+      data.sizes = [];
+      if (data.variants && data.variants.length > 0) {
+        let minPrice = Infinity;
+        let totalStock = 0;
+        data.variants.forEach(variant => {
+          if (variant.sizes && variant.sizes.length > 0) {
+            variant.sizes.forEach(size => {
+              const price = Number(size.price) || 0;
+              const stock = Number(size.stock) || 0;
+              if (price < minPrice && price > 0) minPrice = price;
+              totalStock += stock;
+            });
+          }
+        });
+        data.price = minPrice === Infinity ? 0 : minPrice;
+        data.stock = totalStock;
+
+        // Copy first variant's images to root for legacy components (like ProductCard)
+        if (data.variants[0].images && data.variants[0].images.length > 0) {
+          data.images = data.variants[0].images;
+        }
+      } else {
+        data.price = Number(data.price) || 0;
+        data.stock = Number(data.stock) || 0;
+      }
     }
 
     // Default seller
@@ -215,7 +243,10 @@ export default function NewProductForm({
           />
 
           {productType === 'single' ? (
-            <ParentMediaUploader />
+            <>
+              <ParentMediaUploader />
+              <RootSizeManager />
+            </>
           ) : (
             <VariantManager 
             attributes={attributes}
