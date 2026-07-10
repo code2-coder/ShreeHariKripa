@@ -6,6 +6,7 @@ import {
   createShipment,
   updateShipment,
   updateShipmentStatus,
+  syncTrackingNow,
   addShipmentNote,
   addDeliveryProof,
   duplicateShipment,
@@ -62,6 +63,10 @@ router
 router
   .route("/admin/shipments/:id/delivery-proof")
   .post(isAuthenticatedUser, adminOnly, addDeliveryProof);
+
+router
+  .route("/admin/shipments/:id/sync-tracking")
+  .post(isAuthenticatedUser, adminOnly, syncTrackingNow);
 
 router
   .route("/admin/shipments/:id/duplicate")

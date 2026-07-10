@@ -20,6 +20,44 @@ const logActivity = (shipment, action, user, previousValue, newValue) => {
   });
 };
 
+const TRACKING_ACTIVE_STATUSES = [
+  "Picked Up", "Dispatched", "In Transit", "Arrived at Hub",
+  "Out for Delivery", "Delivery Failed", "Delivery Attempted",
+  "Customer Unavailable", "Rescheduled", "Delivered",
+];
+
+const buildCourierTrackingUrl = (courierName, trackingNumber) => {
+  if (!courierName || !trackingNumber) return null;
+  const name = courierName.toLowerCase();
+  if (name.includes("delhivery")) return `https://www.delhivery.com/track/package/${trackingNumber}`;
+  if (name.includes("bluedart"))  return `https://www.bluedart.com/tracking?trackFor=0&track=${trackingNumber}`;
+  if (name.includes("dtdc"))      return `https://www.dtdc.in/tracking.asp?podNo=${trackingNumber}`;
+  if (name.includes("ekart"))     return `https://ekartlogistics.com/shipmenttrack/${trackingNumber}`;
+  return null;
+};
+
+const syncTrackingToOrder = async (shipment, overrideStatus) => {
+  const status = overrideStatus || shipment.status;
+  if (!shipment.order) return;
+
+  const trackingId = shipment.trackingNumber || shipment.awbNumber || null;
+  if (!trackingId && !TRACKING_ACTIVE_STATUSES.includes(status)) return;
+
+  const trackingUrl = buildCourierTrackingUrl(shipment.courierName, shipment.trackingNumber);
+  const isDelivered = status === "Delivered";
+  const shouldMarkShipped = TRACKING_ACTIVE_STATUSES.includes(status);
+
+  const updatePayload = {};
+  if (trackingId) updatePayload.trackingId = trackingId;
+  if (trackingUrl) updatePayload.trackingUrl = trackingUrl;
+  if (shouldMarkShipped) updatePayload.orderStatus = isDelivered ? "Delivered" : "Shipped";
+  if (isDelivered) updatePayload.deliveredAt = new Date();
+
+  if (Object.keys(updatePayload).length > 0) {
+    await Order.findByIdAndUpdate(shipment.order, updatePayload);
+  }
+};
+
 const buildAnalytics = (shipments) => {
   const countByStatus = (status) =>
     shipments.filter((s) => s.status === status).length;
@@ -361,6 +399,9 @@ export const updateShipment = catchAsyncErrors(async (req, res, next) => {
   logActivity(shipment, "Shipment Edited", req.user);
   await shipment.save();
 
+  // Sync tracking to Order if shipment already has an active status and tracking data
+  await syncTrackingToOrder(shipment);
+
   const populated = await populateShipment(Shipment.findById(shipment._id));
   res.status(200).json({ success: true, shipment: populated });
 });
@@ -403,41 +444,22 @@ export const updateShipmentStatus = catchAsyncErrors(async (req, res, next) => {
   logActivity(shipment, "Status Updated", req.user, previousStatus, status);
   await shipment.save();
 
-  // ─── Sync tracking info to Order once shipment is active ───────────────
-  const TRACKING_ACTIVE_STATUSES = [
-    "Picked Up", "Dispatched", "In Transit", "Arrived at Hub",
-    "Out for Delivery", "Delivery Failed", "Delivery Attempted",
-    "Customer Unavailable", "Rescheduled", "Delivered",
-  ];
-
-  if (TRACKING_ACTIVE_STATUSES.includes(status) && shipment.order) {
-    const trackingId = shipment.trackingNumber || shipment.awbNumber || shipment.shipmentId;
-    // Build a simple tracking URL using courier name + tracking number if available
-    let trackingUrl = null;
-    if (shipment.courierName && shipment.trackingNumber) {
-      const courierName = shipment.courierName.toLowerCase();
-      if (courierName.includes("delhivery")) {
-        trackingUrl = `https://www.delhivery.com/track/package/${shipment.trackingNumber}`;
-      } else if (courierName.includes("bluedart")) {
-        trackingUrl = `https://www.bluedart.com/tracking?trackFor=0&track=${shipment.trackingNumber}`;
-      } else if (courierName.includes("dtdc")) {
-        trackingUrl = `https://www.dtdc.in/tracking.asp?podNo=${shipment.trackingNumber}`;
-      } else if (courierName.includes("ekart")) {
-        trackingUrl = `https://ekartlogistics.com/shipmenttrack/${shipment.trackingNumber}`;
-      }
-    }
-
-    await Order.findByIdAndUpdate(shipment.order, {
-      trackingId,
-      ...(trackingUrl ? { trackingUrl } : {}),
-      orderStatus: status === "Delivered" ? "Delivered" : "Shipped",
-      ...(status === "Delivered" ? { deliveredAt: statusDate } : {}),
-    });
-  }
-  // ────────────────────────────────────────────────────────────────────────
+  // Sync tracking info to linked Order
+  await syncTrackingToOrder(shipment, status);
 
   const populated = await populateShipment(Shipment.findById(shipment._id));
   res.status(200).json({ success: true, shipment: populated });
+});
+
+// ADD note
+// FORCE SYNC tracking from shipment → Order (backfill / manual trigger)
+export const syncTrackingNow = catchAsyncErrors(async (req, res, next) => {
+  const shipment = await Shipment.findById(req.params.id);
+  if (!shipment) return next(new ErrorHandler("Shipment not found", 404));
+
+  await syncTrackingToOrder(shipment);
+
+  res.status(200).json({ success: true, message: "Tracking synced to order successfully" });
 });
 
 // ADD note
