@@ -13,7 +13,8 @@ import {
     ListFilter,
     RotateCcw,
     Truck,
-    Coins
+    Coins,
+    Star
   } from "lucide-react";
   import { useState } from "react";
   import { useNavigate, useLocation, Link } from "react-router";
@@ -30,6 +31,7 @@ import {
       { id: "returns", label: "Returns", icon: RotateCcw, link: "/admin/returns" },
       { id: "shipping", label: "Shipping", icon: Truck, link: "/admin/shipping" },
       { id: "banners", label: "Banners", icon: ImageIcon },
+      { id: "reviews", label: "Reviews", icon: Star },
       { id: "ad-posters", label: "Ads Posters", icon: FileText },
       { id: "categories", label: "Categories", icon: Tags },
       { id: "pages", label: "Manage Terms & Conditions", icon: FileText },

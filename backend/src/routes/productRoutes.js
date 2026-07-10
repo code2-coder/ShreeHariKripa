@@ -38,22 +38,4 @@ router
   .put(isAuthenticatedUser, authorizeRoles("admin"), (req, res, next) => productController.updateProduct(req, res, next))
   .delete(isAuthenticatedUser, authorizeRoles("admin"), (req, res, next) => productController.deleteProduct(req, res, next));
 
-//
-// ⭐ REVIEW ROUTES (USER)
-//
-router
-  .route("/reviews")
-  .get(isAuthenticatedUser, (req, res, next) => productController.getProductReviews(req, res, next))
-  .put(isAuthenticatedUser, (req, res, next) => productController.createProductReview(req, res, next));
-
-//
-// 👑 ADMIN REVIEW DELETE
-//
-router.delete(
-  "/admin/reviews",
-  isAuthenticatedUser,
-  authorizeRoles("admin"),
-  (req, res, next) => productController.deleteReview(req, res, next)
-);
-
 export default router;

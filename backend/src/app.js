@@ -25,6 +25,7 @@ import attributeRoutes from "./routes/attributeRoutes.js";
 import returnRoutes from "./routes/returnRoutes.js";
 import shipmentRoutes from "./routes/shipmentRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 import pageRoutes from "./routes/pageRoutes.js";
 import currencySettingRoutes from "./routes/currencySettingRoutes.js";
 import rateLimit from "express-rate-limit";
@@ -142,6 +143,7 @@ app.use("/api/v1", attributeRoutes);
 app.use("/api/v1", returnRoutes);
 app.use("/api/v1", shipmentRoutes);
 app.use("/api/v1", uploadRoutes);
+app.use("/api/v1", reviewRoutes);
 app.use("/api/v1", pageRoutes);
 app.use("/api/v1", currencySettingRoutes);
 

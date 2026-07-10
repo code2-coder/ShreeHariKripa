@@ -34,6 +34,7 @@ import { CollectionCard } from "../components/CollectionCard";
 import { useCurrency } from "../context/CurrencyContext";
 import { PackagingInfo } from "../components/ShippingAndPackaging";
 import { getPackagingText } from "../api/shippingService";
+import ProductReviewsSection from "../components/reviews/ProductReviewsSection";
 
 export function ProductDetails() {
   const { id } = useParams();
@@ -106,10 +107,7 @@ export function ProductDetails() {
     return url;
   };
 
-  // Review states
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewComment, setReviewComment] = useState("");
-  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  // Review states are handled by ProductReviewsSection
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -183,39 +181,7 @@ export function ProductDetails() {
     }
   );
 
-  const submitReview = async () => {
-    if (!user) return toast.error("Please login to submit a review");
-    if (!reviewComment.trim()) return toast.error("Please write a review comment");
-
-    try {
-      setIsSubmittingReview(true);
-      await api.put("/reviews", {
-        rating: reviewRating,
-        comment: reviewComment,
-        productId: product._id
-      });
-      toast.success("Review submitted successfully");
-
-      // Refresh strictly the product to pull the new review block
-      const { data } = await api.get(`/products/${id}`);
-      setProduct(data.product);
-      setReviewComment("");
-      setReviewRating(5); // Reset to 5 stars
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to submit review");
-    } finally {
-      setIsSubmittingReview(false);
-    }
-  };
-
-  // Calculate rating stats
-  const ratingsCount = [0, 0, 0, 0, 0];
-  product?.reviews?.forEach(r => {
-    if (r.rating >= 1 && r.rating <= 5) {
-      ratingsCount[5 - r.rating]++;
-    }
-  });
-  const totalReviews = product?.reviews?.length || 0;
+  // Review methods and stats are handled by ProductReviewsSection
 
   const specificationEntries = [
     { label: "Product Type", value: product?.productType },
@@ -868,144 +834,7 @@ export function ProductDetails() {
           );
         })()}
 
-        {/* CUSTOMER REVIEWS SECTION - Polished */}
-        <div id="reviews" className="max-w-5xl mx-auto mb-24 animate-fade-in-up" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
-          <div className="mb-12">
-            <h2 className="text-xl lg:text-2xl font-black text-obsidian uppercase tracking-[0.2em] mb-4">Client Perspectives</h2>
-            <div className="h-1.5 w-12 bg-[#B8934E] rounded-full"></div>
-
-            <div className="flex items-center mt-6 space-x-4">
-              <div className="flex text-[#B8934E]">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`w-6 h-6 ${i < Math.round(product.ratings || 0) ? "fill-current" : "text-gray-200 fill-current"}`} />
-                ))}
-              </div>
-              <span className="text-2xl font-serif text-obsidian font-bold">{product.ratings?.toFixed(1) || "0.0"} <span className="text-gray-400 text-lg font-medium">/ 5.0</span></span>
-              <span className="text-gray-300 text-xl">|</span>
-              <span className="text-xs font-black text-gray-500 uppercase tracking-widest">{totalReviews} reviews</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
-            {/* Rating Breakdown */}
-            <div className="lg:col-span-4 lg:pr-8 h-fit">
-              <h3 className="text-xs font-bold text-obsidian uppercase tracking-[0.2em] mb-6 pb-4 border-b border-gray-100">Rating Distribution</h3>
-              <div className="space-y-4">
-                {ratingsCount.map((count, i) => {
-                  const stars = 5 - i;
-                  const percentage = totalReviews === 0 ? 0 : Math.round((count / totalReviews) * 100);
-                  return (
-                    <div key={stars} className="flex items-center space-x-4">
-                      <span className="text-xs font-bold text-gray-500 uppercase tracking-widest w-16">{stars} Stars</span>
-                      <div className="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-obsidian transition-all duration-1000"
-                          style={{ width: `${percentage}%` }}
-                        />
-                      </div>
-                      <span className="text-xs font-bold text-obsidian w-10 text-right">{percentage}%</span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="mt-12 pt-8 border-t border-gray-100">
-                <p className="text-base text-gray-500 font-serif italic leading-relaxed">
-                  "Exquisite craftsmanship and unparalleled elegance."
-                </p>
-              </div>
-            </div>
-
-            {/* Reviews List */}
-            <div className="lg:col-span-8 lg:pl-10 lg:border-l border-gray-100">
-              <div className="space-y-0">
-                {product.reviews && product.reviews.length > 0 ? (
-                  product.reviews.map((review, idx) => (
-                    <div key={review._id} className="py-8 border-b border-gray-100 last:border-0 animate-fade-in-up" style={{ animationDelay: `${0.2 + idx * 0.1}s`, animationFillMode: 'both' }}>
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <p className="text-sm font-bold text-obsidian uppercase tracking-wide">{review.user?.name || "Verified Client"}</p>
-                          <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider">
-                            {new Date(review.createdAt).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
-                          </p>
-                        </div>
-                        <div className="flex text-obsidian">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className={`w-3.5 h-3.5 ${i < review.rating ? "fill-current" : "text-gray-200 fill-current"}`} />
-                          ))}
-                        </div>
-                      </div>
-                      <p className="text-sm font-medium text-gray-800 leading-relaxed">"{review.comment}"</p>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-16">
-                    <div className="w-12 h-px bg-gray-200 mx-auto mb-6"></div>
-                    <h3 className="text-sm font-bold text-obsidian uppercase tracking-[0.2em] mb-3">No perspectives yet</h3>
-                    <p className="text-xs text-gray-500 font-medium mb-6 uppercase tracking-widest">Be the pioneer who sets the standard.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* MODERN REVIEW SUBMISSION FORM */}
-        <div className="max-w-5xl mx-auto mb-20 border-t border-gray-100 pt-16">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-sm font-bold text-obsidian uppercase tracking-[0.2em] mb-4">Share Your Perspective</h2>
-            <div className="h-px w-12 bg-gray-200 mx-auto mb-10"></div>
-
-            {!user ? (
-              <div className="py-6">
-                <p className="text-gray-500 font-medium mb-6 text-xs uppercase tracking-widest">Sign in to leave a verified review.</p>
-                <button onClick={() => navigate("/login")} className="px-10 py-3.5 bg-obsidian text-white text-[10px] uppercase tracking-[0.2em] font-bold hover:bg-black rounded shadow-sm hover:shadow-md transition-all duration-300">
-                  Sign In
-                </button>
-              </div>
-            ) : (
-              <div className="text-left space-y-8">
-                <div className="flex flex-col items-center">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Select Rating</label>
-                  <div className="flex space-x-3">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => setReviewRating(s)}
-                        className="focus:outline-none transition-transform hover:scale-110 active:scale-90"
-                      >
-                        <Star className={`w-6 h-6 stroke-1 ${s <= reviewRating ? "text-obsidian fill-current" : "text-gray-200"}`} />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Your thoughts</label>
-                  <textarea
-                    value={reviewComment}
-                    onChange={e => setReviewComment(e.target.value)}
-                    rows="4"
-                    className="w-full bg-transparent border-b border-gray-200 py-3 text-obsidian placeholder:text-gray-300 focus:outline-none focus:border-obsidian transition-colors text-sm font-medium resize-none"
-                    placeholder="Describe your experience with this piece..."
-                  />
-                </div>
-
-                <button
-                  onClick={submitReview}
-                  disabled={isSubmittingReview}
-                  className="w-full py-4 bg-obsidian text-white text-[10px] uppercase tracking-[0.2em] font-bold hover:bg-black disabled:bg-gray-100 disabled:text-gray-400 transition-all flex items-center justify-center"
-                >
-                  {isSubmittingReview ? "Processing..." : "Submit Review"}
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+        <ProductReviewsSection productId={id} />
 
         {/* Mobile sticky Add-to-Cart (shows on small screens) */}
         {product && displayStock > 0 && (
