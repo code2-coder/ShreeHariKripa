@@ -475,16 +475,8 @@ export function ProductsTab({ products, setProducts, categories, setCategories, 
                               {/* Content Section */}
                               <div className="p-5 flex-1 flex flex-col bg-white">
                                  <h4 className="font-bold text-gray-900 text-[15px] mb-1.5 line-clamp-2 leading-tight" title={product.name}>{product.name}</h4>
-                                 <div className="flex items-center justify-between mb-4">
+                                 <div className="mb-4">
                                     <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest font-mono">SKU: {product._id.substring(product._id.length - 8)}</p>
-                                    <select
-                                       value={product.status || "draft"}
-                                       onChange={(e) => handleQuickStatusChange(product._id, e.target.value)}
-                                       className="text-[11px] font-bold px-2.5 py-1 rounded-xl bg-gray-50 border border-gray-200 text-gray-700 focus:outline-none cursor-pointer hover:bg-gray-100 hover:text-gray-900 transition-all font-sans shadow-sm"
-                                    >
-                                       <option value="draft">Draft</option>
-                                       <option value="published">Published</option>
-                                    </select>
                                  </div>
                                  
                                  {product.variants && product.variants.length > 0 && (

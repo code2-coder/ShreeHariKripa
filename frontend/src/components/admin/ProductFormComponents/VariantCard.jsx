@@ -225,7 +225,7 @@ export default function VariantCard({ index, field = {}, attributes, onCreateAtt
   return (
     <div className="space-y-6">
       {/* General Settings */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-6 border-b border-gray-100">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-6 border-b border-gray-100">
         <div>
           <label className="block text-xs font-bold text-gray-700 mb-1.5">Variant / Color Name *</label>
           <input {...register(`variants.${index}.variantName`, { required: true })} defaultValue={field.variantName} placeholder="e.g. Midnight Black" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-gray-900 outline-none" />
@@ -243,10 +243,6 @@ export default function VariantCard({ index, field = {}, attributes, onCreateAtt
             onEditAttr={onEditAttr}
             onDeleteAttr={onDeleteAttr}
           />
-        </div>
-        <div>
-          <label className="block text-xs font-bold text-gray-700 mb-1.5">SKU Prefix</label>
-          <input {...register(`variants.${index}.skuPrefix`)} defaultValue={field.skuPrefix} placeholder="e.g. BLK" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-gray-900 outline-none" />
         </div>
       </div>
 

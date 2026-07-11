@@ -80,12 +80,39 @@ export class ProductService {
     return product;
   }
 
+  async _processMediaArray(mediaArray, type = "image") {
+    if (!mediaArray || !Array.isArray(mediaArray)) return [];
+    const uploadPromises = mediaArray.map(async (media) => {
+      if (typeof media === "string" && media.startsWith(`data:${type}`)) {
+        const res = await UploadService.uploadMedia(media, { type, folder: "shreeharikripa/products" });
+        return { public_id: res.public_id, url: res.url };
+      }
+      if (typeof media === "object" && media.public_id && media.url) {
+        return { public_id: media.public_id, url: media.url };
+      }
+      return null;
+    });
+    const results = await Promise.all(uploadPromises);
+    return results.filter(Boolean);
+  }
+
   async createProduct(productData, userId) {
     productData.user = userId;
     productData.status = productData.status || "draft";
     if (productData.features) {
       productData.features = this.sanitizeFeatures(productData.features);
     }
+    
+    productData.images = await this._processMediaArray(productData.images, "image");
+    productData.videos = await this._processMediaArray(productData.videos, "video");
+    
+    if (productData.variants && Array.isArray(productData.variants)) {
+      for (const variant of productData.variants) {
+        variant.images = await this._processMediaArray(variant.images, "image");
+        variant.videos = await this._processMediaArray(variant.videos, "video");
+      }
+    }
+
     return ProductRepository.create(productData);
   }
 
@@ -99,16 +126,15 @@ export class ProductService {
       updateData.status = updateData.status || "draft";
     }
 
-    const { images, videos } = updateData;
+    const { images, videos, variants } = updateData;
 
-    // Handle Cloudinary Image Updates
+    // Process Root Images
     if (images !== undefined) {
       const uploadedImages = Array.isArray(images) ? images : [images];
       const existingPublicIdsToKeep = uploadedImages
         .filter(img => typeof img === "object" && img.public_id)
         .map(img => img.public_id);
 
-      // Delete removed images from Cloudinary
       await Promise.all(
         product.images.map(img => {
           if (img.public_id && !existingPublicIdsToKeep.includes(img.public_id)) {
@@ -119,32 +145,16 @@ export class ProductService {
           return Promise.resolve();
         })
       );
-
-      // Upload new images to Cloudinary (if they are base64 strings)
-      const imageUploadPromises = uploadedImages.map(img => {
-        if (typeof img === "string" && img.startsWith("data:image")) {
-          return UploadService.uploadMedia(img, { type: "image", folder: "shreeharikripa/products" });
-        }
-        return Promise.resolve(img);
-      });
-
-      const uploadResults = await Promise.all(imageUploadPromises);
-      updateData.images = uploadResults
-        .map(res => {
-          if (res && res.url) return { public_id: res.public_id, url: res.url };
-          return res;
-        })
-        .filter(Boolean);
+      updateData.images = await this._processMediaArray(uploadedImages, "image");
     }
 
-    // Handle Cloudinary Video Updates
+    // Process Root Videos
     if (videos !== undefined) {
       const uploadedVideos = Array.isArray(videos) ? videos : [videos];
       const existingPublicIdsToKeep = uploadedVideos
         .filter(vid => typeof vid === "object" && vid.public_id)
         .map(vid => vid.public_id);
 
-      // Delete removed videos
       await Promise.all(
         product.videos.map(vid => {
           if (vid.public_id && !existingPublicIdsToKeep.includes(vid.public_id)) {
@@ -155,22 +165,19 @@ export class ProductService {
           return Promise.resolve();
         })
       );
-
-      // Upload new videos
-      const videoUploadPromises = uploadedVideos.map(vid => {
-        if (typeof vid === "string" && vid.startsWith("data:video")) {
-          return UploadService.uploadMedia(vid, { type: "video", folder: "shreeharikripa/products" });
-        }
-        return Promise.resolve(vid);
-      });
-
-      const uploadResults = await Promise.all(videoUploadPromises);
-      updateData.videos = uploadResults
-        .map(res => {
-          if (res && res.url) return { public_id: res.public_id, url: res.url };
-          return res;
-        })
-        .filter(Boolean);
+      updateData.videos = await this._processMediaArray(uploadedVideos, "video");
+    }
+    
+    // Process Variants Images/Videos
+    if (variants !== undefined && Array.isArray(variants)) {
+      // NOTE: We don't automatically delete old variant images from Cloudinary here 
+      // because tracking nested public_ids for deletions can be complex. 
+      // They are just overwritten in DB and uploaded if new.
+      for (const variant of variants) {
+        variant.images = await this._processMediaArray(variant.images, "image");
+        variant.videos = await this._processMediaArray(variant.videos, "video");
+      }
+      updateData.variants = variants;
     }
 
     if (updateData.features !== undefined) {

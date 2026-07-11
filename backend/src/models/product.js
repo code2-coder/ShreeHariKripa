@@ -174,7 +174,7 @@ const productSchema = new mongoose.Schema(
             price: { type: Number, required: true },
             comparePrice: { type: Number },
             stock: { type: Number, required: true, default: 0 },
-            sku: { type: String, required: true },
+            sku: { type: String },
             weight: { type: Number },
             barcode: { type: String },
             status: { type: String, enum: ["Active", "Draft"], default: "Active" }
@@ -188,7 +188,7 @@ const productSchema = new mongoose.Schema(
         price: { type: Number, required: true },
         comparePrice: { type: Number },
         stock: { type: Number, required: true, default: 0 },
-        sku: { type: String, required: true },
+        sku: { type: String },
         weight: { type: Number },
         barcode: { type: String },
         status: { type: String, enum: ["Active", "Draft"], default: "Active" }

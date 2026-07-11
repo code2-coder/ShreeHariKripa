@@ -12,11 +12,10 @@ export default function NestedSizeManager({ variantIndex }) {
   const addSize = () => {
     append({
       size: '',
-      price: 0,
-      comparePrice: 0,
-      stock: 0,
-      sku: '',
-      weight: 0,
+      price: '',
+      comparePrice: '',
+      stock: '',
+      weight: '',
       barcode: '',
       status: 'Active'
     });
@@ -27,7 +26,7 @@ export default function NestedSizeManager({ variantIndex }) {
       <div className="flex justify-between items-center mb-4">
         <div>
           <h5 className="text-sm font-bold text-gray-800">Size & Pricing Variations</h5>
-          <p className="text-xs text-gray-500">Manage prices, stock, and SKUs per size for this color.</p>
+          <p className="text-xs text-gray-500">Manage prices, stock, and weight per size for this color.</p>
         </div>
         <button type="button" onClick={addSize} className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-xs font-bold transition-colors">
           <Plus className="w-3.5 h-3.5" /> Add Size
@@ -47,7 +46,6 @@ export default function NestedSizeManager({ variantIndex }) {
                   <th className="p-3">Size *</th>
                   <th className="p-3">Price *</th>
                   <th className="p-3">Stock *</th>
-                  <th className="p-3">SKU *</th>
                   <th className="p-3">Weight(g)</th>
                   <th className="p-3 w-12 text-center"></th>
                 </tr>
@@ -81,14 +79,7 @@ export default function NestedSizeManager({ variantIndex }) {
                         className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm focus:ring-1 focus:ring-gray-900 outline-none" 
                       />
                     </td>
-                    <td className="p-2 align-top">
-                      <input 
-                        {...register(`variants.${variantIndex}.sizes.${sizeIndex}.sku`, { required: true })} 
-                        defaultValue={field.sku}
-                        placeholder="SKU" 
-                        className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm focus:ring-1 focus:ring-gray-900 outline-none uppercase" 
-                      />
-                    </td>
+
                     <td className="p-2 align-top">
                       <input 
                         type="number" 

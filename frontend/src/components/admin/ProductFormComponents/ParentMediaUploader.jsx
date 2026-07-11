@@ -7,9 +7,7 @@ export default function ParentMediaUploader() {
   const { watch, setValue, register, formState: { errors } } = useFormContext();
   
   useEffect(() => {
-    register("images", {
-      validate: (val) => (val && val.length > 0) || "At least one product image is required in Parent Media"
-    });
+    register("images");
   }, [register]);
 
   const images = watch('images') || [];

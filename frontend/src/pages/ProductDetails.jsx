@@ -465,11 +465,25 @@ export function ProductDetails() {
                 {product.variants && product.variants.length > 0 && (
                   <div>
                     <label className="block text-sm uppercase tracking-[0.2em] font-black text-gray-800 mb-4">
-                      Select Color: <span className={`ml-1 font-serif text-base capitalize ${getVariantAccent(selectedColorVariant?.variantName).text}`}>{selectedColorVariant?.variantName}</span>
+                      {(() => {
+                        const selectedDisplayColor = selectedColorVariant?.colorHex || getVariantAccent(selectedColorVariant?.variantName).swatch;
+                        const isWhite = selectedDisplayColor && ['#ffffff', '#fff', 'white', '#f8fafc'].includes(selectedDisplayColor.toLowerCase());
+                        return (
+                          <>
+                            Select Color: <span 
+                              className={`ml-2 font-serif text-xl font-bold capitalize ${isWhite ? 'bg-black px-2 py-0.5 rounded' : ''}`} 
+                              style={{ color: selectedDisplayColor }}
+                            >
+                              {selectedColorVariant?.variantName}
+                            </span>
+                          </>
+                        );
+                      })()}
                     </label>
                     <div className="flex flex-wrap gap-4">
                       {product.variants.map((variant, idx) => {
                         const accent = getVariantAccent(variant.variantName);
+                        const displayColor = variant.colorHex || accent.swatch;
                         return (
                           <button
                             key={variant._id || idx}
@@ -484,14 +498,14 @@ export function ProductDetails() {
                                 setSelectedSize(null);
                               }
                             }}
-                            className={`group relative flex flex-col items-center p-1.5 rounded transition-all duration-300 w-20 hover:-translate-y-1 hover:shadow-lg ${selectedColorVariant?._id === variant._id || (selectedColorVariant && selectedColorVariant.variantName === variant.variantName)
+                            className={`group relative flex flex-col items-center p-2 rounded transition-all duration-300 w-28 hover:-translate-y-1 hover:shadow-lg ${selectedColorVariant?._id === variant._id || (selectedColorVariant && selectedColorVariant.variantName === variant.variantName)
                               ? `border-none ring-2 ring-obsidian ring-offset-2 bg-gray-50 shadow-md`
                               : `border-transparent bg-white hover:bg-gray-50`
                               }`}
                             title={variant.variantName}
                           >
-                            <div className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full border border-white/70 shadow-sm" style={{ backgroundColor: accent.swatch }} />
-                            <div className="relative w-12 h-12 mb-1.5 rounded-lg overflow-hidden border border-gray-100 bg-[#FAF9F6]">
+                            <div className="absolute right-3 top-2 h-3 w-3 rounded-full border border-white/70 shadow-sm z-10" style={{ backgroundColor: displayColor }} />
+                            <div className="relative w-16 h-16 mb-2 rounded-lg overflow-hidden border border-gray-100 bg-[#FAF9F6]">
                               <img
                                 src={getOptimizedUrl((variant.images && variant.images[0]?.url) || (product?.images && product.images[0]?.url) || product?.image, 150) || "https://placehold.co/150x150"}
                                 alt={variant.variantName}
@@ -499,10 +513,14 @@ export function ProductDetails() {
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                             </div>
-                            <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-[0.1em] text-center truncate w-full px-1 transition-colors duration-300 ${selectedColorVariant?._id === variant._id || (selectedColorVariant && selectedColorVariant.variantName === variant.variantName) ? accent.text : "text-gray-800 group-hover:text-[#B8934E]"}`}>
+                            <span 
+                              className={`text-xs sm:text-sm font-black uppercase tracking-[0.1em] text-center truncate w-full px-1 transition-colors duration-300 text-gray-900 group-hover:text-black`}
+                            >
                               {variant.variantName}
                             </span>
-                            <span className={`text-[10px] font-serif font-semibold mt-0.5 ${accent.text}`}>
+                            <span 
+                              className={`text-sm font-serif font-semibold mt-0.5 text-gray-900`}
+                            >
                               {getFormattedPrice(variant.sizes?.[0]?.price || 0)}
                             </span>
                           </button>

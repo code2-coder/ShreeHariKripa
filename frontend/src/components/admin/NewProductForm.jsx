@@ -117,6 +117,11 @@ export default function NewProductForm({
       return;
     }
 
+    // Filter out empty features
+    if (data.features) {
+      data.features = data.features.filter(f => typeof f === 'string' && f.trim().length > 0);
+    }
+
     // Clean payload based on productType toggled mode
     if (productType === 'single') {
       data.variants = [];
@@ -156,8 +161,10 @@ export default function NewProductForm({
       if (data.variants && data.variants.length > 0) {
         let minPrice = Infinity;
         let totalStock = 0;
+        let hasSizes = false;
         data.variants.forEach(variant => {
           if (variant.sizes && variant.sizes.length > 0) {
+            hasSizes = true;
             variant.sizes.forEach(size => {
               const price = Number(size.price) || 0;
               const stock = Number(size.stock) || 0;
@@ -166,7 +173,18 @@ export default function NewProductForm({
             });
           }
         });
-        data.price = minPrice === Infinity ? 0 : minPrice;
+        
+        if (!hasSizes) {
+          toast.error("Please add at least one size with pricing to your variants");
+          return;
+        }
+        
+        if (minPrice === Infinity || minPrice <= 0) {
+          toast.error("At least one variant size must have a price greater than 0");
+          return;
+        }
+
+        data.price = minPrice;
         data.stock = totalStock;
 
         // Copy first variant's images to root for legacy components (like ProductCard)
@@ -174,16 +192,8 @@ export default function NewProductForm({
           data.images = data.variants[0].images;
         }
       } else {
-        if (data.price === undefined || data.price === '' || isNaN(data.price) || Number(data.price) <= 0) {
-          toast.error("Base Selling Price is required and must be greater than 0");
-          return;
-        }
-        if (data.stock === undefined || data.stock === '' || isNaN(data.stock) || Number(data.stock) < 0) {
-          toast.error("Stock is required and must be 0 or more");
-          return;
-        }
-        data.price = Number(data.price) || 0;
-        data.stock = Number(data.stock) || 0;
+        toast.error("Please add at least one variant");
+        return;
       }
     }
 
@@ -221,8 +231,38 @@ export default function NewProductForm({
       </div>
 
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
-          <ProductInformation categories={categories} />
+        <form onSubmit={methods.handleSubmit(onSubmit, (errors) => {
+          console.error("Form validation errors:", errors);
+          const getErrorPaths = (errObj, prefix = '') => {
+            let paths = [];
+            for (let key in errObj) {
+              if (key === 'ref' || key === 'type' || key === 'message') continue;
+              const currentPath = prefix ? `${prefix}.${key}` : key;
+              if (errObj[key] && errObj[key].type) {
+                paths.push(errObj[key].message || currentPath);
+              } else if (errObj[key] && typeof errObj[key] === 'object') {
+                paths = paths.concat(getErrorPaths(errObj[key], currentPath));
+              }
+            }
+            return paths;
+          };
+          
+          let paths = getErrorPaths(errors);
+          paths = paths.map(p => {
+             if (p.includes('variants.')) return 'Variant fields (Name, Sizes, Price, or SKU)';
+             if (p === 'name') return 'Product Name';
+             if (p === 'category') return 'Category';
+             if (p === 'status') return 'Status';
+             if (p === 'price') return 'Base Selling Price';
+             if (p === 'stock') return 'Stock';
+             if (p === 'description') return 'Description';
+             return p;
+          });
+          
+          const uniquePaths = [...new Set(paths)];
+          toast.error(`Missing or invalid fields: ${uniquePaths.join(', ')}`);
+        })} className="space-y-6">
+          <ProductInformation categories={categories} productType={productType} />
 
           {/* Product Type Toggle */}
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">

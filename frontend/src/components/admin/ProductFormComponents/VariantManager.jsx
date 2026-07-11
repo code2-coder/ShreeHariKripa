@@ -16,7 +16,6 @@ export default function VariantManager({ openSizeModal, attributes = [], onCreat
     append({
       variantName: '',
       colorHex: '#000000',
-      skuPrefix: '',
       images: [],
       videos: [],
       sizes: []
@@ -30,7 +29,6 @@ export default function VariantManager({ openSizeModal, attributes = [], onCreat
       ...v,
       id: undefined, // remove id to avoid key conflicts
       variantName: v.variantName + ' (Copy)',
-      skuPrefix: v.skuPrefix + '-COPY',
       sizes: v.sizes ? v.sizes.map(s => ({ ...s, id: undefined })) : []
     });
     setExpandedIndex(fields.length);
@@ -60,7 +58,6 @@ export default function VariantManager({ openSizeModal, attributes = [], onCreat
                 <div className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded-full border border-gray-300" style={{ backgroundColor: field.colorHex || '#ccc' }}></div>
                   <h4 className="font-bold text-gray-900">{field.variantName || `Variant ${index + 1}`}</h4>
-                  {field.skuPrefix && <span className="text-xs bg-white border border-gray-200 px-2 py-1 rounded text-gray-600">{field.skuPrefix}</span>}
                 </div>
                 <div className="flex items-center gap-3">
                   <button type="button" onClick={(e) => { e.stopPropagation(); duplicateVariant(index); }} className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors" title="Duplicate">

@@ -12,11 +12,10 @@ export default function RootSizeManager() {
   const addSize = () => {
     append({
       size: '',
-      price: 0,
-      comparePrice: 0,
-      stock: 0,
-      sku: '',
-      weight: 0,
+      price: '',
+      comparePrice: '',
+      stock: '',
+      weight: '',
       barcode: '',
       status: 'Active'
     });
@@ -27,7 +26,7 @@ export default function RootSizeManager() {
       <div className="flex justify-between items-center mb-4">
         <div>
           <h3 className="text-lg font-bold text-gray-900">Size & Pricing Variations</h3>
-          <p className="text-xs text-gray-500">Manage prices, stock, and SKUs per size for this product.</p>
+          <p className="text-xs text-gray-500">Manage prices, stock, and weight per size for this product.</p>
         </div>
         <button 
           type="button" 
@@ -51,7 +50,6 @@ export default function RootSizeManager() {
                   <th className="p-3">Size *</th>
                   <th className="p-3">Price *</th>
                   <th className="p-3">Stock *</th>
-                  <th className="p-3">SKU *</th>
                   <th className="p-3">Weight(g)</th>
                   <th className="p-3 w-12 text-center"></th>
                 </tr>
@@ -85,14 +83,7 @@ export default function RootSizeManager() {
                         className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm focus:ring-1 focus:ring-gray-900 outline-none" 
                       />
                     </td>
-                    <td className="p-2 align-top">
-                      <input 
-                        {...register(`sizes.${sizeIndex}.sku`, { required: true })} 
-                        defaultValue={field.sku}
-                        placeholder="SKU" 
-                        className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm focus:ring-1 focus:ring-gray-900 outline-none uppercase" 
-                      />
-                    </td>
+
                     <td className="p-2 align-top">
                       <input 
                         type="number" 

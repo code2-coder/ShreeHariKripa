@@ -210,20 +210,6 @@ export default function ProductFeatures() {
           <Plus className="w-4 h-4" />
           Add Feature
         </button>
-        <button
-          type="button"
-          onClick={() => {
-            if (validateFeatures()) {
-              const trimmed = trimAll(features);
-              const filtered = trimmed.filter(f => f.length > 0);
-              syncForm(filtered);
-              toast.success("Features saved");
-            }
-          }}
-          className="px-4 py-2 text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-xl transition-all"
-        >
-          Save
-        </button>
         <span className="text-xs text-gray-400 ml-auto">{features.filter(f => f.trim()).length} feature{(features.filter(f => f.trim()).length !== 1) ? 's' : ''}</span>
       </div>
     </div>
