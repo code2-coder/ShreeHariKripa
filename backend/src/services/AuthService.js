@@ -9,7 +9,7 @@ export class AuthService {
   // Helper to generate access token
   generateAccessToken(userId) {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-      expiresIn: "15m", // 15 mins short-lived
+      expiresIn: "7d", // 7 days long-lived
     });
   }
 
