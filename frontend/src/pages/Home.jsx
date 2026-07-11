@@ -304,7 +304,7 @@ export function Home() {
 
             <motion.div layout className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
               <AnimatePresence mode="popLayout">
-                {(showAll ? products : products.slice(0, 8)).map((product, idx) => (
+                {(showAll ? products : products.slice(0, 40)).map((product, idx) => (
                   <motion.div
                     layout
                     initial={{ opacity: 0, y: 40 }}
@@ -325,7 +325,7 @@ export function Home() {
               </div>
             )}
 
-            {!showAll && products.length > 8 && (
+            {!showAll && products.length > 40 && (
               <div className="mt-12 flex justify-center">
                 <button
                   onClick={() => setShowAll(true)}
