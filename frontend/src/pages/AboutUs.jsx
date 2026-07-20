@@ -12,11 +12,16 @@ export function AboutUs() {
         
         {/* HERO SECTION */}
         <section className="relative w-full py-20 lg:py-32 flex items-center justify-center overflow-hidden bg-[#1A050A]">
-           {/* Background Overlay */}
-           <div className="absolute inset-0 z-0 opacity-40">
+           {/* Background Overlay with slow zoom animation */}
+           <motion.div 
+             initial={{ scale: 1 }}
+             animate={{ scale: 1.1 }}
+             transition={{ duration: 20, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
+             className="absolute inset-0 z-0 opacity-40"
+           >
               <img src="https://res.cloudinary.com/dg4pix57t/image/upload/v1782091008/shreeharikripa/products/va4itpnjtej851hy1fit.jpg" alt="Background" className="w-full h-full object-cover object-center filter brightness-50" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1A050A] via-[#1A050A]/80 to-[#1A050A]/30"></div>
-           </div>
+           </motion.div>
            
            <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
               <motion.div 
@@ -65,12 +70,20 @@ export function AboutUs() {
                  <img src="/images/jewelry_craftsmanship.png" alt="Master Craftsman" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)]" />
                  <div className="absolute inset-0 bg-gradient-to-t from-[#2D0D18]/60 via-transparent to-transparent opacity-80"></div>
                  
-                 {/* Floating Badge */}
-                 <div className="absolute bottom-8 left-8 sm:bottom-10 sm:left-10 bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-2xl border border-white/50 max-w-[280px]">
+                 {/* Floating Badge with continuous floating animation */}
+                 <motion.div 
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute bottom-8 left-8 sm:bottom-10 sm:left-10 bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-2xl border border-white/50 max-w-[280px]"
+                 >
                     <div className="flex items-center gap-3 mb-3">
-                       <div className="w-10 h-10 rounded-full bg-[#1A050A] flex items-center justify-center">
+                       <motion.div 
+                         animate={{ rotate: [0, 15, -15, 0] }}
+                         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                         className="w-10 h-10 rounded-full bg-[#1A050A] flex items-center justify-center"
+                       >
                           <Sparkles className="w-4 h-4 text-[#B8934E]" />
-                       </div>
+                       </motion.div>
                        <div>
                           <h4 className="text-[#2D0D18] font-serif text-[18px] font-bold leading-tight">Master<br/>Craftsmanship</h4>
                        </div>
@@ -78,7 +91,7 @@ export function AboutUs() {
                     <p className="text-[#5C1A1B]/70 text-[12px] leading-relaxed font-medium">
                        Preserving the ancient techniques of Indian luxury jewelry making.
                     </p>
-                 </div>
+                 </motion.div>
               </motion.div>
 
               {/* Content Side */}
@@ -124,10 +137,18 @@ export function AboutUs() {
 
         {/* OUR VALUES SECTION */}
         <section className="bg-[#1A050A] py-24 lg:py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-           {/* Decorative Background */}
+           {/* Decorative Background with floating blobs */}
            <div className="absolute inset-0 pointer-events-none opacity-50">
-              <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#800000] rounded-full mix-blend-screen filter blur-[150px] opacity-[0.15]"></div>
-              <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-[#B8934E] rounded-full mix-blend-screen filter blur-[150px] opacity-[0.1]"></div>
+              <motion.div 
+                animate={{ x: [0, 50, 0], y: [0, -50, 0] }}
+                transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#800000] rounded-full mix-blend-screen filter blur-[150px] opacity-[0.15]"
+              ></motion.div>
+              <motion.div 
+                animate={{ x: [0, -50, 0], y: [0, 50, 0] }}
+                transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-[#B8934E] rounded-full mix-blend-screen filter blur-[150px] opacity-[0.1]"
+              ></motion.div>
            </div>
            
            <div className="max-w-[1400px] mx-auto relative z-10">
@@ -156,10 +177,13 @@ export function AboutUs() {
                     className="group relative bg-gradient-to-b from-[#2D0D18]/80 to-[#1A050A] p-10 lg:p-12 rounded-[2.5rem] border border-[#B8934E]/20 hover:border-[#B8934E]/50 transition-colors duration-500 overflow-hidden"
                  >
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
-                       <Sparkles className="w-32 h-32 text-white" />
+                       <motion.div animate={{ scale: [1, 1.05, 1], rotate: [0, 5, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}>
+                         <Sparkles className="w-32 h-32 text-white" />
+                       </motion.div>
                     </div>
-                    <div className="w-16 h-16 bg-[#B8934E]/10 rounded-2xl border border-[#B8934E]/20 flex items-center justify-center mb-8 group-hover:bg-[#B8934E]/20 transition-colors duration-500">
-                       <Sparkles className="w-7 h-7 text-[#B8934E]" />
+                    <div className="relative w-16 h-16 bg-[#B8934E]/10 rounded-2xl border border-[#B8934E]/20 flex items-center justify-center mb-8 group-hover:bg-[#B8934E]/20 transition-colors duration-500">
+                       <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-0 rounded-2xl bg-[#B8934E]/20 filter blur-md"></motion.div>
+                       <Sparkles className="w-7 h-7 text-[#B8934E] relative z-10" />
                     </div>
                     <h3 className="text-[24px] lg:text-[28px] font-serif text-white mb-4 tracking-wide group-hover:text-[#DDA7A5] transition-colors duration-500">Purity</h3>
                     <p className="text-[#E5E5E5]/70 font-light text-[15px] leading-relaxed">
@@ -176,10 +200,13 @@ export function AboutUs() {
                     className="group relative bg-gradient-to-b from-[#2D0D18]/80 to-[#1A050A] p-10 lg:p-12 rounded-[2.5rem] border border-[#B8934E]/20 hover:border-[#B8934E]/50 transition-colors duration-500 overflow-hidden"
                  >
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
-                       <Heart className="w-32 h-32 text-white" />
+                       <motion.div animate={{ scale: [1, 1.05, 1], rotate: [0, -5, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}>
+                         <Heart className="w-32 h-32 text-white" />
+                       </motion.div>
                     </div>
-                    <div className="w-16 h-16 bg-[#B8934E]/10 rounded-2xl border border-[#B8934E]/20 flex items-center justify-center mb-8 group-hover:bg-[#B8934E]/20 transition-colors duration-500">
-                       <Heart className="w-7 h-7 text-[#B8934E]" />
+                    <div className="relative w-16 h-16 bg-[#B8934E]/10 rounded-2xl border border-[#B8934E]/20 flex items-center justify-center mb-8 group-hover:bg-[#B8934E]/20 transition-colors duration-500">
+                       <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute inset-0 rounded-2xl bg-[#B8934E]/20 filter blur-md"></motion.div>
+                       <Heart className="w-7 h-7 text-[#B8934E] relative z-10" />
                     </div>
                     <h3 className="text-[24px] lg:text-[28px] font-serif text-white mb-4 tracking-wide group-hover:text-[#DDA7A5] transition-colors duration-500">Artistry</h3>
                     <p className="text-[#E5E5E5]/70 font-light text-[15px] leading-relaxed">
@@ -196,10 +223,13 @@ export function AboutUs() {
                     className="group relative bg-gradient-to-b from-[#2D0D18]/80 to-[#1A050A] p-10 lg:p-12 rounded-[2.5rem] border border-[#B8934E]/20 hover:border-[#B8934E]/50 transition-colors duration-500 overflow-hidden"
                  >
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
-                       <ShieldCheck className="w-32 h-32 text-white" />
+                       <motion.div animate={{ scale: [1, 1.05, 1], rotate: [0, 5, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}>
+                         <ShieldCheck className="w-32 h-32 text-white" />
+                       </motion.div>
                     </div>
-                    <div className="w-16 h-16 bg-[#B8934E]/10 rounded-2xl border border-[#B8934E]/20 flex items-center justify-center mb-8 group-hover:bg-[#B8934E]/20 transition-colors duration-500">
-                       <ShieldCheck className="w-7 h-7 text-[#B8934E]" />
+                    <div className="relative w-16 h-16 bg-[#B8934E]/10 rounded-2xl border border-[#B8934E]/20 flex items-center justify-center mb-8 group-hover:bg-[#B8934E]/20 transition-colors duration-500">
+                       <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute inset-0 rounded-2xl bg-[#B8934E]/20 filter blur-md"></motion.div>
+                       <ShieldCheck className="w-7 h-7 text-[#B8934E] relative z-10" />
                     </div>
                     <h3 className="text-[24px] lg:text-[28px] font-serif text-white mb-4 tracking-wide group-hover:text-[#DDA7A5] transition-colors duration-500">Trust</h3>
                     <p className="text-[#E5E5E5]/70 font-light text-[15px] leading-relaxed">
