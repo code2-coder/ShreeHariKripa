@@ -1,87 +1,213 @@
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { motion } from "motion/react";
+import { Sparkles, ShieldCheck, Heart } from 'lucide-react';
 
 export function AboutUs() {
   return (
-    <div className="min-h-screen bg-[#FAF9F6] font-sans selection:bg-[#B8934E]/30">
+    <div className="min-h-screen bg-[#FAF9F6] font-sans selection:bg-[#B8934E]/30 overflow-hidden">
       <Header />
 
-      <main className="pb-20 pt-[160px] lg:pt-[180px]">
-        {/* Hero Section */}
-        <section className="relative px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto mb-24">
-          <div className="text-center max-w-3xl mx-auto pt-16">
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-serif text-obsidian tracking-wide mb-6"
-            >
-              Our <span className="text-[#B8934E] italic">Story</span>
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-gray-600 font-light leading-relaxed text-lg"
-            >
-              Crafting timeless masterpieces that celebrate tradition, modern elegance, and life's most precious moments.
-            </motion.p>
-          </div>
-        </section>
-
-        {/* Content Section */}
-        <section className="px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto grid md:grid-cols-2 gap-16 items-center mb-24">
-          <motion.div 
-             initial={{ opacity: 0, x: -30 }}
-             whileInView={{ opacity: 1, x: 0 }}
-             viewport={{ once: true }}
-             className="space-y-6"
-          >
-            <h2 className="text-3xl font-serif text-obsidian tracking-wide">A Legacy of Excellence</h2>
-            <p className="text-gray-600 font-light leading-relaxed">
-              Founded on the principles of exceptional craftsmanship and uncompromising quality, Shree Hari Kripa has been a trusted name in luxury jewellery for generations. 
-            </p>
-            <p className="text-gray-600 font-light leading-relaxed">
-              Our artisans blend ancient techniques with contemporary design to create pieces that are not just accessories, but heirlooms meant to be passed down through time.
-            </p>
-          </motion.div>
-          <motion.div 
-             initial={{ opacity: 0, scale: 0.95 }}
-             whileInView={{ opacity: 1, scale: 1 }}
-             viewport={{ once: true }}
-             className="relative h-[500px] rounded-3xl overflow-hidden shadow-2xl"
-          >
-            <img src="/occ_wedding.png" alt="Craftsmanship" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-[#B8934E]/10 mix-blend-overlay"></div>
-          </motion.div>
-        </section>
-
-        {/* Values Section */}
-        <section className="bg-white py-24 px-4 sm:px-6 lg:px-8 border-y border-gray-100">
-          <div className="max-w-[1200px] mx-auto text-center mb-16">
-            <h2 className="text-3xl font-serif text-obsidian tracking-wide mb-4">Our Values</h2>
-            <p className="text-gray-500 max-w-2xl mx-auto font-light">The pillars that define every piece we create.</p>
-          </div>
-          <div className="max-w-[1200px] mx-auto grid sm:grid-cols-3 gap-12">
-            {[
-              { title: "Purity", desc: "Sourcing only the finest, ethically mined materials to ensure absolute brilliance." },
-              { title: "Artistry", desc: "Every design is brought to life by master craftsmen with decades of experience." },
-              { title: "Trust", desc: "A commitment to transparency, ensuring peace of mind with every purchase." }
-            ].map((val, i) => (
+      <main className="pb-0 pt-[120px] lg:pt-[140px]">
+        
+        {/* HERO SECTION */}
+        <section className="relative w-full py-20 lg:py-32 flex items-center justify-center overflow-hidden bg-[#1A050A]">
+           {/* Background Overlay */}
+           <div className="absolute inset-0 z-0 opacity-40">
+              <img src="https://res.cloudinary.com/dg4pix57t/image/upload/v1782091008/shreeharikripa/products/va4itpnjtej851hy1fit.jpg" alt="Background" className="w-full h-full object-cover object-center filter brightness-50" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1A050A] via-[#1A050A]/80 to-[#1A050A]/30"></div>
+           </div>
+           
+           <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
               <motion.div 
-                key={val.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="text-center p-8 bg-[#FAF9F6] rounded-2xl border border-gray-100"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="flex items-center justify-center gap-4 mb-6"
               >
-                <div className="w-12 h-12 mx-auto bg-[#B8934E]/10 text-[#B8934E] rounded-full flex items-center justify-center mb-6 text-xl">✦</div>
-                <h3 className="text-xl font-bold text-obsidian mb-3 tracking-wide">{val.title}</h3>
-                <p className="text-gray-600 font-light text-sm">{val.desc}</p>
+                <div className="h-[1px] w-12 sm:w-20 bg-gradient-to-r from-transparent to-[#B8934E]"></div>
+                <span className="text-[#B8934E] text-[10px] sm:text-xs font-bold uppercase tracking-[0.4em]">Shree Hari Kripa</span>
+                <div className="h-[1px] w-12 sm:w-20 bg-gradient-to-l from-transparent to-[#B8934E]"></div>
               </motion.div>
-            ))}
-          </div>
+              
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-5xl md:text-7xl lg:text-8xl font-serif text-white tracking-tight mb-8 leading-[1.1]"
+              >
+                Our <span className="text-[#DDA7A5] italic font-light">Story</span>
+              </motion.h1>
+              
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.5 }}
+                className="text-white/80 font-light leading-relaxed text-[16px] sm:text-[18px] max-w-2xl mx-auto tracking-wide"
+              >
+                Crafting timeless masterpieces that celebrate tradition, modern elegance, and life's most precious moments.
+              </motion.p>
+           </div>
+        </section>
+
+        {/* LEGACY OF EXCELLENCE SECTION */}
+        <section className="py-24 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
+           <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+              
+              {/* Image Side */}
+              <motion.div 
+                 initial={{ opacity: 0, x: -40 }}
+                 whileInView={{ opacity: 1, x: 0 }}
+                 viewport={{ once: true, margin: "-100px" }}
+                 transition={{ duration: 1, ease: "easeOut" }}
+                 className="relative rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_rgba(45,13,24,0.15)] group aspect-[4/5] lg:aspect-auto lg:h-[650px]"
+              >
+                 <img src="/images/jewelry_craftsmanship.png" alt="Master Craftsman" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)]" />
+                 <div className="absolute inset-0 bg-gradient-to-t from-[#2D0D18]/60 via-transparent to-transparent opacity-80"></div>
+                 
+                 {/* Floating Badge */}
+                 <div className="absolute bottom-8 left-8 sm:bottom-10 sm:left-10 bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-2xl border border-white/50 max-w-[280px]">
+                    <div className="flex items-center gap-3 mb-3">
+                       <div className="w-10 h-10 rounded-full bg-[#1A050A] flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-[#B8934E]" />
+                       </div>
+                       <div>
+                          <h4 className="text-[#2D0D18] font-serif text-[18px] font-bold leading-tight">Master<br/>Craftsmanship</h4>
+                       </div>
+                    </div>
+                    <p className="text-[#5C1A1B]/70 text-[12px] leading-relaxed font-medium">
+                       Preserving the ancient techniques of Indian luxury jewelry making.
+                    </p>
+                 </div>
+              </motion.div>
+
+              {/* Content Side */}
+              <motion.div 
+                 initial={{ opacity: 0, x: 40 }}
+                 whileInView={{ opacity: 1, x: 0 }}
+                 viewport={{ once: true, margin: "-100px" }}
+                 transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+                 className="flex flex-col justify-center"
+              >
+                 <div className="flex items-center gap-4 mb-6">
+                    <span className="text-[#B8934E] text-[11px] font-bold uppercase tracking-[0.3em]">Heritage & Tradition</span>
+                 </div>
+                 
+                 <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-[#2D0D18] mb-8 leading-[1.1] tracking-tight">
+                    A Legacy of <br/><span className="italic text-[#DDA7A5] font-light">Excellence</span>
+                 </h2>
+                 
+                 <div className="space-y-6 text-[#5C1A1B]/70 font-light text-[16px] sm:text-[17px] leading-loose">
+                    <p>
+                       Founded on the principles of exceptional craftsmanship and uncompromising quality, Shree Hari Kripa has been a trusted name in luxury jewellery for generations. 
+                    </p>
+                    <p>
+                       Our artisans blend ancient techniques with contemporary design to create pieces that are not just accessories, but heirlooms meant to be passed down through time. Every curve, every setting, and every polish is a testament to our enduring commitment to perfection.
+                    </p>
+                 </div>
+                 
+                 <div className="mt-12 flex items-center gap-8">
+                    <div className="flex flex-col">
+                       <span className="text-[#2D0D18] font-serif text-[32px] sm:text-[40px] leading-none mb-1">100+</span>
+                       <span className="text-[#B8934E] text-[10px] uppercase font-bold tracking-widest">Master Artisans</span>
+                    </div>
+                    <div className="w-[1px] h-12 bg-[#B8934E]/20"></div>
+                    <div className="flex flex-col">
+                       <span className="text-[#2D0D18] font-serif text-[32px] sm:text-[40px] leading-none mb-1">3</span>
+                       <span className="text-[#B8934E] text-[10px] uppercase font-bold tracking-widest">Generations</span>
+                    </div>
+                 </div>
+              </motion.div>
+
+           </div>
+        </section>
+
+        {/* OUR VALUES SECTION */}
+        <section className="bg-[#1A050A] py-24 lg:py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+           {/* Decorative Background */}
+           <div className="absolute inset-0 pointer-events-none opacity-50">
+              <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#800000] rounded-full mix-blend-screen filter blur-[150px] opacity-[0.15]"></div>
+              <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-[#B8934E] rounded-full mix-blend-screen filter blur-[150px] opacity-[0.1]"></div>
+           </div>
+           
+           <div className="max-w-[1400px] mx-auto relative z-10">
+              <motion.div 
+                 initial={{ opacity: 0, y: 30 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true }}
+                 transition={{ duration: 0.8 }}
+                 className="text-center max-w-3xl mx-auto mb-20"
+              >
+                 <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-white tracking-tight mb-6">
+                    Our <span className="italic text-[#DDA7A5] font-light">Values</span>
+                 </h2>
+                 <p className="text-[#E5E5E5]/70 font-light text-[16px] sm:text-[18px] leading-relaxed max-w-xl mx-auto">
+                    The pillars that define every masterpiece we create, guiding our dedication to you.
+                 </p>
+              </motion.div>
+
+              <div className="grid sm:grid-cols-3 gap-8 lg:gap-12">
+                 {/* VALUE 1: Purity */}
+                 <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.1 }}
+                    className="group relative bg-gradient-to-b from-[#2D0D18]/80 to-[#1A050A] p-10 lg:p-12 rounded-[2.5rem] border border-[#B8934E]/20 hover:border-[#B8934E]/50 transition-colors duration-500 overflow-hidden"
+                 >
+                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
+                       <Sparkles className="w-32 h-32 text-white" />
+                    </div>
+                    <div className="w-16 h-16 bg-[#B8934E]/10 rounded-2xl border border-[#B8934E]/20 flex items-center justify-center mb-8 group-hover:bg-[#B8934E]/20 transition-colors duration-500">
+                       <Sparkles className="w-7 h-7 text-[#B8934E]" />
+                    </div>
+                    <h3 className="text-[24px] lg:text-[28px] font-serif text-white mb-4 tracking-wide group-hover:text-[#DDA7A5] transition-colors duration-500">Purity</h3>
+                    <p className="text-[#E5E5E5]/70 font-light text-[15px] leading-relaxed">
+                       Sourcing only the finest, ethically mined materials to ensure absolute brilliance in every creation.
+                    </p>
+                 </motion.div>
+
+                 {/* VALUE 2: Artistry */}
+                 <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="group relative bg-gradient-to-b from-[#2D0D18]/80 to-[#1A050A] p-10 lg:p-12 rounded-[2.5rem] border border-[#B8934E]/20 hover:border-[#B8934E]/50 transition-colors duration-500 overflow-hidden"
+                 >
+                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
+                       <Heart className="w-32 h-32 text-white" />
+                    </div>
+                    <div className="w-16 h-16 bg-[#B8934E]/10 rounded-2xl border border-[#B8934E]/20 flex items-center justify-center mb-8 group-hover:bg-[#B8934E]/20 transition-colors duration-500">
+                       <Heart className="w-7 h-7 text-[#B8934E]" />
+                    </div>
+                    <h3 className="text-[24px] lg:text-[28px] font-serif text-white mb-4 tracking-wide group-hover:text-[#DDA7A5] transition-colors duration-500">Artistry</h3>
+                    <p className="text-[#E5E5E5]/70 font-light text-[15px] leading-relaxed">
+                       Every design is brought to life by master craftsmen with decades of experience and an eye for perfection.
+                    </p>
+                 </motion.div>
+
+                 {/* VALUE 3: Trust */}
+                 <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.3 }}
+                    className="group relative bg-gradient-to-b from-[#2D0D18]/80 to-[#1A050A] p-10 lg:p-12 rounded-[2.5rem] border border-[#B8934E]/20 hover:border-[#B8934E]/50 transition-colors duration-500 overflow-hidden"
+                 >
+                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
+                       <ShieldCheck className="w-32 h-32 text-white" />
+                    </div>
+                    <div className="w-16 h-16 bg-[#B8934E]/10 rounded-2xl border border-[#B8934E]/20 flex items-center justify-center mb-8 group-hover:bg-[#B8934E]/20 transition-colors duration-500">
+                       <ShieldCheck className="w-7 h-7 text-[#B8934E]" />
+                    </div>
+                    <h3 className="text-[24px] lg:text-[28px] font-serif text-white mb-4 tracking-wide group-hover:text-[#DDA7A5] transition-colors duration-500">Trust</h3>
+                    <p className="text-[#E5E5E5]/70 font-light text-[15px] leading-relaxed">
+                       A commitment to transparency, ensuring absolute peace of mind and satisfaction with every purchase.
+                    </p>
+                 </motion.div>
+              </div>
+           </div>
         </section>
 
       </main>
