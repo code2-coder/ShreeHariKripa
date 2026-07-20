@@ -131,7 +131,7 @@ export function BestSellers() {
              </div>
 
              <div className="flex-1 w-full relative flex items-center justify-center pt-16 pb-4">
-                 <img src="https://res.cloudinary.com/dg4pix57t/image/upload/v1781105671/shreeharikripa/products/zfxxljdhbsh3gmruw459.webp" alt="Deity Naths & Kundals" className="w-[85%] h-[85%] object-cover rounded-2xl drop-shadow-[0_15px_30px_rgba(0,0,0,0.15)] group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]" />
+                 <img src="/images/deity_naths_kundals.png" alt="Deity Naths & Kundals" className="w-[85%] h-[85%] object-cover rounded-2xl drop-shadow-[0_15px_30px_rgba(0,0,0,0.15)] group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]" />
               </div>
               <div className="p-8 pt-0 relative z-10 text-center">
                 <h4 className="font-serif text-[24px] text-[#2D0D18] mb-2">Deity Naths & Kundals</h4>
@@ -264,7 +264,7 @@ export function BestSellers() {
                       <Heart className="w-5 h-5 text-[#DDA7A5]" />
                    </div>
                     <div className="relative w-full aspect-square bg-[#FAF9F6] flex items-center justify-center p-6">
-                      <img src="https://res.cloudinary.com/dg4pix57t/image/upload/v1781105671/shreeharikripa/products/zfxxljdhbsh3gmruw459.webp" alt="Deity Naths & Kundals" className="w-[85%] h-[85%] object-cover rounded-2xl drop-shadow-lg" />
+                      <img src="/images/deity_naths_kundals.png" alt="Deity Naths & Kundals" className="w-[85%] h-[85%] object-cover rounded-2xl drop-shadow-lg" />
                     </div>
                     <div className="p-8 text-center bg-white">
                       <h4 className="font-serif text-[26px] font-bold text-[#2D0D18] mb-2">Deity Naths & Kundals</h4>
