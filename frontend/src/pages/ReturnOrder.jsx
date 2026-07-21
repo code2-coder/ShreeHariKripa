@@ -3,9 +3,9 @@ import { useParams, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { MediaUploader } from "../components/returns/MediaUploader";
 import api from "../api/axios";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import { PackageOpen, ShieldAlert, ArrowLeft, RefreshCw, CreditCard, Repeat } from "lucide-react";
+import { Header } from "../components/layout/Header";
+import { Footer } from "../components/layout/Footer";
+import { ShieldAlert, ArrowLeft, RefreshCw, CreditCard, Repeat } from "lucide-react";
 import { useSearchParams } from "react-router";
 
 export const ReturnOrder = () => {

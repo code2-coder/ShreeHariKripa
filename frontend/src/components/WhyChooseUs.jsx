@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Gem, Award, Truck, ShieldCheck, RefreshCcw, Users, CheckCircle2, Star, Sparkles } from 'lucide-react';
+import { Gem, Award, Truck, ShieldCheck, RefreshCcw, Users, Star, Sparkles } from 'lucide-react';
 
 const features = [
   {

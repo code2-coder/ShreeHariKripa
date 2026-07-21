@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Sparkles, ArrowRight, Crown } from 'lucide-react';
+import { ArrowRight, Crown } from 'lucide-react';
 import { useNavigate } from 'react-router';
 
 export function HeritageCollection() {

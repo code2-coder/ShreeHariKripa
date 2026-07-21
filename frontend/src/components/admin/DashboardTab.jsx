@@ -3,14 +3,10 @@ import {
   ShoppingBag, 
   IndianRupee, 
   TrendingUp, 
-  Clock, 
   CheckCircle,
   Calendar,
   Download,
-  AlertCircle,
-  TrendingDown,
-  Activity,
-  Award
+  AlertCircle
 } from "lucide-react";
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 

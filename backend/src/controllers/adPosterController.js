@@ -1,6 +1,6 @@
 import AdPoster from "../models/adPosterModel.js";
 import cloudinary from "../utils/cloudinary.js";
-import { clearCache } from "../middlewares/cache.js";
+import { clearCache } from "../middleware/cache.js";
 
 // CREATE AdPoster
 export const createAdPoster = async (req, res) => {

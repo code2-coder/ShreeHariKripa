@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
+import { Header } from "../components/layout/Header";
+import { Footer } from "../components/layout/Footer";
 import { useAuth } from "../context/AuthContext";
 import { 
    User, Mail, Shield, Package, ShoppingCart, 
    Edit3, Save, X, Phone, MapPin, LogOut, 
-   ChevronRight, Camera, Map, RotateCcw, Bell
+   ChevronRight, Camera, Map, RotateCcw
 } from "lucide-react";
 import { toast } from "sonner";
 import api from "../api/axios";

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams, Link } from "react-router";
-import { Header } from "../components/Header";
+import { Header } from "../components/layout/Header";
 import { ProductCard } from "../components/ProductCard";
 import { useCategory } from "../context/CategoryContext";
 import { useCurrency } from "../context/CurrencyContext";
@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { lazy, Suspense } from "react";
-const Footer = lazy(() => import("../components/Footer").then(m => ({ default: m.Footer })));
+const Footer = lazy(() => import("../components/layout/Footer").then(m => ({ default: m.Footer })));
 
 // Predefined filters
 const PRICE_RANGES = [

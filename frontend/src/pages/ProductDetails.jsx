@@ -1,10 +1,9 @@
 import { useParams, useNavigate } from "react-router";
 import { useState, useEffect, useRef } from "react";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
+import { Header } from "../components/layout/Header";
+import { Footer } from "../components/layout/Footer";
 import api from "../api/axios";
 import {
-  ShoppingCart,
   ShoppingBag,
   Minus,
   Plus,
@@ -13,9 +12,6 @@ import {
   Package,
   Truck,
   Star,
-  User,
-  ThumbsUp,
-  Calendar,
   Play,
   X,
   MapPin,

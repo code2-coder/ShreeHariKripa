@@ -1,7 +1,7 @@
 import { useNavigate, Link } from "react-router";
 import { useState, useEffect, lazy, Suspense } from "react";
-import { Trash2, Plus, Minus, ShoppingBag, ShieldCheck, Truck, CreditCard, Banknote, ChevronRight, Loader2, ArrowRight, MapPin } from "lucide-react";
-import { Header } from "../components/Header";
+import { Trash2, Plus, Minus, ShoppingBag, ShieldCheck, CreditCard, Banknote, ChevronRight, Loader2, ArrowRight, MapPin } from "lucide-react";
+import { Header } from "../components/layout/Header";
 import { useSEO } from "../hooks/useSEO";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
@@ -16,7 +16,7 @@ import {
 } from "../components/ShippingAndPackaging";
 import { convertPrice, DEFAULT_CURRENCY, formatPrice } from "../utils/currencyUtils";
 
-const Footer = lazy(() => import("../components/Footer").then(m => ({ default: m.Footer })));
+const Footer = lazy(() => import("../components/layout/Footer").then(m => ({ default: m.Footer })));
 
 export function Cart() {
   const { cart, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();

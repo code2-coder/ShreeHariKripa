@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
 import { Plus, Trash2, Copy, ChevronDown, ChevronUp } from 'lucide-react';
 import VariantCard from './VariantCard';

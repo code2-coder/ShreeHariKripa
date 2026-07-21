@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { 
-   Plus, Trash2, Edit2, Image as ImageIcon, ChevronLeft, ChevronRight, Download, FolderTree, Tags
+import { Trash2, Edit2, Image as ImageIcon, FolderTree, Tags
 } from "lucide-react";
 import { toast } from "sonner";
 import api from "../../api/axios";

@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Search, Plus, Edit, Trash2, Image as ImageIcon, X, LayoutGrid, List, Tag, AlertCircle, Film, Package } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Image as ImageIcon, Package } from "lucide-react";
 import { toast } from "sonner";
 import api from "../../api/axios";
-import { CreatableSelect } from "./CreatableSelect";
 import NewProductForm from "./NewProductForm";
 
 export function ProductsTab({ products, setProducts, categories, setCategories, sizes, setSizes, attributes = [], setAttributes, formatINR, globalSearch, setGlobalSearch }) {

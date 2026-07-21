@@ -1,6 +1,5 @@
 import React from 'react';
 import { Save } from 'lucide-react';
-import { useFormContext } from 'react-hook-form';
 
 export default function StickySaveBar({ onCancel, isSaving }) {
   return (

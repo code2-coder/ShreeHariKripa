@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 import api from "../api/axios";
 import { ReturnStatusBadge } from "../components/returns/ReturnStatusBadge";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
+import { Header } from "../components/layout/Header";
+import { Footer } from "../components/layout/Footer";
 import { Search, Filter, ChevronLeft, ChevronRight, PackageX } from "lucide-react";
 
 export const ReturnsList = () => {

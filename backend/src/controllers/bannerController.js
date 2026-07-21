@@ -1,6 +1,6 @@
 import Banner from "../models/bannerModel.js";
 import cloudinary from "../utils/cloudinary.js";
-import { clearCache } from "../middlewares/cache.js";
+import { clearCache } from "../middleware/cache.js";
 
 // CREATE Banner
 export const createBanner = async (req, res) => {

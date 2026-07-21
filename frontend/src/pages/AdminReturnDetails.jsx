@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { ReturnStatusBadge } from "../components/returns/ReturnStatusBadge";
 import { ReturnTimeline } from "../components/returns/ReturnTimeline";
 import { AdminSidebar } from "../components/admin/AdminSidebar";
-import { ArrowLeft, User, Package, HelpCircle, FileText, Camera, Video, Calendar, IndianRupee, Save, Truck, CreditCard, RefreshCw } from "lucide-react";
+import { ArrowLeft, User, Package, HelpCircle, FileText, Camera, Video, Calendar, Save, Truck, CreditCard, RefreshCw } from "lucide-react";
 
 export const AdminReturnDetails = () => {
   const { id } = useParams();

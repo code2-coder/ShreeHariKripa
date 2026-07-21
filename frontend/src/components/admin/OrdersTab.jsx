@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { 
-  Search, Trash2, ChevronDown, ChevronUp, MapPin, Phone, Mail, Package, AlertCircle, 
+  Search, Trash2, ChevronDown, ChevronUp, MapPin, Phone, Package, 
   Download, Truck, CheckCircle2, AlertTriangle, Filter, ChevronLeft, ChevronRight, X
 } from "lucide-react";
-import api from "../../api/axios";
-import { toast } from "sonner";
 
 export function OrdersTab({ orders, formatINR, updateOrderStatus, handleDeleteOrder, globalSearch, setGlobalSearch }) {
   const [expandedOrder, setExpandedOrder] = useState(null);

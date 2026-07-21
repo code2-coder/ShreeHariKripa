@@ -6,17 +6,13 @@ import {
   Star,
   CheckCircle,
   Image as ImageIcon,
-  Video as VideoIcon,
   X,
   Play,
   Filter,
-  ArrowUpDown,
   Upload,
   MessageSquare,
-  ChevronDown,
   Loader2,
-  Trash2,
-  AlertCircle
+  Trash2
 } from "lucide-react";
 
 // Client-side image compression utility

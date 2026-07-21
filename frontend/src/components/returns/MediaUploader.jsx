@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { UploadCloud, X, Film, Image as ImageIcon } from "lucide-react";
+import { X, Film, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export const MediaUploader = ({ onUpload, type = "video", maxFiles = 1, maxSizeMB = 200 }) => {

@@ -9,8 +9,6 @@ import {
     X,
     FileText,
     Settings,
-    Plus,
-    ListFilter,
     RotateCcw,
     Truck,
     Coins,

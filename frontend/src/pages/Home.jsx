@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router";
-import { Header } from "../components/Header";
+import { Header } from "../components/layout/Header";
 import { lazy, Suspense } from "react";
-const Footer = lazy(() => import("../components/Footer").then(m => ({ default: m.Footer })));
+const Footer = lazy(() => import("../components/layout/Footer").then(m => ({ default: m.Footer })));
 import { BannerCarousel } from "../components/BannerCarousel";
 import { AdPostersDisplay } from "../components/AdPostersDisplay";
 import { ProductCard } from "../components/ProductCard";

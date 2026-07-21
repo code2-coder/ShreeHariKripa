@@ -4,8 +4,8 @@ import { toast } from "sonner";
 import api from "../api/axios";
 import { ReturnStatusBadge } from "../components/returns/ReturnStatusBadge";
 import { ReturnTimeline } from "../components/returns/ReturnTimeline";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
+import { Header } from "../components/layout/Header";
+import { Footer } from "../components/layout/Footer";
 import { ArrowLeft, Package, CreditCard, RefreshCw, CalendarDays, FileText } from "lucide-react";
 
 export const ReturnDetails = () => {

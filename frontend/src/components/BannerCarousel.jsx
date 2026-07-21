@@ -65,7 +65,7 @@ export function BannerCarousel({ banners }) {
               sizes="100vw"
               alt={banner.title || `Banner ${index + 1}`}
               loading={index === 0 ? "eager" : "lazy"}
-              fetchpriority={index === 0 ? "high" : "auto"}
+              fetchPriority={index === 0 ? "high" : "auto"}
               decoding="async"
               className={`w-full h-full object-cover object-center transition-transform ease-in-out will-change-transform ${
                 isActive ? "scale-105 duration-[8000ms]" : "scale-100 duration-1000"
