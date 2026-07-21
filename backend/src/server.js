@@ -18,12 +18,13 @@ process.on("uncaughtException", (err) => {
   }, 200);
 });
 
-import app from "./app.js";
+import app, { setDbReady } from "./app.js";
 import { connectDB } from "./database/connection.js";
 import { seedPages } from "./database/pageSeeder.js";
 
-// Connect to MongoDB
+// Connect to MongoDB — mark app ready only after DB is connected
 connectDB().then(() => {
+  setDbReady();
   seedPages();
 });
 

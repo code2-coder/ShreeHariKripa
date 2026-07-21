@@ -230,12 +230,23 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Add Indexes for performance
-productSchema.index({ category: 1 });
+// ── Performance Indexes ──────────────────────────────────────────────────────
+// Category + price for sorted category browsing
 productSchema.index({ category: 1, price: 1 });
+// Individual field indexes for filter combinations
 productSchema.index({ price: 1 });
-productSchema.index({ createdAt: -1 });
-productSchema.index({ name: 'text' });
 productSchema.index({ status: 1 });
+productSchema.index({ material: 1 });
+productSchema.index({ stoneType: 1 });
+productSchema.index({ color: 1 });
+productSchema.index({ stock: 1 });
+productSchema.index({ homeSection: 1 });
+productSchema.index({ createdAt: -1 });
+productSchema.index({ ratings: -1 });
+productSchema.index({ numOfReviews: -1 });
+// Compound: status + category (most common shop query)
+productSchema.index({ status: 1, category: 1, price: 1 });
+// Text index for keyword search across name, material, stoneType, color
+productSchema.index({ name: 'text', material: 'text', stoneType: 'text', color: 'text' });
 
 export default mongoose.model("Product", productSchema);

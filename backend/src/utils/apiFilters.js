@@ -2,155 +2,142 @@ class APIFilters {
     constructor(query, queryStr) {
         this.query = query;
         this.queryStr = queryStr;
+        this._andClauses = []; // Accumulate $and clauses to avoid overwrite conflicts
     }
 
-    // 🔍 SEARCH — regex for prefix matching (1–2 chars), $text for longer terms
+    // 🔍 SEARCH — regex across all searchable text fields
     search() {
         if (this.queryStr.keyword) {
             const kw = this.queryStr.keyword.trim();
             const regex = new RegExp(kw, 'i');
-            
-            // Build the base $or array for both modes
+
             const searchOrBlock = [
                 { name: { $regex: regex } },
                 { description: { $regex: regex } },
                 { material: { $regex: regex } },
-                { metalColor: { $regex: regex } },
                 { color: { $regex: regex } },
                 { stoneType: { $regex: regex } },
                 { features: { $regex: regex } },
-                { 'variants.sku': { $regex: regex } },
+                { 'variants.variantName': { $regex: regex } },
                 { 'variants.sizes.sku': { $regex: regex } },
                 { 'sizes.sku': { $regex: regex } },
-                { 'variants.colorName': { $regex: regex } }
             ];
 
-            // If we manually resolved category IDs matching this keyword in the service, inject them
+            // Category ObjectIds already resolved in ProductService
             if (this.queryStr.matchedCategories && this.queryStr.matchedCategories.length > 0) {
                 searchOrBlock.push({ category: { $in: this.queryStr.matchedCategories } });
             }
 
-            // Execute regex search for all inputs. 
-            // Avoid using $text inside $or unless ALL other fields in the $or array are fully indexed.
-            this.query = this.query.find({ $or: searchOrBlock });
+            this._andClauses.push({ $or: searchOrBlock });
         }
         return this;
     }
 
-    // 🎯 FILTER (price, ratings, category etc)
+    // 🎯 FILTERS — all filtering logic in one clean method
     filters() {
-        const queryCopy = { ...this.queryStr };
+        const filterObj = {};
 
-        // Remove fields that should not be strictly filtered
-        const removeFields = ["keyword", "page", "limit", "sort", "category", "sizes", "colors", "materials", "stoneTypes"];
-        removeFields.forEach((el) => delete queryCopy[el]);
-
-        // Advance filter
-        let queryStr = JSON.stringify(queryCopy);
-
-        // Convert to Mongo operators ($gt, $gte, etc)
-        queryStr = queryStr.replace(
-            /\b(gt|gte|lt|lte)\b/g,
-            (key) => `$${key}`
-        );
-
-        let filterObj = JSON.parse(queryStr);
-
-        // Handle category array
-        if (this.queryStr.category) {
-            const categories = this.queryStr.category.split(',').map(c => c.trim());
-            if (categories.length > 0 && categories[0] !== '') {
-                filterObj.category = { $in: categories };
-            }
+        // ── Price (bracket notation comes pre-parsed by Express as object) ──────
+        // Handle both price[gte] style (Express parsed) and flat string keys
+        const priceGte = this.queryStr['price[gte]'];
+        const priceLte = this.queryStr['price[lte]'];
+        if (priceGte !== undefined || priceLte !== undefined) {
+            filterObj.price = {};
+            if (priceGte) filterObj.price.$gte = Number(priceGte);
+            if (priceLte) filterObj.price.$lte = Number(priceLte);
         }
 
-        // Handle sizes array
-        if (this.queryStr.sizes) {
-            const sizes = this.queryStr.sizes.split(',').map(s => s.trim());
-            if (sizes.length > 0 && sizes[0] !== '') {
-                filterObj['$or'] = [
-                    { 'variants.sizes.size': { $in: sizes } },
-                    { 'sizes.size': { $in: sizes } }
-                ];
-            }
+        // ── Category (ObjectIds already resolved by service layer) ─────────────
+        // The service converts category names → ObjectIds before calling APIFilters
+        if (this.queryStr.resolvedCategoryIds && this.queryStr.resolvedCategoryIds.length > 0) {
+            filterObj.category = { $in: this.queryStr.resolvedCategoryIds };
         }
 
-        // Handle colors array
-        if (this.queryStr.colors) {
-            const colors = this.queryStr.colors.split(',').map(c => c.trim());
-            if (colors.length > 0 && colors[0] !== '') {
-                filterObj['variants.colorHex'] = { $in: colors };
-            }
-        }
-
-        // Handle materials array
+        // ── Material (case-insensitive, multi-select) ──────────────────────────
         if (this.queryStr.materials) {
-            const materials = this.queryStr.materials.split(',').map(m => m.trim());
-            if (materials.length > 0 && materials[0] !== '') {
-                filterObj.material = { $in: materials };
+            const materials = this.queryStr.materials.split(',').map(m => m.trim()).filter(Boolean);
+            if (materials.length > 0) {
+                filterObj.material = { $in: materials.map(m => new RegExp(`^${m}$`, 'i')) };
             }
         }
 
-        // Handle stoneTypes array
+        // ── Stone Type (case-insensitive, multi-select) ────────────────────────
         if (this.queryStr.stoneTypes) {
-            const stoneTypes = this.queryStr.stoneTypes.split(',').map(s => s.trim());
-            if (stoneTypes.length > 0 && stoneTypes[0] !== '') {
-                filterObj.stoneType = { $in: stoneTypes };
+            const stoneTypes = this.queryStr.stoneTypes.split(',').map(s => s.trim()).filter(Boolean);
+            if (stoneTypes.length > 0) {
+                filterObj.stoneType = { $in: stoneTypes.map(s => new RegExp(`^${s}$`, 'i')) };
             }
         }
 
-        // Handle inStock boolean
+        // ── Color — match color name string (NOT hex code) ─────────────────────
+        if (this.queryStr.colors) {
+            const colors = this.queryStr.colors.split(',').map(c => c.trim()).filter(Boolean);
+            if (colors.length > 0) {
+                filterObj.color = { $in: colors.map(c => new RegExp(`^${c}$`, 'i')) };
+            }
+        }
+
+        // ── Sizes (root sizes OR variant sizes — avoid $or overwrite via _andClauses) ─
+        if (this.queryStr.sizes) {
+            const sizes = this.queryStr.sizes.split(',').map(s => s.trim()).filter(Boolean);
+            if (sizes.length > 0) {
+                this._andClauses.push({
+                    $or: [
+                        { 'variants.sizes.size': { $in: sizes } },
+                        { 'sizes.size': { $in: sizes } }
+                    ]
+                });
+            }
+        }
+
+        // ── In Stock (root stock OR variant stock) ─────────────────────────────
         if (this.queryStr.inStock === 'true') {
-            filterObj.stock = { $gt: 0 };
+            this._andClauses.push({
+                $or: [
+                    { stock: { $gt: 0 } },
+                    { 'sizes.stock': { $gt: 0 } },
+                    { 'variants.sizes.stock': { $gt: 0 } }
+                ]
+            });
         }
 
-        this.query = this.query.find(filterObj);
+        // ── Merge all clauses ──────────────────────────────────────────────────
+        const allClauses = [];
+        if (Object.keys(filterObj).length > 0) allClauses.push(filterObj);
+        allClauses.push(...this._andClauses);
+
+        if (allClauses.length > 0) {
+            this.query = this.query.find({ $and: allClauses });
+        }
+
         return this;
     }
 
-    // 🔀 SORTING
+    // 🔀 SORTING — 10 sort modes
     sort() {
-        if (this.queryStr.sort) {
-            switch (this.queryStr.sort) {
-                case 'price_asc':
-                    this.query = this.query.sort({ price: 1 });
-                    break;
-                case 'price_desc':
-                    this.query = this.query.sort({ price: -1 });
-                    break;
-                case 'rating':
-                    this.query = this.query.sort({ ratings: -1 });
-                    break;
-                case 'newest':
-                    this.query = this.query.sort({ createdAt: -1 });
-                    break;
-                case 'popular':
-                    this.query = this.query.sort({ numOfReviews: -1 });
-                    break;
-                default:
-                    this.query = this.query.sort({ createdAt: -1 });
-                    break;
-            }
-        } else {
-            // Default sort if keyword exists and length > 2
-            if (this.queryStr.keyword && this.queryStr.keyword.length > 2) {
-               // Relevance sorting is handled in search() now via $text, but we removed select/sort from there.
-               // So we just sort by createdAt for now.
-               this.query = this.query.sort({ createdAt: -1 });
-            } else {
-               this.query = this.query.sort({ createdAt: -1 });
-            }
-        }
+        const sortMap = {
+            featured:    { homeSection: -1, createdAt: -1 },
+            newest:      { createdAt: -1 },
+            oldest:      { createdAt: 1 },
+            price_asc:   { price: 1 },
+            price_desc:  { price: -1 },
+            best_seller: { numOfReviews: -1, ratings: -1 },
+            rating:      { ratings: -1, numOfReviews: -1 },
+            name_asc:    { name: 1 },
+            name_desc:   { name: -1 },
+            popular:     { numOfReviews: -1 },
+        };
+
+        const sortKey = this.queryStr.sort || 'newest';
+        this.query = this.query.sort(sortMap[sortKey] || { createdAt: -1 });
         return this;
     }
 
-    // 📄 PAGINATION
-    pagination(resPerPage) {
-        const currentPage = Number(this.queryStr.page) || 1;
-        const limit = Number(this.queryStr.limit) || resPerPage;
-
+    // 📄 PAGINATION — safe defaults, max 100 per page
+    pagination(defaultPerPage = 12) {
+        const currentPage = Math.max(1, Number(this.queryStr.page) || 1);
+        const limit = Math.min(100, Number(this.queryStr.limit) || defaultPerPage);
         const skip = limit * (currentPage - 1);
-
         this.query = this.query.limit(limit).skip(skip);
         return this;
     }

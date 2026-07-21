@@ -3,6 +3,7 @@ import UploadService from "./UploadService.js";
 import APIFilters from "../utils/apiFilters.js";
 import Product from "../models/product.js";
 import Category from "../models/category.js";
+import mongoose from "mongoose";
 
 export class ProductService {
   sanitizeFeatures(features) {
@@ -18,9 +19,31 @@ export class ProductService {
   }
 
   async getProducts(queryStr) {
-    const resPerPage = 5;
+    const DEFAULT_PER_PAGE = 12;
 
-    // If there is a search keyword, find matching categories first
+    // ── Resolve category names → ObjectIds ─────────────────────────────────────
+    // The frontend sends category names (e.g. "Mukut,Earrings"). We must convert
+    // them to ObjectIds before passing to APIFilters, because the Product schema
+    // has category as an ObjectId ref.
+    if (queryStr.category) {
+      const categoryNames = queryStr.category.split(',').map(c => c.trim()).filter(Boolean);
+      
+      // Check if any value looks like an ObjectId already
+      const areObjectIds = categoryNames.every(n => mongoose.Types.ObjectId.isValid(n));
+      
+      if (!areObjectIds) {
+        // Resolve names → ObjectIds
+        const matched = await Category.find({
+          name: { $in: categoryNames.map(n => new RegExp(`^${n}$`, 'i')) }
+        }).select('_id').lean();
+        
+        queryStr.resolvedCategoryIds = matched.map(c => c._id);
+      } else {
+        queryStr.resolvedCategoryIds = categoryNames.map(id => new mongoose.Types.ObjectId(id));
+      }
+    }
+
+    // ── Keyword → category match ────────────────────────────────────────────────
     if (queryStr.keyword) {
       const regex = new RegExp(queryStr.keyword.trim(), 'i');
       const matchedCategories = await Category.find({ name: { $regex: regex } }).select('_id').lean();
@@ -29,27 +52,104 @@ export class ProductService {
       }
     }
 
-    // Create query
-    const baseQuery = Product.find({ status: "published" });
+    // ── Base query: published products only ─────────────────────────────────────
+    const baseFilter = { status: "published" };
+
+    // ── Paginated results ───────────────────────────────────────────────────────
+    const baseQuery = Product.find(baseFilter);
     const apiFilters = new APIFilters(baseQuery, queryStr)
       .search()
       .filters()
       .sort()
-      .pagination(resPerPage);
+      .pagination(DEFAULT_PER_PAGE);
 
     const products = await apiFilters.query
-      .select("name price description images video category ratings stock variants sizes numOfReviews homeSection features status")
+      .select("name price description images category ratings stock variants sizes numOfReviews homeSection features status color material stoneType")
       .populate("category", "name")
       .lean();
 
     products.forEach(p => { if (!p.features) p.features = []; });
 
-    const totalProducts = await Product.countDocuments({ status: "published" });
+    // ── Filtered total count (mirrors the same filters, without pagination) ──────
+    // Build the same filter conditions to get an accurate count
+    const countFilters = new APIFilters(Product.find(baseFilter), queryStr)
+      .search()
+      .filters();
+    
+    const filteredTotal = await Product.countDocuments(
+      countFilters.query.getFilter()
+    );
 
     return {
       products,
       count: products.length,
-      totalProducts
+      totalProducts: filteredTotal,
+      page: Number(queryStr.page) || 1,
+      perPage: Math.min(100, Number(queryStr.limit) || DEFAULT_PER_PAGE),
+    };
+  }
+
+  /**
+   * Returns dynamic filter options derived from actual published products.
+   * Single aggregation pipeline — efficient, no over-fetching.
+   */
+  async getFilterOptions() {
+    const [aggregateResult, categoryCounts] = await Promise.all([
+      // Distinct materials, stoneTypes, colors from published products
+      Product.aggregate([
+        { $match: { status: "published" } },
+        {
+          $group: {
+            _id: null,
+            materials:  { $addToSet: "$material" },
+            stoneTypes: { $addToSet: "$stoneType" },
+            colors:     { $addToSet: "$color" },
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            materials:  { $filter: { input: "$materials",  as: "v", cond: { $and: [{ $ne: ["$$v", null] }, { $ne: ["$$v", ""] }] } } },
+            stoneTypes: { $filter: { input: "$stoneTypes", as: "v", cond: { $and: [{ $ne: ["$$v", null] }, { $ne: ["$$v", ""] }] } } },
+            colors:     { $filter: { input: "$colors",     as: "v", cond: { $and: [{ $ne: ["$$v", null] }, { $ne: ["$$v", ""] }] } } },
+          }
+        }
+      ]),
+
+      // Product count per category
+      Product.aggregate([
+        { $match: { status: "published" } },
+        { $group: { _id: "$category", count: { $sum: 1 } } },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "_id",
+            foreignField: "_id",
+            as: "categoryInfo"
+          }
+        },
+        { $unwind: { path: "$categoryInfo", preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            _id: 1,
+            count: 1,
+            name: { $ifNull: ["$categoryInfo.name", "Uncategorised"] }
+          }
+        }
+      ])
+    ]);
+
+    const opts = aggregateResult[0] || { materials: [], stoneTypes: [], colors: [] };
+
+    return {
+      materials:  opts.materials.sort(),
+      stoneTypes: opts.stoneTypes.sort(),
+      colors:     opts.colors.sort(),
+      categoryCounts: categoryCounts.map(c => ({
+        _id:   c._id,
+        name:  c.name,
+        count: c.count,
+      })),
     };
   }
 
@@ -61,7 +161,6 @@ export class ProductService {
     products.forEach(p => { if (!p.features) p.features = []; });
     return products;
   }
-
 
   async getProductById(id) {
     const product = await ProductRepository.findById(id, {
@@ -102,10 +201,10 @@ export class ProductService {
     if (productData.features) {
       productData.features = this.sanitizeFeatures(productData.features);
     }
-    
+
     productData.images = await this._processMediaArray(productData.images, "image");
     productData.videos = await this._processMediaArray(productData.videos, "video");
-    
+
     if (productData.variants && Array.isArray(productData.variants)) {
       for (const variant of productData.variants) {
         variant.images = await this._processMediaArray(variant.images, "image");
@@ -128,7 +227,6 @@ export class ProductService {
 
     const { images, videos, variants } = updateData;
 
-    // Process Root Images
     if (images !== undefined) {
       const uploadedImages = Array.isArray(images) ? images : [images];
       const existingPublicIdsToKeep = uploadedImages
@@ -148,7 +246,6 @@ export class ProductService {
       updateData.images = await this._processMediaArray(uploadedImages, "image");
     }
 
-    // Process Root Videos
     if (videos !== undefined) {
       const uploadedVideos = Array.isArray(videos) ? videos : [videos];
       const existingPublicIdsToKeep = uploadedVideos
@@ -167,12 +264,8 @@ export class ProductService {
       );
       updateData.videos = await this._processMediaArray(uploadedVideos, "video");
     }
-    
-    // Process Variants Images/Videos
+
     if (variants !== undefined && Array.isArray(variants)) {
-      // NOTE: We don't automatically delete old variant images from Cloudinary here 
-      // because tracking nested public_ids for deletions can be complex. 
-      // They are just overwritten in DB and uploaded if new.
       for (const variant of variants) {
         variant.images = await this._processMediaArray(variant.images, "image");
         variant.videos = await this._processMediaArray(variant.videos, "video");
@@ -193,7 +286,6 @@ export class ProductService {
       throw new Error("Product not found");
     }
 
-    // Delete media assets
     await Promise.all(
       product.images.map(img =>
         UploadService.deleteMedia(img.public_id, "image").catch(err =>
@@ -242,7 +334,6 @@ export class ProductService {
       product.numOfReviews = product.reviews.length;
     }
 
-    // Recalculate average rating
     product.ratings =
       product.reviews.reduce((acc, item) => item.rating + acc, 0) /
       product.reviews.length;
@@ -270,7 +361,6 @@ export class ProductService {
     );
 
     const numOfReviews = reviews.length;
-
     const ratings =
       numOfReviews === 0
         ? 0
@@ -278,16 +368,12 @@ export class ProductService {
 
     return ProductRepository.updateById(
       productId,
-      {
-        reviews,
-        ratings,
-        numOfReviews
-      },
+      { reviews, ratings, numOfReviews },
       { new: true }
     );
   }
 
-  // --- VISUAL SEARCH (EMBEDDING SIMILARITY) ---
+  // --- VISUAL SEARCH ---
   async visualSearch(embedding) {
     if (!embedding || !Array.isArray(embedding)) {
       throw new Error("Valid visual embedding array is required");
@@ -300,11 +386,10 @@ export class ProductService {
 
     const scoredProducts = products.map(product => {
       const score = this.calculateCosineSimilarity(embedding, product.visualEmbedding);
-      delete product.visualEmbedding; // remove large array
+      delete product.visualEmbedding;
       return { ...product, similarityScore: score };
     });
 
-    // Sort descending similarity and return top 10
     return scoredProducts
       .sort((a, b) => b.similarityScore - a.similarityScore)
       .slice(0, 10);

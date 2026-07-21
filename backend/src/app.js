@@ -121,8 +121,17 @@ const limiter = rateLimit({
 });
 app.use("/api", limiter);
 
+// DB readiness flag — set to true in server.js after MongoDB connects
+let _dbReady = false;
+export const setDbReady = () => { _dbReady = true; };
+
+// Health check — returns 503 until DB is connected so wait-port.js waits correctly
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok", service: "server" });
+  if (_dbReady) {
+    res.status(200).json({ status: "ready", db: "connected" });
+  } else {
+    res.status(503).json({ status: "starting", db: "connecting" });
+  }
 });
 
 // Register routes

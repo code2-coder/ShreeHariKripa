@@ -9,8 +9,19 @@ export class ProductController {
       return sendResponse(res, 200, true, "Products fetched successfully", {
         results: result.count,
         totalProducts: result.totalProducts,
+        page: result.page,
+        perPage: result.perPage,
         products: result.products
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getFilterOptions(req, res, next) {
+    try {
+      const options = await ProductService.getFilterOptions();
+      return sendResponse(res, 200, true, "Filter options fetched successfully", options);
     } catch (error) {
       next(error);
     }
@@ -63,7 +74,6 @@ export class ProductController {
       next(error);
     }
   }
-
 
   // --- REVIEWS ---
   async createProductReview(req, res, next) {

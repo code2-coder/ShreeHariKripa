@@ -10,9 +10,12 @@ const router = express.Router();
 
 //
 // 📦 PUBLIC ROUTES
+// IMPORTANT: /products/filter-options and /products/visual-search must come
+// BEFORE /products/:id — otherwise Express will treat "filter-options" as an ID.
 //
-router.get("/products", cacheMiddleware(300), (req, res, next) => productController.getProducts(req, res, next)); // Cache for 5 mins
+router.get("/products/filter-options", cacheMiddleware(60), (req, res, next) => productController.getFilterOptions(req, res, next));
 router.post("/products/visual-search", (req, res, next) => productController.visualSearchProducts(req, res, next));
+router.get("/products", cacheMiddleware(60), (req, res, next) => productController.getProducts(req, res, next));
 router.get("/products/:id", cacheMiddleware(300), (req, res, next) => productController.getProductById(req, res, next));
 
 //
@@ -31,7 +34,6 @@ router.get(
   authorizeRoles("admin"),
   (req, res, next) => productController.getAdminProducts(req, res, next)
 );
-
 
 router
   .route("/admin/products/:id")
