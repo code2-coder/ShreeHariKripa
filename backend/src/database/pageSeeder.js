@@ -61,7 +61,7 @@ const defaultPages = [
     sections: [
       {
         title: "How to Initiate a Return",
-        content: "To initiate a return or exchange, please contact our support team at info@shreeharikripa.com within 7 days of receiving your order. We will arrange a complimentary secure pickup from your address. The item must be unused, in its original condition, and accompanied by the original invoice and Certificate of Authenticity.",
+        content: "To initiate a return or exchange, please contact our support team at shreeharikripa1204@gmail.com within 7 days of receiving your order. We will arrange a complimentary secure pickup from your address. The item must be unused, in its original condition, and accompanied by the original invoice and Certificate of Authenticity.",
       },
       {
         title: "Quality Inspection",
@@ -144,6 +144,8 @@ export const seedPages = async () => {
       if (!pageExists) {
         await Page.create(pageData);
         console.log(`[Database] Seeded default page: ${pageData.slug}`);
+      } else {
+        await Page.findOneAndUpdate({ slug: pageData.slug }, pageData);
       }
     }
   } catch (error) {

@@ -16,7 +16,6 @@ const PrivacyPolicy = lazy(() => import("../pages/PrivacyPolicy").then(m => ({ d
 const TermsOfService = lazy(() => import("../pages/TermsOfService").then(m => ({ default: m.TermsOfService })));
 const VisualSearch = lazy(() => import("../pages/VisualSearch").then(m => ({ default: m.VisualSearch })));
 const Shop = lazy(() => import("../pages/Shop").then(m => ({ default: m.Shop })));
-const FAQs = lazy(() => import("../pages/FAQs").then(m => ({ default: m.FAQs })));
 const ShippingPolicy = lazy(() => import("../pages/ShippingPolicy").then(m => ({ default: m.ShippingPolicy })));
 const ReturnPolicy = lazy(() => import("../pages/ReturnPolicy").then(m => ({ default: m.ReturnPolicy })));
 const AboutUs = lazy(() => import("../pages/AboutUs").then(m => ({ default: m.AboutUs })));
@@ -83,10 +82,6 @@ export const router = createBrowserRouter([
       {
         path: "/terms",
         element: <LazyComponent Component={TermsOfService} />,
-      },
-      {
-        path: "/faqs",
-        element: <LazyComponent Component={FAQs} />,
       },
       {
         path: "/shipping-policy",

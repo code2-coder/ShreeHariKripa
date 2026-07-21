@@ -126,7 +126,6 @@ export function Footer() {
             <h4 className="font-serif text-[20px] text-white mb-8 border-b border-[#2D0D18] pb-4">Support</h4>
             <ul className="space-y-4">
               {[
-                { name: 'FAQs', path: '/faqs' },
                 { name: 'Shipping Policy', path: '/shipping-policy' },
                 { name: 'Return & Exchange Policy', path: '/return-policy' },
                 { name: 'Privacy Policy', path: '/privacy' },

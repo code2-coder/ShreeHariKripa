@@ -25,7 +25,7 @@ const DEFAULT_CONTENT = {
     { title: "Non-Returnable", content: "Customized and engraved pieces cannot be returned or exchanged.", iconName: "AlertCircle" }
   ],
   sections: [
-    { title: "How to Initiate a Return", content: "To initiate a return or exchange, please contact our support team at info@shreeharikripa.com within 7 days of receiving your order. We will arrange a complimentary secure pickup from your address. The item must be unused, in its original condition, and accompanied by the original invoice and Certificate of Authenticity." },
+    { title: "How to Initiate a Return", content: "To initiate a return or exchange, please contact our support team at shreeharikripa1204@gmail.com within 7 days of receiving your order. We will arrange a complimentary secure pickup from your address. The item must be unused, in its original condition, and accompanied by the original invoice and Certificate of Authenticity." },
     { title: "Quality Inspection", content: "Upon receiving the returned item, our master craftsmen will conduct a thorough quality check. Once the item is verified to be in its original condition without any damage or alteration, we will process your refund or exchange within 3-5 business days." },
     { title: "Lifetime Exchange Value", content: "We value your investment. Under our Lifetime Exchange Policy, you can exchange your Shree Hari Kripa jewellery for a new piece at 100% of the current prevailing market value of the metal and 80% of the diamond value, subject to our assessment." }
   ]

@@ -1,7 +1,7 @@
 import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";
 import { motion } from "motion/react";
-import { MapPin, Phone, Mail, Send } from "lucide-react";
+import { MapPin, Mail, Send } from "lucide-react";
 import { toast } from "sonner";
 
 export function ContactUs() {
@@ -114,15 +114,18 @@ export function ContactUs() {
               </div>
 
               <div className="flex items-start gap-6">
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 flex-shrink-0 text-[#B8934E]">
-                  <Phone className="w-5 h-5" />
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 flex-shrink-0 text-[#25D366]">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.532 5.845L.057 23.617a.5.5 0 0 0 .625.608l5.945-1.557A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.797 9.797 0 0 1-5.003-1.373l-.36-.214-3.528.925.94-3.434-.234-.373A9.78 9.78 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/>
+                  </svg>
                 </div>
-                 <div className="flex flex-col">
-                  <h4 className="text-sm font-bold text-obsidian uppercase tracking-widest mb-2">Call Us</h4>
-                  <a href="tel:+919152350955" className="text-gray-600 font-light text-sm hover:text-[#B8934E] transition-colors mb-1">
+                <div className="flex flex-col">
+                  <h4 className="text-sm font-bold text-obsidian uppercase tracking-widest mb-2">WhatsApp Us</h4>
+                  <a href="https://wa.me/919152350955" target="_blank" rel="noopener noreferrer" className="text-gray-600 font-light text-sm hover:text-[#25D366] transition-colors mb-1">
                     India: +91 91523 50955
                   </a>
-                  <a href="tel:+61493600549" className="text-gray-600 font-light text-sm hover:text-[#B8934E] transition-colors">
+                  <a href="https://wa.me/61493600549" target="_blank" rel="noopener noreferrer" className="text-gray-600 font-light text-sm hover:text-[#25D366] transition-colors">
                     Australia: +61 493600549
                   </a>
                 </div>
@@ -134,8 +137,8 @@ export function ContactUs() {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-obsidian uppercase tracking-widest mb-2">Email Us</h4>
-                  <a href="mailto:info@shreeharikripa.com" className="text-gray-600 font-light text-sm hover:text-[#B8934E] transition-colors">
-                    info@shreeharikripa.com
+                  <a href="mailto:shreeharikripa1204@gmail.com" className="text-gray-600 font-light text-sm hover:text-[#B8934E] transition-colors">
+                    shreeharikripa1204@gmail.com
                   </a>
                 </div>
               </div>
