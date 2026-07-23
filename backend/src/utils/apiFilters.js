@@ -128,7 +128,7 @@ class APIFilters {
             popular:     { numOfReviews: -1 },
         };
 
-        const sortKey = this.queryStr.sort || 'newest';
+        const sortKey = this.queryStr.sort || 'price_asc';
         this.query = this.query.sort(sortMap[sortKey] || { createdAt: -1 });
         return this;
     }
@@ -136,7 +136,7 @@ class APIFilters {
     // 📄 PAGINATION — safe defaults, max 100 per page
     pagination(defaultPerPage = 12) {
         const currentPage = Math.max(1, Number(this.queryStr.page) || 1);
-        const limit = Math.min(100, Number(this.queryStr.limit) || defaultPerPage);
+        const limit = Math.min(1000, Number(this.queryStr.limit) || defaultPerPage);
         const skip = limit * (currentPage - 1);
         this.query = this.query.limit(limit).skip(skip);
         return this;

@@ -21,13 +21,13 @@ const Footer = lazy(() =>
 // Constants
 // ─────────────────────────────────────────────────────────────────────────────
 
-const PRICE_RANGES = [
-  { label: "Under ₹5,000",   min: "",  max: "5000"  },
-  { label: "Under ₹10,000",  min: "",  max: "10000" },
-  { label: "Under ₹15,000",  min: "",  max: "15000" },
-  { label: "Under ₹20,000",  min: "",  max: "20000" },
-  { label: "Under ₹25,000",  min: "",  max: "25000" },
-  { label: "Above ₹25,000",  min: "25000", max: "" },
+const PRICE_RANGES_BASE = [
+  { value: 5000, type: 'under' },
+  { value: 10000, type: 'under' },
+  { value: 15000, type: 'under' },
+  { value: 20000, type: 'under' },
+  { value: 25000, type: 'under' },
+  { value: 25000, type: 'above' },
 ];
 
 const SORT_OPTIONS = [
@@ -116,7 +116,7 @@ const SkeletonCard = () => (
 
 const SidebarContent = ({
   activeFilters, updateFilter, toggleArrayFilter,
-  categories, filterOptions, PRICE_RANGES,
+  categories, filterOptions, priceRanges,
   searchInput, onSearchChange,
 }) => {
   const { categoryCounts = [], materials = [], stoneTypes = [], colors = [] } = filterOptions;
@@ -129,7 +129,7 @@ const SidebarContent = ({
   }, [categoryCounts]);
 
   // Selected price range (compare min+max together)
-  const selectedPriceIdx = PRICE_RANGES.findIndex(
+  const selectedPriceIdx = priceRanges.findIndex(
     r => r.min === activeFilters.priceGte && r.max === activeFilters.priceLte
   );
 
@@ -185,7 +185,7 @@ const SidebarContent = ({
 
       {/* Price */}
       <FilterBlock title="Price Range">
-        {PRICE_RANGES.map((range, i) => (
+        {priceRanges.map((range, i) => (
           <label key={i} className="flex items-center gap-3 py-1.5 cursor-pointer group">
             <div
               onClick={() => handlePriceToggle(range, i)}
@@ -280,8 +280,19 @@ export function Shop() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const { categories } = useCategory();
-  const { currency } = useCurrency();
+  const { currency, getFormattedPrice } = useCurrency();
   const currencySymbol = SUPPORTED_CURRENCIES[currency]?.symbol || "₹";
+
+  const priceRanges = useMemo(() => {
+    return PRICE_RANGES_BASE.map(range => {
+      const formatted = getFormattedPrice(range.value).replace(/\.00$/, '');
+      if (range.type === 'under') {
+        return { label: `Under ${formatted}`, min: "", max: String(range.value) };
+      } else {
+        return { label: `Above ${formatted}`, min: String(range.value), max: "" };
+      }
+    });
+  }, [getFormattedPrice]);
 
   // ── State ────────────────────────────────────────────────────────────────
   const [products, setProducts] = useState([]);
@@ -296,7 +307,7 @@ export function Shop() {
   // Local search input (debounced before hitting URL)
   const [searchInput, setSearchInput] = useState(() => searchParams.get("keyword") || "");
   const searchDebounceRef = useRef(null);
-  const LIMIT = 12;
+  const LIMIT = 1000;
 
   // ── Derived filter state from URL ─────────────────────────────────────────
   const activeFilters = useMemo(() => ({
@@ -307,7 +318,7 @@ export function Shop() {
     stoneTypes: searchParams.get("stoneTypes") ? searchParams.get("stoneTypes").split(",") : [],
     priceGte:   searchParams.get("price[gte]") || "",
     priceLte:   searchParams.get("price[lte]") || "",
-    sort:       searchParams.get("sort") || "newest",
+    sort:       searchParams.get("sort") || "price_asc",
     inStock:    searchParams.get("inStock") === "true",
   }), [searchParams]);
 
@@ -443,10 +454,13 @@ export function Shop() {
     activeFilters.colors.forEach(c => chips.push({ key: "colors", val: c, label: c }));
 
     if (activeFilters.priceGte || activeFilters.priceLte) {
-      const matched = PRICE_RANGES.find(r => r.min === activeFilters.priceGte && r.max === activeFilters.priceLte);
+      const matched = priceRanges.find(r => r.min === activeFilters.priceGte && r.max === activeFilters.priceLte);
+      
+      const formatFallback = (val) => val ? getFormattedPrice(Number(val)).replace(/\.00$/, '') : "";
+      
       chips.push({
         key: "price",
-        label: matched ? matched.label : `${activeFilters.priceGte ? `₹${activeFilters.priceGte}` : "0"} – ${activeFilters.priceLte ? `₹${activeFilters.priceLte}` : "Max"}`,
+        label: matched ? matched.label : `${activeFilters.priceGte ? formatFallback(activeFilters.priceGte) : "0"} – ${activeFilters.priceLte ? formatFallback(activeFilters.priceLte) : "Max"}`,
       });
     }
 
@@ -470,7 +484,7 @@ export function Shop() {
 
   const sidebarProps = {
     activeFilters, updateFilter, toggleArrayFilter,
-    categories, filterOptions, PRICE_RANGES,
+    categories, filterOptions, priceRanges,
     searchInput, onSearchChange: handleSearchChange,
   };
 
@@ -539,7 +553,7 @@ export function Shop() {
                   className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2.5 rounded-full text-xs font-bold text-obsidian shadow-sm hover:border-obsidian transition-colors"
                 >
                   <ArrowUpDown className="w-3.5 h-3.5" />
-                  {SORT_OPTIONS.find(o => o.value === activeFilters.sort)?.label || "Newest"}
+                  {SORT_OPTIONS.find(o => o.value === activeFilters.sort)?.label || "Price: Low to High"}
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isSortOpen ? "rotate-180" : ""}`} />
                 </button>
 
