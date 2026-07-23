@@ -26,7 +26,7 @@ const trustCards = [
   {
     icon: RefreshCw,
     title: "Easy Returns",
-    description: "Hassle-free 14-day return and exchange policy for your peace of mind."
+    description: "Hassle-free return and exchange policy for your peace of mind."
   },
   {
     icon: Crown,
