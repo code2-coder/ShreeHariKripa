@@ -16,7 +16,7 @@ const settingsSchema = new mongoose.Schema(
             },
             freeShippingThreshold: {
                 type: Number,
-                default: 7.54,
+                default: 99,
                 description: "Order total threshold for free standard shipping in AUD",
             },
         },
@@ -25,7 +25,7 @@ const settingsSchema = new mongoose.Schema(
         packaging: {
             exquisitePackagingPrice: {
                 type: Number,
-                default: 4.95,
+                default: 5,
                 description: "Price for exquisite gift packaging in AUD",
             },
             standardPackagingName: {

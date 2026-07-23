@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import api from '../api/axios';
 import { State, City } from 'country-state-city';
 
-export const AddressForm = ({ initialData, onSave, onCancel }) => {
+export const AddressForm = ({ initialData, defaultCountry = 'India', onSave, onCancel }) => {
   const [formData, setFormData] = useState(
     initialData || {
       title: 'Home',
@@ -15,7 +15,7 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
       city: '',
       state: '',
       zipCode: '',
-      country: 'India',
+      country: defaultCountry,
       isDefault: false,
     }
   );
@@ -25,7 +25,7 @@ export const AddressForm = ({ initialData, onSave, onCancel }) => {
     return 'IN'; // default to India
   };
 
-  const [countryCode, setCountryCode] = useState(getCountryCode(initialData?.country || 'India'));
+  const [countryCode, setCountryCode] = useState(getCountryCode(initialData?.country || defaultCountry));
   const [stateCode, setStateCode] = useState('');
 
   useEffect(() => {

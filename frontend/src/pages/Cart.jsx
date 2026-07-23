@@ -211,7 +211,8 @@ export function Cart() {
     ? displayPackagingAmountAUD
     : convertPrice(displayPackagingAmountAUD, currency, rates, "AUD");
   const totalAmountWithExtras = convertedCartTotal + displayShippingAmount + displayPackagingAmount;
-  const canShowShippingOptions = !!chosenAddress;
+  const displayCountry = chosenAddress?.country || (currency === "AUD" ? "Australia" : "India");
+  const canShowShippingOptions = !!chosenAddress || currency === "AUD";
 
   // COD is only for India: header must be INR AND address must be India (or not yet selected)
   const isCODAvailable = currency === "INR" && (isIndiaAddress || !chosenAddress);
@@ -417,6 +418,7 @@ export function Cart() {
                 ) : (
                   <AddressForm
                     initialData={addressToEdit}
+                    defaultCountry={currency === "AUD" ? "Australia" : "India"}
                     onSave={handleSaveAddress}
                     onCancel={() => {
                       setAddressView("book");
@@ -439,13 +441,13 @@ export function Cart() {
                   {canShowShippingOptions && (
                     <div className="space-y-6">
                       <ShippingMethodSelector
-                        country={chosenAddress?.country || "Australia"}
+                        country={displayCountry}
                         orderTotal={cartTotalAUD}
                         selectedMethod={selectedShipping?.id || "standard"}
                         onSelect={(option) => setSelectedShipping(option)}
                       />
                       <PackagingSelector
-                        country={chosenAddress?.country || "Australia"}
+                        country={displayCountry}
                         selectedOption={selectedPackaging?.id || "standard"}
                         onSelect={(option) => setSelectedPackaging(option)}
                       />
@@ -472,7 +474,11 @@ export function Cart() {
                         selectedShipping.isFree
                           ? <span className="text-emerald-700 font-bold uppercase text-xs tracking-wider bg-emerald-100/60 px-2 py-0.5 rounded">FREE</span>
                           : formatPrice(displayShippingAmount, currency, rates, currency)
-                      ) : "—"}
+                      ) : (
+                        currency === "INR" 
+                          ? <span className="text-emerald-700 font-bold uppercase text-xs tracking-wider bg-emerald-100/60 px-2 py-0.5 rounded">FREE</span> 
+                          : "—"
+                      )}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-gray-600">

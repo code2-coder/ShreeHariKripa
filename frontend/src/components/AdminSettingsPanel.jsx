@@ -203,7 +203,7 @@ export const AdminSettingsPanel = ({ onSaved = null }) => {
                         <input
                             type="number"
                             step="0.01"
-                            value={formData.packaging?.exquisitePackagingPrice || 4.95}
+                            value={formData.packaging?.exquisitePackagingPrice || 5}
                             onChange={(e) =>
                                 handleInputChange(e, 'packaging.exquisitePackagingPrice')
                             }
