@@ -202,8 +202,11 @@ export function Cart() {
                               !chosenAddress;
   const convertedCartTotal = getConvertedPrice(cartTotal);
   const cartTotalAUD = convertPrice(cartTotal, "AUD", rates, DEFAULT_CURRENCY);
-  const displayShippingAmountAUD = selectedShipping?.price ?? 0;
-  const displayPackagingAmountAUD = selectedPackaging?.price ?? 0;
+  const displayCountry = chosenAddress?.country || (currency === "AUD" ? "Australia" : "India");
+  const isTargetingAustralia = displayCountry.toLowerCase() === "australia";
+  const displayShippingAmountAUD = isTargetingAustralia ? (selectedShipping?.price ?? 0) : 0;
+  const displayPackagingAmountAUD = isTargetingAustralia ? (selectedPackaging?.price ?? 0) : 0;
+  
   const displayShippingAmount = currency === "AUD"
     ? displayShippingAmountAUD
     : convertPrice(displayShippingAmountAUD, currency, rates, "AUD");
@@ -211,8 +214,8 @@ export function Cart() {
     ? displayPackagingAmountAUD
     : convertPrice(displayPackagingAmountAUD, currency, rates, "AUD");
   const totalAmountWithExtras = convertedCartTotal + displayShippingAmount + displayPackagingAmount;
-  const displayCountry = chosenAddress?.country || (currency === "AUD" ? "Australia" : "India");
-  const canShowShippingOptions = !!chosenAddress || currency === "AUD";
+  
+  const canShowShippingOptions = isTargetingAustralia;
 
   // COD is only for India: header must be INR AND address must be India (or not yet selected)
   const isCODAvailable = currency === "INR" && (isIndiaAddress || !chosenAddress);
@@ -454,10 +457,15 @@ export function Cart() {
                     </div>
                   )}
 
-                  {!canShowShippingOptions && (
+                  {!canShowShippingOptions && displayCountry.toLowerCase() !== "india" && (
                     <div className="rounded-2xl border border-gray-150 bg-[#FAF9F6] p-5 text-sm text-gray-500 text-center flex flex-col items-center justify-center gap-2">
                       <MapPin className="w-5 h-5 text-gray-400" />
                       <span>Select a delivery address to view shipping and packaging options.</span>
+                    </div>
+                  )}
+                  {!canShowShippingOptions && displayCountry.toLowerCase() === "india" && (
+                    <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-5 text-sm text-emerald-700 text-center flex flex-col items-center justify-center gap-2">
+                      <span className="font-medium">Free delivery and premium packaging within India.</span>
                     </div>
                   )}
                 </div>
