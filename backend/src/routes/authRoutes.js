@@ -22,9 +22,8 @@ router.post("/refresh-token", (req, res, next) => authController.refreshToken(re
 router.post("/verify-email", (req, res, next) => authController.verifyEmail(req, res, next));
 router.post("/resend-verification", (req, res, next) => authController.resendVerification(req, res, next));
 
-// Password Management
-router.post("/forgot-password", (req, res, next) => authController.forgotPassword(req, res, next));
-router.post("/reset-password", validate(resetPasswordSchema), (req, res, next) => authController.resetPassword(req, res, next));
+// Password Management (Handled by forgotPassword.routes.js)
+
 
 // Google OAuth
 router.get(
@@ -44,8 +43,7 @@ router.get("/logout", (req, res, next) => authController.logout(req, res, next))
 router.post("/logout", (req, res, next) => authController.logout(req, res, next));
 router.get("/profile", protect, (req, res, next) => authController.getProfile(req, res, next));
 
-// Verify OTP (forgot password flow optional verification)
-router.post("/verify-otp", validate(verifyOtpSchema), (req, res, next) => authController.verifyOtp(req, res, next));
+
 
 // User Profile management
 router.put("/me/update", protect, (req, res, next) => authController.updateProfile(req, res, next));

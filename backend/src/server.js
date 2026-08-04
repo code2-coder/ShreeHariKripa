@@ -8,6 +8,17 @@ const __dirname = path.dirname(__filename);
 // Load environment variables from server/.env first before importing app or connection
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
+// Validate ZeptoMail Configuration on startup
+import zeptoMailService, { ZeptoMailService } from "./services/zeptoMail.service.js";
+try {
+  ZeptoMailService.logDebugInfo();
+  ZeptoMailService.validateConfig();
+} catch (error) {
+  console.error("FATAL: Startup validation failed!");
+  console.error(error.message);
+  process.exit(1);
+}
+
 // Handle Uncaught exceptions
 process.on("uncaughtException", (err) => {
   console.error(`UNCAUGHT EXCEPTION: ${err.message}`);

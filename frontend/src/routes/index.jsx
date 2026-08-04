@@ -51,7 +51,7 @@ import { Outlet, ScrollRestoration } from "react-router";
 import { MobileBottomNav } from "../components/layout/MobileBottomNav";
 
 const RootLayout = () => (
-  <div className="pb-16 md:pb-0">
+  <div className="pb-24 md:pb-0">
     <ScrollRestoration />
     <Outlet />
     <MobileBottomNav />
@@ -110,6 +110,10 @@ export const router = createBrowserRouter([
       {
         path: "/verify-email",
         element: <LazyComponent Component={lazy(() => import("../pages/VerifyEmail"))} />,
+      },
+      {
+        path: "/verify-otp",
+        element: <LazyComponent Component={lazy(() => import("../pages/VerifyOTP"))} />,
       },
       {
         path: "/forgot-password",

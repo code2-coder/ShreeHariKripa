@@ -2,6 +2,17 @@ import ErrorHandler from "../utils/errorHandler.js";
 import logger from "../utils/logger.js";
 
 export default (err, req, res, next) => {
+  // Handle ZeptoMail Errors
+  if (err.isZeptoMailError) {
+    return res.status(err.statusCode || 500).json({
+      success: false,
+      statusCode: err.statusCode,
+      errorCode: err.errorCode,
+      message: err.message,
+      details: err.details
+    });
+  }
+
   let error = {
     statusCode: err?.statusCode || 500,
     message: err?.message || "Internal Server Error",

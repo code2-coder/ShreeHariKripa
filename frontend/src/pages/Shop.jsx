@@ -22,12 +22,12 @@ const Footer = lazy(() =>
 // ─────────────────────────────────────────────────────────────────────────────
 
 const PRICE_RANGES_BASE = [
-  { value: 5000, type: 'under' },
-  { value: 10000, type: 'under' },
-  { value: 15000, type: 'under' },
-  { value: 20000, type: 'under' },
-  { value: 25000, type: 'under' },
-  { value: 25000, type: 'above' },
+  { min: 0, max: 500 },
+  { min: 500, max: 1000 },
+  { min: 1000, max: 2000 },
+  { min: 2000, max: 3000 },
+  { min: 3000, max: 4000 },
+  { min: 4000, max: null }
 ];
 
 const SORT_OPTIONS = [
@@ -186,34 +186,30 @@ const SidebarContent = ({
       {/* Price */}
       <FilterBlock title="Price Range">
         {priceRanges.map((range, i) => (
-          <label key={i} className="flex items-center gap-3 py-1.5 cursor-pointer group">
+          <label key={i} className="flex items-center gap-3 py-1.8 cursor-pointer group">
             <div
               onClick={() => handlePriceToggle(range, i)}
-              className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors flex-shrink-0
-                ${selectedPriceIdx === i ? "border-obsidian" : "border-gray-300 group-hover:border-obsidian"}`}
+              className={`w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center transition-all duration-300 flex-shrink-0 relative
+                ${selectedPriceIdx === i 
+                  ? "border-[#B8934E] bg-[#FAF9F6] shadow-sm scale-105" 
+                  : "border-gray-200 group-hover:border-[#B8934E]"}`}
             >
-              {selectedPriceIdx === i && <div className="w-2 h-2 rounded-full bg-obsidian" />}
+              {selectedPriceIdx === i && (
+                <motion.div
+                  layoutId="activePriceIndicator"
+                  className="w-2.5 h-2.5 rounded-full bg-[#B8934E]"
+                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                />
+              )}
             </div>
-            <span className={`text-[13px] tracking-wide ${selectedPriceIdx === i ? "text-obsidian font-semibold" : "text-gray-600"}`}>
+            <span className={`text-[13px] tracking-wide transition-colors duration-300 ${selectedPriceIdx === i ? "text-obsidian font-bold" : "text-gray-600 group-hover:text-obsidian"}`}>
               {range.label}
             </span>
           </label>
         ))}
       </FilterBlock>
 
-      {/* Material */}
-      {materials.length > 0 && (
-        <FilterBlock title="Material">
-          {materials.map(m => (
-            <CheckboxRow
-              key={m}
-              label={m}
-              checked={activeFilters.materials.includes(m)}
-              onChange={() => toggleArrayFilter("materials", m)}
-            />
-          ))}
-        </FilterBlock>
-      )}
+
 
       {/* Stone Type */}
       {stoneTypes.length > 0 && (
@@ -285,11 +281,20 @@ export function Shop() {
 
   const priceRanges = useMemo(() => {
     return PRICE_RANGES_BASE.map(range => {
-      const formatted = getFormattedPrice(range.value).replace(/\.00$/, '');
-      if (range.type === 'under') {
-        return { label: `Under ${formatted}`, min: "", max: String(range.value) };
+      const minFormatted = getFormattedPrice(range.min).replace(/\.00$/, '');
+      if (range.max === null) {
+        return {
+          label: `Above ${minFormatted}`,
+          min: String(range.min),
+          max: ""
+        };
       } else {
-        return { label: `Above ${formatted}`, min: String(range.value), max: "" };
+        const maxFormatted = getFormattedPrice(range.max).replace(/\.00$/, '');
+        return {
+          label: `${minFormatted} to ${maxFormatted}`,
+          min: String(range.min),
+          max: String(range.max)
+        };
       }
     });
   }, [getFormattedPrice]);
@@ -311,15 +316,16 @@ export function Shop() {
 
   // ── Derived filter state from URL ─────────────────────────────────────────
   const activeFilters = useMemo(() => ({
-    keyword:    searchParams.get("keyword") || "",
-    category:   searchParams.get("category") ? searchParams.get("category").split(",") : [],
-    materials:  searchParams.get("materials") ? searchParams.get("materials").split(",") : [],
-    colors:     searchParams.get("colors") ? searchParams.get("colors").split(",") : [],
-    stoneTypes: searchParams.get("stoneTypes") ? searchParams.get("stoneTypes").split(",") : [],
-    priceGte:   searchParams.get("price[gte]") || "",
-    priceLte:   searchParams.get("price[lte]") || "",
-    sort:       searchParams.get("sort") || "price_asc",
-    inStock:    searchParams.get("inStock") === "true",
+    keyword:     searchParams.get("keyword") || "",
+    category:    searchParams.get("category") ? searchParams.get("category").split(",") : [],
+    materials:   searchParams.get("materials") ? searchParams.get("materials").split(",") : [],
+    colors:      searchParams.get("colors") ? searchParams.get("colors").split(",") : [],
+    stoneTypes:  searchParams.get("stoneTypes") ? searchParams.get("stoneTypes").split(",") : [],
+    homeSection: searchParams.get("homeSection") ? searchParams.get("homeSection").split(",") : [],
+    priceGte:    searchParams.get("price[gte]") || "",
+    priceLte:    searchParams.get("price[lte]") || "",
+    sort:        searchParams.get("sort") || "price_asc",
+    inStock:     searchParams.get("inStock") === "true",
   }), [searchParams]);
 
   // Sync local search input when URL changes externally (e.g. browser back)
@@ -358,6 +364,7 @@ export function Shop() {
       if (activeFilters.keyword)            params.set("keyword", activeFilters.keyword);
       // Send category ObjectIds — sidebar now stores _id strings
       if (activeFilters.category.length > 0) params.set("category", activeFilters.category.join(","));
+      if (activeFilters.homeSection.length > 0) params.set("homeSection", activeFilters.homeSection.join(","));
       if (activeFilters.priceGte)           params.set("price[gte]", activeFilters.priceGte);
       if (activeFilters.priceLte)           params.set("price[lte]", activeFilters.priceLte);
       if (activeFilters.materials.length > 0)  params.set("materials", activeFilters.materials.join(","));
@@ -449,9 +456,10 @@ export function Shop() {
       chips.push({ key: "category", val: id, label: cat ? cat.name : id });
     });
 
-    activeFilters.materials.forEach(m => chips.push({ key: "materials", val: m, label: m }));
+
     activeFilters.stoneTypes.forEach(s => chips.push({ key: "stoneTypes", val: s, label: s }));
     activeFilters.colors.forEach(c => chips.push({ key: "colors", val: c, label: c }));
+    activeFilters.homeSection.forEach(hs => chips.push({ key: "homeSection", val: hs, label: hs }));
 
     if (activeFilters.priceGte || activeFilters.priceLte) {
       const matched = priceRanges.find(r => r.min === activeFilters.priceGte && r.max === activeFilters.priceLte);
@@ -460,7 +468,7 @@ export function Shop() {
       
       chips.push({
         key: "price",
-        label: matched ? matched.label : `${activeFilters.priceGte ? formatFallback(activeFilters.priceGte) : "0"} – ${activeFilters.priceLte ? formatFallback(activeFilters.priceLte) : "Max"}`,
+        label: matched ? matched.label : `${activeFilters.priceGte ? formatFallback(activeFilters.priceGte) : getFormattedPrice(0).replace(/\.00$/, '')} to ${activeFilters.priceLte ? formatFallback(activeFilters.priceLte) : "Max"}`,
       });
     }
 

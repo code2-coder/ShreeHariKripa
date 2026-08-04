@@ -77,6 +77,14 @@ class APIFilters {
             }
         }
 
+        // ── Home Section (e.g. New Arrival, Best Seller, Trending Product) ─────
+        if (this.queryStr.homeSection) {
+            const homeSections = this.queryStr.homeSection.split(',').map(s => s.trim()).filter(Boolean);
+            if (homeSections.length > 0) {
+                filterObj.homeSection = { $in: homeSections };
+            }
+        }
+
         // ── Sizes (root sizes OR variant sizes — avoid $or overwrite via _andClauses) ─
         if (this.queryStr.sizes) {
             const sizes = this.queryStr.sizes.split(',').map(s => s.trim()).filter(Boolean);

@@ -19,6 +19,7 @@ export const ProductCard = memo(function ProductCard({ product }) {
   const variantSize = selectedVariant?.sizes?.[0] || product.sizes?.[0];
   const currentStock = variantSize ? variantSize.stock : product.stock;
   const currentPrice = variantSize?.price ?? product.price;
+  const currentComparePrice = variantSize?.comparePrice ?? product.comparePrice;
   const currentSizeName = variantSize ? variantSize.size : null;
 
   const handleAddToCart = (e) => {
@@ -80,15 +81,36 @@ export const ProductCard = memo(function ProductCard({ product }) {
   const secondaryImage = getSecondaryImageUrl();
   const hasSecondaryImage = !!secondaryImage;
 
+  // Premium specs calculation
+  const getProductSpecs = () => {
+    const specs = [];
+    if (product.purity) specs.push(product.purity);
+    if (product.metal || product.material) specs.push(product.metal || product.material);
+    if (product.weight) specs.push(product.weight);
+    return specs.join(" • ");
+  };
+  const productSpecs = getProductSpecs();
+
+  // Discount calculation
+  const discountPercent = currentComparePrice && currentComparePrice > currentPrice 
+    ? Math.round(((currentComparePrice - currentPrice) / currentComparePrice) * 100) 
+    : 0;
+
   return (
-    <div className="group relative flex flex-col h-full bg-white transition-all duration-500 rounded-2xl border border-stone-100 hover:border-amber-200/50 hover:shadow-[0_20px_45px_rgba(184,147,78,0.08)] max-w-sm mx-auto overflow-hidden">
+    <div className="group relative flex flex-col h-full bg-white rounded-2xl border border-neutral-100/70 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:-translate-y-2 hover:shadow-[0_20px_45px_-12px_rgba(184,147,78,0.18),_0_1px_2px_rgba(184,147,78,0.05)] hover:border-amber-500/20 max-w-sm mx-auto overflow-hidden transition-all duration-500 cubic-bezier(0.16, 1, 0.3, 1)">
       
+      {/* Premium Card Shimmer Shine effect */}
+      <div className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[120%] skew-x-[-20deg] group-hover:translate-x-[120%] transition-transform duration-[1500ms] ease-out z-25 pointer-events-none" />
+
       {/* Image Container */}
       <Link 
         to={`/product/${product._id || product.id}`} 
         aria-label={`View ${product.name} details`} 
-        className="block relative aspect-[4/5] bg-[#FCFAF8] overflow-hidden cursor-pointer"
+        className="block relative aspect-[4/5] bg-cream overflow-hidden cursor-pointer rounded-t-2xl z-0"
       >
+        {/* Subtle Dark Gradient Overlay on Hover for Button Contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
+
         {/* Primary Image */}
         <img
           src={getImageUrl()}
@@ -97,8 +119,8 @@ export const ProductCard = memo(function ProductCard({ product }) {
           alt={product.name}
           loading="lazy"
           decoding="async"
-          className={`w-full h-full object-cover transition-all duration-700 ease-out ${
-            hasSecondaryImage ? "md:group-hover:opacity-0" : "group-hover:scale-105"
+          className={`w-full h-full object-cover transition-all duration-700 ease-out scale-[1.01] ${
+            hasSecondaryImage ? "md:group-hover:opacity-0 md:group-hover:scale-105" : "group-hover:scale-105"
           }`}
         />
 
@@ -109,26 +131,51 @@ export const ProductCard = memo(function ProductCard({ product }) {
             alt={`${product.name} - alternate view`}
             loading="lazy"
             decoding="async"
-            className="hidden md:block absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out opacity-0 group-hover:opacity-100 group-hover:scale-105"
+            className="hidden md:block absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out opacity-0 scale-[1.01] group-hover:opacity-100 group-hover:scale-105"
           />
         )}
 
         {/* Luxury Badges (Pills) */}
-        <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20 flex flex-col gap-1 md:gap-2">
+        <div className="absolute top-3.5 left-3.5 z-30 flex flex-col gap-1.5 pointer-events-none">
+          {product.homeSection === "Best Seller" && (
+            <span className="bg-gradient-to-r from-[#B8934E] to-[#D4AF37] text-white font-extrabold px-2.5 py-1 text-[9px] uppercase tracking-[0.15em] rounded-full shadow-[0_2px_10px_rgba(184,147,78,0.3)] flex items-center gap-1 border border-[#B8934E]/30 backdrop-blur-md">
+              ★ Best Seller
+            </span>
+          )}
+          {product.homeSection === "New Arrival" && (
+            <span className="bg-gradient-to-r from-[#800000] to-[#a00000] text-white font-extrabold px-2.5 py-1 text-[9px] uppercase tracking-[0.15em] rounded-full shadow-[0_2px_10px_rgba(128,0,0,0.3)] flex items-center gap-1 border border-[#800000]/30 backdrop-blur-md">
+              ✦ New Arrival
+            </span>
+          )}
+          {product.homeSection === "Trending Product" && (
+            <span className="bg-gradient-to-r from-[#DDA7A5] to-[#E5B5B3] text-[#2D0D18] font-extrabold px-2.5 py-1 text-[9px] uppercase tracking-[0.15em] rounded-full shadow-[0_2px_10px_rgba(221,167,165,0.3)] flex items-center gap-1 border border-[#DDA7A5]/30 backdrop-blur-md">
+              🔥 Trending
+            </span>
+          )}
+          {product.handmade && (
+            <span className="bg-amber-50/90 text-amber-800 border border-amber-500/20 backdrop-blur-md px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] rounded-full shadow-sm flex items-center gap-1">
+              ✨ Handcrafted
+            </span>
+          )}
+          {discountPercent > 0 && (
+            <span className="bg-[#800000]/95 text-white font-bold backdrop-blur-md px-2.5 py-1 text-[9px] uppercase tracking-[0.15em] rounded-full shadow-sm">
+              Save {discountPercent}%
+            </span>
+          )}
           {currentStock < 10 && currentStock > 0 && (
-            <span className="text-[#AA8C2C] bg-[#FCFAF8]/95 border border-[#AA8C2C]/30 backdrop-blur-md px-2 md:px-2.5 py-0.5 md:py-1 text-[8px] md:text-[9px] font-bold uppercase tracking-[0.18em] shadow-sm rounded-full">
-              Limited
+            <span className="text-[#800000] bg-white/95 border border-[#800000]/25 backdrop-blur-md px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] shadow-sm rounded-full">
+              Limited Stock
             </span>
           )}
           {currentStock === 0 && (
-            <span className="text-white bg-stone-900/90 backdrop-blur-md px-2 md:px-2.5 py-0.5 md:py-1 text-[8px] md:text-[9px] font-bold uppercase tracking-[0.18em] shadow-sm rounded-full">
+            <span className="text-stone-500 bg-white/95 border border-stone-200/50 backdrop-blur-md px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] shadow-sm rounded-full">
               Sold Out
             </span>
           )}
         </div>
 
         {/* Glassmorphic Floating Quick Actions */}
-        <div className="absolute top-2 right-2 md:top-4 md:right-4 z-20 flex flex-col gap-1.5 md:gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:translate-x-4 md:group-hover:translate-x-0 transition-all duration-300">
+        <div className="absolute top-3.5 right-3.5 z-30 flex flex-col gap-2 transition-all duration-300">
           <button
             onClick={(e) => {
                e.preventDefault();
@@ -137,54 +184,64 @@ export const ProductCard = memo(function ProductCard({ product }) {
             }}
             aria-pressed={isWished}
             aria-label={isWished ? 'Remove from wishlist' : 'Add to wishlist'}
-            className="p-1.5 md:p-2.5 bg-white/80 hover:bg-white text-stone-700 hover:text-rose-600 border border-white/20 shadow-md backdrop-blur-md rounded-full transition-all duration-300 transform active:scale-90 hover:scale-105 flex items-center justify-center cursor-pointer"
+            className="w-9 h-9 bg-white/90 backdrop-blur-md hover:bg-white text-stone-700 hover:text-[#800000] border border-neutral-200/30 shadow-[0_4px_12px_rgba(0,0,0,0.08)] rounded-full transition-all duration-300 transform active:scale-90 hover:scale-105 flex items-center justify-center cursor-pointer"
           >
-            <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 transition-colors duration-200 ${isWished ? "fill-rose-600 text-rose-600" : "text-stone-700"}`} />
+            <Heart className={`w-4 h-4 transition-transform duration-300 ${isWished ? "fill-red-600 text-red-600 scale-110" : "text-stone-700"}`} />
           </button>
 
           <button
             onClick={handleShare}
             aria-label="Share product"
-            className="p-1.5 md:p-2.5 bg-white/80 hover:bg-white text-stone-700 hover:text-[#AA8C2C] border border-white/20 shadow-md backdrop-blur-md rounded-full transition-all duration-300 transform hover:scale-105 flex items-center justify-center cursor-pointer"
+            className="w-9 h-9 bg-white/90 backdrop-blur-md hover:bg-white text-stone-700 hover:text-[#800000] border border-neutral-200/30 shadow-[0_4px_12px_rgba(0,0,0,0.08)] rounded-full transition-all duration-300 transform hover:scale-105 flex items-center justify-center cursor-pointer"
           >
-            <Share2 className={`w-3.5 h-3.5 md:w-4 md:h-4`} />
+            <Share2 className="w-4 h-4" />
           </button>
         </div>
         
         {/* Floating Quick Add Button (Sliding Glassmorphism - Desktop Only) */}
-        <div className="absolute bottom-4 left-0 right-0 translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out hidden md:block z-20 pointer-events-none group-hover:pointer-events-auto px-4">
+        <div className="absolute bottom-4 left-4 right-4 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out hidden md:block z-30 pointer-events-none group-hover:pointer-events-auto">
           <button
             onClick={handleAddToCart}
             disabled={currentStock === 0}
-            className="w-full py-3.5 bg-stone-900/95 hover:bg-[#800000] text-white rounded-xl shadow-xl font-bold text-[10px] tracking-[0.2em] uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-3 bg-[#800000] hover:bg-[#600000] active:scale-98 disabled:bg-neutral-200 disabled:text-neutral-400 text-white rounded-xl shadow-[0_12px_24px_-8px_rgba(128,0,0,0.5)] font-bold text-[10px] tracking-[0.2em] uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
           >
             <ShoppingBag className="w-3.5 h-3.5" />
             <span>{currentStock === 0 ? "Out of Stock" : "Add to Bag"}</span>
           </button>
         </div>
-
       </Link>
 
       {/* Product Info */}
-      <div className="pt-3 pb-4 md:pt-5 md:pb-6 px-3.5 md:px-5 flex flex-col flex-grow bg-white text-center">
-        <p className="text-[#AA8C2C] text-[9px] md:text-[10px] mb-1 md:mb-2 font-bold uppercase tracking-[0.2em] md:tracking-[0.25em]">
-          {product.category?.name || "Collection"}
-        </p>
+      <div className="pt-5 pb-5 px-4 md:px-5 flex flex-col flex-grow bg-white text-left">
+        {/* Category / Collection Tag */}
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[#800000] text-[10px] font-bold uppercase tracking-[0.2em] font-sans">
+            {product.category?.name || "Collection"}
+          </p>
+        </div>
         
-        <Link to={`/product/${product._id || product.id}`} className="focus:outline-none w-full mb-1.5 md:mb-2 inline-block">
-          <h3 className="font-serif text-stone-850 hover:text-[#AA8C2C] text-[13px] sm:text-sm md:text-base font-normal leading-snug transition-colors duration-300 line-clamp-2 px-1">
+        {/* Product Title */}
+        <Link to={`/product/${product._id || product.id}`} className="focus:outline-none w-full mb-1.5 block">
+          <h3 className="font-serif text-neutral-900 hover:text-[#800000] text-sm md:text-base font-semibold leading-relaxed transition-colors duration-300 line-clamp-2 min-h-[2.5rem] tracking-wide">
             {product.name}
           </h3>
         </Link>
 
+        {/* Extended Specs Metadata */}
+        {productSpecs && (
+          <p className="text-[11px] text-neutral-400 font-sans font-normal mb-2.5 tracking-wide truncate">
+            {productSpecs}
+          </p>
+        )}
+
         {/* Ratings & Reviews Stars Display */}
-        {product.ratings !== undefined && product.ratings > 0 && (
-          <div className="flex items-center justify-center gap-1 mb-2 md:mb-3">
+        {product.ratings !== undefined && product.ratings > 0 ? (
+          <div className="flex items-center gap-1.5 mb-3.5">
             <div className="flex text-amber-500 gap-0.5">
               {[...Array(5)].map((_, i) => (
                 <svg
                   key={i}
-                  className={`w-3 h-3 md:w-3.5 md:h-3.5 ${
+                  className={`w-3.5 h-3.5 ${
                     i < Math.round(product.ratings) ? "fill-current" : "text-stone-200"
                   }`}
                   viewBox="0 0 20 20"
@@ -194,25 +251,45 @@ export const ProductCard = memo(function ProductCard({ product }) {
                 </svg>
               ))}
             </div>
-            <span className="text-[9px] md:text-[10px] text-stone-400 font-medium font-sans mt-0.5">
+            <span className="text-[10px] text-stone-400 font-semibold font-sans">
               ({product.numOfReviews || 0})
             </span>
           </div>
+        ) : (
+          <div className="h-3.5 mb-3.5" />
         )}
 
-        <div className="mt-auto flex items-center justify-between w-full pt-1.5 md:pt-3">
-          <span className="text-stone-900 font-semibold tracking-wide text-xs sm:text-sm md:text-base text-left">
-            {currentPrice != null ? getFormattedPrice(currentPrice) : "Price Unavailable"}
-          </span>
+        {/* Price & Action Row */}
+        <div className="mt-auto flex flex-col gap-3 w-full pt-3.5 border-t border-neutral-100/70">
+          <div className="flex items-baseline justify-between gap-2 flex-wrap">
+            <div className="flex flex-col gap-0.5">
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="text-neutral-900 text-base md:text-[17px] font-bold tracking-wide font-sans">
+                  {currentPrice != null ? getFormattedPrice(currentPrice) : "Price Unavailable"}
+                </span>
+                {discountPercent > 0 && (
+                  <span className="text-neutral-400 text-xs line-through font-sans font-medium">
+                    {getFormattedPrice(currentComparePrice)}
+                  </span>
+                )}
+              </div>
+              {discountPercent > 0 && (
+                <span className="text-emerald-600 text-[10px] font-bold uppercase tracking-wider font-sans">
+                  Save {discountPercent}%
+                </span>
+              )}
+            </div>
+          </div>
           
-          {/* Mobile Add to Bag (Circular Action Icon next to Price) */}
+          {/* Mobile Add to Bag (Full-width text pill button for optimal tap targets) */}
           <button
             onClick={handleAddToCart}
             disabled={currentStock === 0}
-            className="md:hidden w-8 h-8 rounded-full bg-stone-900 hover:bg-[#800000] text-white flex items-center justify-center transition-all duration-300 disabled:bg-stone-200 disabled:text-stone-400 disabled:cursor-not-allowed cursor-pointer shrink-0"
+            className="md:hidden w-full py-2.5 bg-[#800000] hover:bg-[#600000] active:scale-[0.98] disabled:bg-neutral-100 disabled:text-neutral-400 text-white rounded-xl shadow-sm text-[10px] font-bold tracking-[0.15em] uppercase transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
             aria-label="Add to bag"
           >
              <ShoppingBag className="w-3.5 h-3.5" />
+             <span>{currentStock === 0 ? "Out of Stock" : "Add to Bag"}</span>
           </button>
         </div>
       </div>

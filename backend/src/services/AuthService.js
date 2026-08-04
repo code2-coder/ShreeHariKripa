@@ -4,6 +4,7 @@ import crypto from "crypto";
 import UserRepository from "../repositories/UserRepository.js";
 import EmailService from "./EmailService.js";
 import OtpService from "./OtpService.js";
+import ErrorHandler from "../utils/errorHandler.js";
 
 export class AuthService {
   // Helper to generate access token
@@ -26,7 +27,7 @@ export class AuthService {
     // Check if user already exists
     const existingUser = await UserRepository.findByEmail(formattedEmail);
     if (existingUser) {
-      throw new Error("User already exists. Please login.");
+      throw new ErrorHandler("User already exists. Please login.", 400);
     }
 
     // Hash password
@@ -75,7 +76,7 @@ export class AuthService {
     const user = await UserRepository.findByEmail(formattedEmail, { select: "+emailVerificationOTP +emailVerificationOTPExpires +isVerified" });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new ErrorHandler("User not found", 404);
     }
 
     if (user.isVerified) {
@@ -83,16 +84,16 @@ export class AuthService {
     }
 
     if (!user.emailVerificationOTP || !user.emailVerificationOTPExpires) {
-      throw new Error("No OTP found. Please request a new verification OTP.");
+      throw new ErrorHandler("No OTP found. Please request a new verification OTP.", 400);
     }
 
     if (user.emailVerificationOTPExpires < Date.now()) {
-      throw new Error("OTP has expired. Please request a new one.");
+      throw new ErrorHandler("OTP has expired. Please request a new one.", 400);
     }
 
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
     if (user.emailVerificationOTP !== otpHash) {
-      throw new Error("Invalid OTP");
+      throw new ErrorHandler("Invalid OTP", 400);
     }
 
     user.isVerified = true;
@@ -108,7 +109,7 @@ export class AuthService {
     const user = await UserRepository.findByEmail(formattedEmail);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new ErrorHandler("User not found", 404);
     }
 
     if (user.isVerified) {
@@ -132,16 +133,16 @@ export class AuthService {
     const user = await UserRepository.findByEmail(formattedEmail, { select: "+password +isVerified" });
 
     if (!user) {
-      throw new Error("Invalid email or password");
+      throw new ErrorHandler("Invalid email or password", 401);
     }
 
     if (!user.password && user.provider === "google") {
-      throw new Error("This account is registered via Google Login. Please use Google OAuth.");
+      throw new ErrorHandler("This account is registered via Google Login. Please use Google OAuth.", 400);
     }
 
     const isPasswordMatched = await bcrypt.compare(password, user.password);
     if (!isPasswordMatched) {
-      throw new Error("Invalid email or password");
+      throw new ErrorHandler("Invalid email or password", 401);
     }
 
     if (!user.isVerified) {
@@ -172,7 +173,7 @@ export class AuthService {
 
   async verifyRefreshToken(token) {
     if (!token) {
-      throw new Error("Refresh token is required");
+      throw new ErrorHandler("Refresh token is required", 400);
     }
 
     try {
@@ -180,7 +181,7 @@ export class AuthService {
       const user = await UserRepository.findById(decoded.id, "+refreshToken");
 
       if (!user || user.refreshToken !== token) {
-        throw new Error("Invalid refresh token");
+        throw new ErrorHandler("Invalid refresh token", 401);
       }
 
       const accessToken = this.generateAccessToken(user._id);
@@ -194,7 +195,8 @@ export class AuthService {
         refreshToken: newRefreshToken
       };
     } catch (error) {
-      throw new Error("Invalid or expired refresh token");
+      if (error instanceof ErrorHandler) throw error;
+      throw new ErrorHandler("Invalid or expired refresh token", 401);
     }
   }
 
@@ -203,7 +205,7 @@ export class AuthService {
     const user = await UserRepository.findByEmail(formattedEmail);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new ErrorHandler("User not found", 400);
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -223,20 +225,20 @@ export class AuthService {
     const user = await UserRepository.findByEmail(formattedEmail, { select: "+resetPasswordToken +resetPasswordExpires" });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new ErrorHandler("User not found", 404);
     }
 
     if (!user.resetPasswordToken || !user.resetPasswordExpires) {
-      throw new Error("No password reset OTP found or already used");
+      throw new ErrorHandler("No password reset OTP found or already used", 400);
     }
 
     if (user.resetPasswordExpires < Date.now()) {
-      throw new Error("OTP has expired. Please request a new one.");
+      throw new ErrorHandler("OTP has expired. Please request a new one.", 400);
     }
 
     const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
     if (user.resetPasswordToken !== hashedOtp) {
-      throw new Error("Invalid OTP");
+      throw new ErrorHandler("Invalid OTP", 400);
     }
 
     return { success: true, message: "OTP verified. You can now reset your password." };
@@ -247,7 +249,7 @@ export class AuthService {
     const user = await UserRepository.findByEmail(formattedEmail, { select: "+resetPasswordToken +resetPasswordExpires" });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new ErrorHandler("User not found", 404);
     }
 
     // Verify OTP first

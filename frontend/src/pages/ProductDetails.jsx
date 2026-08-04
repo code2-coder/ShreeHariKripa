@@ -24,7 +24,7 @@ import { ProductCard } from "../components/common/ProductCard";
 import { useAuth } from "../context/AuthContext";
 import { useSEO } from "../hooks/useSEO";
 import { ProductSchema } from "../components/common/ProductSchema";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { useCategory } from "../context/CategoryContext";
 import { CollectionCard } from "../components/common/CollectionCard";
 import { useCurrency } from "../context/CurrencyContext";
@@ -172,7 +172,7 @@ export function ProductDetails() {
 
   useSEO(
     product ? product.name : "Loading Product...",
-    product ? `${product.name} - ${product.description.substring(0, 150)}...` : "Premium Tech Product",
+    product ? `${product.name} - ${(product.description || "").substring(0, 150)}...` : "Premium Tech Product",
     {
       image: product?.images?.[0]?.url || product?.image,
       type: "product",
@@ -223,7 +223,7 @@ export function ProductDetails() {
     return (
       <div className="min-h-screen bg-muted/30">
         <Header />
-        <main className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-[160px] lg:pt-[180px]">
           <div className="animate-pulse">
             <div className="h-4 bg-gray-100 w-32 mb-10" />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -244,6 +244,20 @@ export function ProductDetails() {
               </div>
             </div>
           </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Handle case where product fails to load (redirecting to Home)
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        <Header />
+        <main className="flex-1 max-w-[90rem] mx-auto px-4 py-8 flex flex-col items-center justify-center min-h-[50vh] pt-[160px] lg:pt-[180px]">
+          <RefreshCw className="w-8 h-8 animate-spin text-[#800000] mb-4" />
+          <p className="text-sm font-bold uppercase tracking-widest text-gray-500">Redirecting...</p>
         </main>
         <Footer />
       </div>
@@ -286,15 +300,19 @@ export function ProductDetails() {
               </div>
             ) : (
               <div className="w-[85%] sm:w-[75%] md:w-[90%] lg:w-[80%] mx-auto relative overflow-hidden bg-gray-50 flex items-center justify-center aspect-[4/5] group rounded-xl shadow-sm">
-                {/* Main Image (Always visible) */}
-                <img
-                  onClick={() => setIsLightboxOpen(true)}
-                  src={getOptimizedUrl((selectedColorVariant?.images && selectedColorVariant.images[activeImage]?.url) || (product?.images && product.images[activeImage]?.url) || product?.image, 1200) || "https://placehold.co/800x1000"}
-                  alt={`${product.name} - Main`}
-                  loading="eager"
-                  decoding="async"
-                  className="w-full h-full object-cover cursor-zoom-in hover:scale-[1.03] transition-transform duration-700 ease-out"
-                />
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={activeImage}
+                    initial={{ opacity: 0, scale: 1.02 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    src={getOptimizedUrl((selectedColorVariant?.images && selectedColorVariant.images[activeImage]?.url) || (product?.images && product.images[activeImage]?.url) || product?.image, 800)}
+                    alt={`${product.name} - Main`}
+                    onClick={() => setIsLightboxOpen(true)}
+                    className="w-full h-full object-cover cursor-zoom-in transition-transform duration-500 group-hover:scale-105"
+                  />
+                </AnimatePresence>
               </div>
             )}
 
@@ -353,9 +371,9 @@ export function ProductDetails() {
               </div>
             )}
 
-            {/* Minimal Specifications Below Images */}
+            {/* Minimal Specifications Below Images (Desktop Only) */}
             {specificationEntries.length > 0 && (
-              <div className="mt-16 w-[85%] sm:w-[75%] md:w-[90%] lg:w-[80%] mx-auto">
+              <div className="hidden md:block mt-16 w-[85%] sm:w-[75%] md:w-[90%] lg:w-[80%] mx-auto">
                 <h3 className="text-sm font-black uppercase tracking-widest text-obsidian mb-3 border-b border-gray-200 pb-2">Specifications</h3>
                 <div className="flex flex-col">
                   {specificationEntries.map((item) => (
@@ -436,22 +454,24 @@ export function ProductDetails() {
                     </label>
                     <div className="flex flex-wrap gap-3">
                       {(selectedColorVariant?.sizes || product.sizes || []).map((sizeObj, idx) => (
-                        <button
+                        <motion.button
                           key={sizeObj._id || idx}
                           onClick={() => {
                             setSelectedSize(sizeObj);
                             setQuantity(1);
                           }}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                           disabled={sizeObj.stock === 0}
-                          className={`px-4 py-1.5 font-bold text-[10px] sm:text-xs tracking-widest uppercase transition-all duration-300 rounded border hover:-translate-y-0.5 hover:shadow-sm ${selectedSize?._id === sizeObj._id || (selectedSize && selectedSize.size === sizeObj.size)
-                            ? "bg-obsidian text-white border-obsidian shadow-sm"
+                          className={`px-4 py-1.5 font-bold text-[10px] sm:text-xs tracking-widest uppercase transition-all duration-300 rounded-lg border hover:-translate-y-0.5 hover:shadow-sm cursor-pointer ${selectedSize?._id === sizeObj._id || (selectedSize && selectedSize.size === sizeObj.size)
+                            ? "bg-[#800000] text-white border-[#800000] shadow-sm"
                             : sizeObj.stock === 0
                               ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed hover:-translate-y-0 hover:shadow-none"
-                              : "bg-white text-gray-800 border-gray-300 hover:border-obsidian hover:text-obsidian"
+                              : "bg-white text-gray-800 border-gray-300 hover:border-[#800000] hover:text-[#800000]"
                             }`}
                         >
                           {sizeObj.size}
-                        </button>
+                        </motion.button>
                       ))}
                     </div>
                   </div>
@@ -481,7 +501,7 @@ export function ProductDetails() {
                         const accent = getVariantAccent(variant.variantName);
                         const displayColor = variant.colorHex || accent.swatch;
                         return (
-                          <button
+                          <motion.button
                             key={variant._id || idx}
                             onClick={() => {
                               setSelectedColorVariant(variant);
@@ -494,8 +514,10 @@ export function ProductDetails() {
                                 setSelectedSize(null);
                               }
                             }}
-                            className={`group relative flex flex-col items-center p-2 rounded transition-all duration-300 w-28 hover:-translate-y-1 hover:shadow-lg ${selectedColorVariant?._id === variant._id || (selectedColorVariant && selectedColorVariant.variantName === variant.variantName)
-                              ? `border-none ring-2 ring-obsidian ring-offset-2 bg-gray-50 shadow-md`
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            className={`group relative flex flex-col items-center p-2 rounded-xl transition-all duration-300 w-28 hover:-translate-y-1 hover:shadow-lg cursor-pointer ${selectedColorVariant?._id === variant._id || (selectedColorVariant && selectedColorVariant.variantName === variant.variantName)
+                              ? `border-none ring-2 ring-[#800000] ring-offset-2 bg-gray-50 shadow-md`
                               : `border-transparent bg-white hover:bg-gray-50`
                               }`}
                             title={variant.variantName}
@@ -519,7 +541,7 @@ export function ProductDetails() {
                             >
                               {getFormattedPrice(variant.sizes?.[0]?.price || 0)}
                             </span>
-                          </button>
+                          </motion.button>
                         );
                       })}
                     </div>
@@ -547,35 +569,40 @@ export function ProductDetails() {
               <label className="block text-xs uppercase tracking-[0.2em] font-bold text-gray-400 mb-3">
                 Quantity
               </label>
-              <div className="flex flex-col sm:flex-row items-stretch gap-4">
-                <div className="flex items-center justify-between border border-gray-200 rounded-none bg-white sm:w-24 shadow-sm">
+              <div className="flex items-center gap-3.5 w-full">
+                <div className="flex items-center justify-between border border-neutral-200 rounded-full bg-neutral-50 w-28 h-12 shadow-sm px-1 flex-shrink-0">
                   <button
                     onClick={decrementQuantity}
                     aria-label="Decrease quantity"
-                    className="p-2 sm:p-2.5 hover:bg-gray-50 hover:text-obsidian disabled:opacity-30 transition-colors text-gray-400"
+                    className="p-1.5 rounded-full hover:bg-white text-stone-500 hover:text-stone-900 disabled:opacity-30 transition-all flex items-center justify-center w-8 h-8 cursor-pointer"
                     disabled={quantity <= 1}
                   >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
-                  <span className="font-medium text-obsidian text-xs tracking-widest">{quantity}</span>
+                  <span className="font-bold text-neutral-800 text-xs tracking-widest text-center flex-1">{quantity}</span>
                   <button
                     onClick={incrementQuantity}
                     aria-label="Increase quantity"
-                    className="p-2 sm:p-2.5 hover:bg-gray-50 hover:text-obsidian disabled:opacity-30 transition-colors text-gray-400"
+                    className="p-1.5 rounded-full hover:bg-white text-stone-500 hover:text-stone-900 disabled:opacity-30 transition-all flex items-center justify-center w-8 h-8 cursor-pointer"
                     disabled={quantity >= displayStock}
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <button
+                <motion.button
                   onClick={handleAddToCart}
                   disabled={displayStock === 0}
                   aria-label="Add to cart"
-                  className="flex-1 bg-obsidian text-white py-3 border border-obsidian hover:bg-black hover:-translate-y-1 hover:shadow-[0_10px_20px_-10px_rgba(0,0,0,0.5)] active:scale-95 transition-all duration-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:active:scale-100 font-bold text-xs sm:text-sm uppercase tracking-[0.2em] flex items-center justify-center space-x-3 shadow-md group"
+                  whileHover={{ scale: 1.02, y: -1 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 450, damping: 15 }}
+                  className="flex-1 relative overflow-hidden bg-[#800000] border border-[#800000] text-white h-12 px-6 rounded-full hover:bg-[#600000] hover:border-[#600000] transition-all duration-300 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:border-neutral-200 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:active:scale-100 font-bold text-xs sm:text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-2.5 shadow-md shadow-red-900/10 group cursor-pointer"
                 >
                   <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
                   <span>{displayStock === 0 ? "Out of Stock" : "Add to Bag"}</span>
-                </button>
+                  {/* Floating Shimmer Sweep */}
+                  <div className="absolute top-0 -inset-full h-full w-1/2 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none group-hover:animate-shine animate-shine" />
+                </motion.button>
               </div>
             </motion.div>
 
@@ -745,6 +772,21 @@ export function ProductDetails() {
                 </>
               )}
             </motion.div>
+
+            {/* Minimal Specifications (Mobile Only - renders below buy options) */}
+            {specificationEntries.length > 0 && (
+              <div className="md:hidden mt-8 border-t border-gray-100 pt-6">
+                <h3 className="text-sm font-black uppercase tracking-widest text-obsidian mb-3 border-b border-gray-200 pb-2">Specifications</h3>
+                <div className="flex flex-col">
+                  {specificationEntries.map((item) => (
+                    <div key={item.label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                      <span className="text-xs font-medium text-gray-500">{item.label}</span>
+                      <span className="text-xs font-semibold text-obsidian text-right">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </motion.div>
         </div>
 
@@ -820,9 +862,13 @@ export function ProductDetails() {
               <h2 className="text-lg md:text-xl font-serif text-obsidian font-light tracking-widest uppercase">You May Also Like</h2>
               <div className="h-px w-12 bg-[#B8934E]/50 mx-auto mt-4"></div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="flex overflow-x-auto pb-4 gap-6 no-scrollbar snap-x snap-mandatory sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-8 px-4 sm:px-0">
               {relatedProducts.map((relatedProduct, idx) => (
-                <div key={relatedProduct._id || relatedProduct.id} className="animate-fade-in-up" style={{ animationDelay: `${0.3 + idx * 0.1}s`, animationFillMode: 'both' }}>
+                <div 
+                  key={relatedProduct._id || relatedProduct.id} 
+                  className="w-[75vw] sm:w-auto shrink-0 snap-align-start animate-fade-in-up" 
+                  style={{ animationDelay: `${0.3 + idx * 0.1}s`, animationFillMode: 'both' }}
+                >
                   <ProductCard product={relatedProduct} />
                 </div>
               ))}
@@ -857,14 +903,14 @@ export function ProductDetails() {
 
         {/* Mobile sticky Add-to-Cart (shows on small screens) */}
         {product && displayStock > 0 && (
-          <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-border p-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
+          <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-neutral-100 p-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
             <div className="flex items-center gap-4">
-              <img src={getOptimizedUrl((selectedColorVariant?.images && selectedColorVariant.images[0]?.url) || product?.image, 100) || "https://placehold.co/80x80"} alt={product.name} loading="lazy" className="w-12 h-12 object-cover border border-border/50" />
+              <img src={getOptimizedUrl((selectedColorVariant?.images && selectedColorVariant.images[0]?.url) || product?.image, 100) || "https://placehold.co/80x80"} alt={product.name} loading="lazy" className="w-12 h-12 object-cover border border-neutral-200/60 rounded-lg shadow-sm" />
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-bold truncate text-foreground tracking-wide">{product.name} {selectedColorVariant && `(${selectedColorVariant.variantName})`} {selectedSize && `- ${selectedSize.size}`}</div>
                 <div className="text-sm font-serif text-gray-600">{getFormattedPrice(displayPrice)}</div>
               </div>
-              <button onClick={handleAddToCart} aria-label="Add to cart" className="bg-primary text-white px-6 py-3 text-[10px] font-bold uppercase tracking-[0.2em] disabled:bg-gray-200 disabled:cursor-not-allowed transition-colors">
+              <button onClick={handleAddToCart} aria-label="Add to cart" className="bg-[#800000] hover:bg-[#600000] text-white px-6 py-2.5 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full disabled:bg-neutral-100 disabled:text-neutral-400 disabled:cursor-not-allowed transition-colors shadow-sm cursor-pointer">
                 Add
               </button>
             </div>

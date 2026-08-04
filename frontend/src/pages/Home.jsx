@@ -20,6 +20,47 @@ import { useSEO } from "../hooks/useSEO";
 import { useCategory } from "../context/CategoryContext";
 import { shuffleArray } from "../utils/helpers";
 import { motion, AnimatePresence } from "motion/react";
+const bannerConfigs = {
+  "new-arrival": {
+    badge: "MODERN CLASSICS",
+    title: "New Arrivals",
+    subtitle: "Freshly Curated Divine Masterpieces",
+    description: "Explore our latest handcrafted collection featuring exquisite Kundan details, premium gold finishes, and fresh devotional designs.",
+    bgClass: "bg-gradient-to-br from-[#FAF9F6] via-pink-100/40 to-[#e8d5da] border-[#FAF9F6]/20",
+    textClass: "text-[#800000]",
+    subtextClass: "text-stone-600",
+    badgeClass: "bg-white/80 border-[#800000]/20 text-[#800000] shadow-sm",
+    btnClass: "bg-[#800000] hover:bg-[#600000] text-white shadow-[#800000]/25",
+    accentIcon: "✦",
+    shopPath: "/shop?homeSection=New Arrival"
+  },
+  "best-seller": {
+    badge: "TIMELESS ICONICS",
+    title: "Best Sellers",
+    subtitle: "Our Most Coveted Heritage Icons",
+    description: "Adored by our devotees, these timeless pieces represent the pinnacle of elegance, divine craftsmanship, and traditional beauty.",
+    bgClass: "bg-gradient-to-br from-[#2D0D18] via-[#4A0A18] to-[#1A050A] border-[#800000]/20",
+    textClass: "text-white",
+    subtextClass: "text-pink-100/70",
+    badgeClass: "bg-[#B8934E]/20 border-[#B8934E]/30 text-[#B8934E]",
+    btnClass: "bg-[#B8934E] hover:bg-white hover:text-[#2D0D18] text-[#1A050A] shadow-[#B8934E]/30",
+    accentIcon: "★",
+    shopPath: "/shop?homeSection=Best Seller"
+  },
+  "trending-product": {
+    badge: "POPULAR NOW",
+    title: "Trending Products",
+    subtitle: "The Season's Most-Loved Designs",
+    description: "Stay in style with our trending Laddu Gopal accessories, designer Shringar, and modern traditional sets.",
+    bgClass: "bg-gradient-to-br from-[#FAF9F6] via-[#DDA7A5]/30 to-[#E5B5B3]/40 border-[#DDA7A5]/20",
+    textClass: "text-[#2D0D18]",
+    subtextClass: "text-[#5C1A1B]/80",
+    badgeClass: "bg-white/60 border-[#DDA7A5]/30 text-[#4A0A18]",
+    btnClass: "bg-[#800000] hover:bg-[#600000] text-white shadow-[#800000]/25",
+    accentIcon: "🔥",
+    shopPath: "/shop?homeSection=Trending Product"
+  }
+};
 
 export function Home() {
   useSEO("Home", "Browse Shreeharikripa's expansive offering of highly-rated jewellery pieces, elegant necklaces, and premium diamond rings.");
@@ -337,48 +378,106 @@ export function Home() {
             )}
 
             {visibleFeaturedSections.length > 0 && (
-              <div className="mt-14 space-y-8">
-                {visibleFeaturedSections.map((section) => (
-                  <section key={section.key} className="rounded-[2rem] border border-[#f4e6ea] bg-white/80 backdrop-blur-xl p-4 sm:p-6 shadow-[0_16px_45px_-20px_rgba(128,0,0,0.2)]">
-                    <div className="flex items-center justify-between gap-4 mb-5">
-                      <div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#800000]">Featured</p>
-                        <h4 className="text-xl sm:text-2xl font-serif text-obsidian">{section.title}</h4>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => scrollFeaturedSection(section.key, "left")}
-                          className="flex h-10 w-10 items-center justify-center rounded-full border border-[#f0d9df] bg-white text-[#800000] shadow-sm transition hover:-translate-y-0.5 hover:bg-[#800000] hover:text-white"
-                          aria-label={`Scroll ${section.title} left`}
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => scrollFeaturedSection(section.key, "right")}
-                          className="flex h-10 w-10 items-center justify-center rounded-full border border-[#f0d9df] bg-white text-[#800000] shadow-sm transition hover:-translate-y-0.5 hover:bg-[#800000] hover:text-white"
-                          aria-label={`Scroll ${section.title} right`}
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div
-                      ref={(el) => {
-                        featuredSectionRefs.current[section.key] = el;
-                      }}
-                      className="flex gap-4 overflow-x-auto pb-2 scroll-smooth snap-x snap-mandatory"
+              <div className="mt-16 space-y-12 sm:space-y-16">
+                {visibleFeaturedSections.map((section) => {
+                  const config = bannerConfigs[section.key] || bannerConfigs["trending-product"];
+                  return (
+                    <section
+                      key={section.key}
+                      className="relative rounded-[2.5rem] border border-neutral-100/80 bg-white/70 backdrop-blur-xl p-4 sm:p-8 shadow-[0_24px_55px_-24px_rgba(128,0,0,0.12)] hover:shadow-[0_28px_60px_-20px_rgba(128,0,0,0.15)] transition-shadow duration-500 overflow-hidden"
                     >
-                      {section.products.slice(0, 8).map((product) => (
-                        <div key={`${section.key}-${product._id || product.id}`} className="min-w-[220px] max-w-[220px] snap-start sm:min-w-[250px] sm:max-w-[250px]">
-                          <ProductCard product={product} />
+                      {/* Asymmetric background glow */}
+                      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-pink-100/20 to-[#800000]/5 blur-3xl pointer-events-none" />
+
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+                        
+                        {/* Editorial Banner Column */}
+                        <div className={`lg:col-span-4 flex flex-col justify-between p-8 sm:p-10 rounded-[2rem] relative overflow-hidden shadow-inner border ${config.bgClass}`}>
+                          {/* Pattern Overlay */}
+                          <div className="absolute inset-0 bg-[url('/lotus-bg.png')] bg-repeat opacity-[0.03] pointer-events-none" />
+                          <div className="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-white/5 blur-2xl pointer-events-none" />
+                          <div className="absolute -left-16 -bottom-16 w-48 h-48 rounded-full bg-[#800000]/5 blur-2xl pointer-events-none" />
+                          
+                          <div className="relative z-10 flex flex-col h-full justify-between gap-8">
+                            <div>
+                              <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[9px] font-black tracking-[0.25em] uppercase mb-6 ${config.badgeClass}`}>
+                                <span>{config.accentIcon}</span>
+                                <span>{config.badge}</span>
+                              </div>
+                              
+                              <h4 className={`text-3xl sm:text-4xl font-serif font-light mb-4 tracking-wide leading-tight ${config.textClass}`}>
+                                {config.title}
+                              </h4>
+                              
+                              <p className={`text-xs font-semibold uppercase tracking-widest mb-4 ${config.textClass === 'text-white' ? 'text-[#B8934E]' : 'text-[#800000]'}`}>
+                                {config.subtitle}
+                              </p>
+                              
+                              <p className={`text-[13px] font-light leading-relaxed tracking-wide ${config.subtextClass}`}>
+                                {config.description}
+                              </p>
+                            </div>
+                            
+                            <button
+                              onClick={() => navigate(config.shopPath)}
+                              className={`w-full py-4 text-[10px] uppercase tracking-[0.2em] font-extrabold rounded-2xl shadow-lg transition-all duration-500 flex items-center justify-center gap-2 group cursor-pointer ${config.btnClass}`}
+                            >
+                              <span>Explore Collection</span>
+                              <ChevronRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                            </button>
+                          </div>
                         </div>
-                      ))}
-                    </div>
-                  </section>
-                ))}
+
+                        {/* Product Slider Column */}
+                        <div className="lg:col-span-8 flex flex-col justify-center relative min-w-0">
+                          {/* Slider Navigation Headers */}
+                          <div className="flex justify-between items-center mb-4 px-2">
+                            <span className="text-xs font-bold text-stone-400 uppercase tracking-[0.18em]">
+                              Curated Showcase
+                            </span>
+                            <div className="flex items-center gap-2 z-20">
+                              <button
+                                type="button"
+                                onClick={() => scrollFeaturedSection(section.key, "left")}
+                                className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200/50 bg-white/90 backdrop-blur-sm text-stone-700 hover:text-white shadow-sm hover:bg-[#800000] hover:border-[#800000] transition-all duration-300 cursor-pointer hover:shadow-lg active:scale-95"
+                                aria-label={`Scroll ${section.title} left`}
+                              >
+                                <ChevronLeft className="h-4 w-4" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => scrollFeaturedSection(section.key, "right")}
+                                className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200/50 bg-white/90 backdrop-blur-sm text-stone-700 hover:text-white shadow-sm hover:bg-[#800000] hover:border-[#800000] transition-all duration-300 cursor-pointer hover:shadow-lg active:scale-95"
+                                aria-label={`Scroll ${section.title} right`}
+                              >
+                                <ChevronRight className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Horizontal Scroll Area */}
+                          <div
+                            ref={(el) => {
+                              featuredSectionRefs.current[section.key] = el;
+                            }}
+                            className="flex gap-4 overflow-x-auto pb-4 pt-2 scroll-smooth snap-x snap-mandatory scrollbar-none"
+                            style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
+                          >
+                            {section.products.slice(0, 10).map((product) => (
+                              <div
+                                key={`${section.key}-${product._id || product.id}`}
+                                className="min-w-[210px] max-w-[210px] snap-start sm:min-w-[245px] sm:max-w-[245px] transform hover:scale-[1.01] transition-transform duration-300"
+                              >
+                                <ProductCard product={product} />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                      </div>
+                    </section>
+                  );
+                })}
               </div>
             )}
           </div>

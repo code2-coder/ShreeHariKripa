@@ -333,87 +333,141 @@ export function Header() {
     }
   };
 
-  const searchDropdownContent = showSearchDropdown && (
-    <div className="absolute top-full left-0 w-full mt-3 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-[60] animate-in fade-in slide-in-from-top-2 duration-300">
-      {isSearching ? (
-        <div className="py-2">
-          <div className="px-5 py-2 text-[10px] font-bold uppercase text-black tracking-[0.2em] mb-1">
-            Suggestions
-          </div>
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="flex items-center px-5 py-2.5 animate-pulse border-b border-gray-50 last:border-0">
-              <div className="w-9 h-9 rounded-lg bg-gray-100 mr-3 flex-shrink-0"></div>
-              <div className="h-3 bg-gray-100 rounded w-2/3"></div>
-            </div>
-          ))}
-        </div>
-      ) : liveResults.length > 0 ? (
-        <div className="py-2">
-          <div className="px-5 py-3 text-xs font-semibold uppercase text-gray-900 tracking-widest mb-1 flex items-center gap-2">
-            <span className="w-4 h-[1px] bg-gray-300"></span>
-            Top Suggestions
-          </div>
-          {liveResults.map(product => {
-            const variantPrice = product.variants?.[0]?.sizes?.[0]?.price || product.sizes?.[0]?.price;
-            const displayPrice = variantPrice !== undefined ? variantPrice : product.price;
+  const matchedCats = searchQuery.trim()
+    ? (categories || []).filter(c =>
+        c.name.toLowerCase().includes(searchQuery.toLowerCase().trim())
+      ).slice(0, 5)
+    : [];
 
-            return (
+  const shouldShowDropdown = showSearchDropdown && (searchQuery.trim().length > 0 || searchHistory.length > 0);
+
+  const searchDropdownContent = shouldShowDropdown && (
+    <div className="absolute top-full left-0 w-full mt-3 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-[60] animate-in fade-in slide-in-from-top-2 duration-300">
+      {searchQuery.trim().length >= 1 ? (
+        <div className="py-2 max-h-[70vh] overflow-y-auto custom-scrollbar">
+          {/* 🔍 Search Term Suggestion */}
+          <div className="px-5 py-2">
             <Link
-              key={product._id}
-              to={`/product/${product._id}`}
-              onClick={() => setShowSearchDropdown(false)}
-              className="flex items-center px-6 py-3 hover:bg-gray-50 transition-all duration-300 group border-b border-gray-50 last:border-0"
+              to={`/shop?search=${encodeURIComponent(searchQuery)}`}
+              onClick={() => {
+                saveToHistory(searchQuery);
+                setShowSearchDropdown(false);
+              }}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-gray-50 transition-all duration-300 group"
             >
-              <div className="w-14 h-14 rounded-md overflow-hidden border border-gray-100 mr-4 flex-shrink-0 bg-gray-50 shadow-sm group-hover:shadow-md transition-all duration-300">
-                {/* Fixed duplicate title bug by removing redundant alt text */}
-                <img
-                  src={product.images?.[0]?.url || product.image || "/placeholder.jpg"}
-                  alt=""
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                />
-              </div>
-              <div className="flex flex-col flex-1 min-w-0">
-                <span className="text-[14px] font-medium text-gray-900 truncate group-hover:text-obsidian transition-colors leading-tight">
-                  {(() => {
-                     if (!searchQuery) return product.name;
-                     const parts = product.name.split(new RegExp(`(${searchQuery})`, 'gi'));
-                     return parts.map((part, i) =>
-                       part.toLowerCase() === searchQuery.toLowerCase()
-                         ? <span key={i} className="font-bold underline decoration-gray-300 underline-offset-4">{part}</span>
-                         : part
-                     );
-                  })()}
-                </span>
-                {displayPrice && (
-                  <span className="text-xs text-gray-500 mt-1 font-medium">{getFormattedPrice(displayPrice)}</span>
-                )}
-              </div>
-              <div className="w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:-translate-x-2 shadow-sm">
-                <ArrowUpRight className="w-4 h-4 text-gray-600" />
-              </div>
+              <Search className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
+              <span className="text-[14px] text-gray-600 group-hover:text-black font-medium transition-colors">
+                Search for <span className="font-semibold text-black">"{searchQuery}"</span>
+              </span>
             </Link>
-          )})}
+          </div>
+
+          {/* 📂 Matched Categories / Collections */}
+          {matchedCats.length > 0 && (
+            <div className="px-5 py-2 border-t border-gray-50">
+              <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-1">
+                In Collections
+              </div>
+              <div className="flex flex-wrap gap-2 px-3 py-1">
+                {matchedCats.map(cat => (
+                  <Link
+                    key={cat._id}
+                    to={`/shop?category=${encodeURIComponent(cat.name)}`}
+                    onClick={() => {
+                      saveToHistory(cat.name);
+                      setShowSearchDropdown(false);
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200/60 rounded-full transition-colors text-xs font-semibold text-gray-800"
+                  >
+                    <Gem className="w-3 h-3 text-[#B8934E]" />
+                    <span>{cat.name}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 📦 Product Suggestions */}
+          <div className="px-5 py-2 border-t border-gray-50">
+            <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-1">
+              Products
+            </div>
+            {isSearching ? (
+              <div className="space-y-1">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="flex items-center px-3 py-2.5 animate-pulse rounded-2xl">
+                    <div className="w-12 h-12 rounded-lg bg-gray-100 mr-3 flex-shrink-0"></div>
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3 bg-gray-100 rounded w-2/3"></div>
+                      <div className="h-3 bg-gray-100 rounded w-1/4"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : liveResults.length > 0 ? (
+              <div className="flex flex-col">
+                {liveResults.map(product => {
+                  const variantPrice = product.variants?.[0]?.sizes?.[0]?.price || product.sizes?.[0]?.price;
+                  const displayPrice = variantPrice !== undefined ? variantPrice : product.price;
+
+                  return (
+                    <Link
+                      key={product._id}
+                      to={`/product/${product._id}`}
+                      onClick={() => setShowSearchDropdown(false)}
+                      className="flex items-center px-3 py-2.5 hover:bg-gray-50 transition-all duration-300 group rounded-2xl"
+                    >
+                      <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-100 mr-3.5 flex-shrink-0 bg-gray-50 shadow-sm group-hover:shadow-md transition-all duration-300">
+                        <img
+                          src={product.images?.[0]?.url || product.image || "/placeholder.jpg"}
+                          alt=""
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                        />
+                      </div>
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <span className="text-[13px] font-medium text-gray-900 truncate group-hover:text-obsidian transition-colors leading-tight">
+                          {(() => {
+                            if (!searchQuery) return product.name;
+                            const parts = product.name.split(new RegExp(`(${searchQuery})`, 'gi'));
+                            return parts.map((part, i) =>
+                              part.toLowerCase() === searchQuery.toLowerCase()
+                                ? <span key={i} className="font-bold underline decoration-gray-300 underline-offset-4">{part}</span>
+                                : part
+                            );
+                          })()}
+                        </span>
+                        {displayPrice && (
+                          <span className="text-xs text-[#800000] mt-1 font-semibold">{getFormattedPrice(displayPrice)}</span>
+                        )}
+                      </div>
+                      <div className="w-7 h-7 rounded-full bg-white border border-gray-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:-translate-x-1 shadow-sm">
+                        <ArrowUpRight className="w-3.5 h-3.5 text-gray-600" />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="py-6 text-center bg-gray-50/30 rounded-2xl">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">No products found</p>
+                <p className="text-[11px] text-gray-400 max-w-[200px] mx-auto leading-relaxed">Try checking your spelling or using different keywords</p>
+              </div>
+            )}
+          </div>
+
+          {/* ── View All button ── */}
           <div className="px-5 mt-2 pb-2">
             <button
               onClick={handleSearch}
-              className="w-full py-3.5 bg-gray-900 text-white text-xs font-bold uppercase tracking-widest hover:bg-obsidian transition-colors rounded-lg flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              className="w-full py-3.5 bg-gray-950 text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition-colors rounded-2xl flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
             >
               <span>View all results for "{searchQuery}"</span>
               <ArrowUpRight className="w-4 h-4" />
             </button>
           </div>
         </div>
-      ) : searchQuery.trim().length >= 1 ? (
-        <div className="p-10 text-center bg-gray-50/50">
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-gray-100">
-            <Search className="w-6 h-6 text-gray-300" />
-          </div>
-          <p className="text-sm font-bold text-gray-600 uppercase tracking-widest mb-1">No products found</p>
-          <p className="text-xs text-gray-400 font-medium max-w-[200px] mx-auto leading-relaxed">Try checking your spelling or using different keywords</p>
-        </div>
       ) : (
         <div className="py-2 max-h-[70vh] overflow-y-auto custom-scrollbar">
-
           {/* ── Recent Searches ── */}
           {searchHistory.length > 0 && (
             <div className="px-5 pt-4 pb-3">
@@ -434,7 +488,11 @@ export function Header() {
                   <Link
                     key={idx}
                     to={`/shop?search=${encodeURIComponent(query)}`}
-                    onClick={() => { setShowSearchDropdown(false); setSearchQuery(query); saveToHistory(query); }}
+                    onClick={() => {
+                      setShowSearchDropdown(false);
+                      setSearchQuery(query);
+                      saveToHistory(query);
+                    }}
                     className="flex items-center justify-between py-2 px-1 group transition-colors rounded-lg hover:bg-gray-50"
                   >
                     <div className="flex items-center gap-2.5">
@@ -447,34 +505,6 @@ export function Header() {
               </div>
             </div>
           )}
-
-          {/* ── Divider ── */}
-          {searchHistory.length > 0 && (
-            <div className="mx-5 border-t border-gray-100 my-1" />
-          )}
-
-          {/* ── Collections ── */}
-          <div className="px-5 pt-3 pb-4">
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-black block mb-2">
-              Collections
-            </span>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-0.5">
-              {(categories || []).filter(c => !c.parentCategory).map((cat) => (
-                <Link
-                  key={cat._id}
-                  to={`/shop?category=${encodeURIComponent(cat.name)}`}
-                  onClick={() => setShowSearchDropdown(false)}
-                  className="flex items-center gap-2 py-2 px-1 group transition-colors rounded-lg hover:bg-gray-50"
-                >
-                  <span className="w-1 h-3.5 rounded-full bg-black/20 group-hover:bg-black transition-colors flex-shrink-0" />
-                  <span className="text-[13px] font-medium text-black group-hover:text-black transition-colors">
-                    {cat.name}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-
         </div>
       )}
     </div>

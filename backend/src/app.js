@@ -11,6 +11,7 @@ import errorMiddleware from "./middleware/errors.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import forgotPasswordRoutes from "./routes/forgotPassword.routes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import bannerRoutes from "./routes/bannerRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
@@ -138,6 +139,8 @@ app.get("/health", (req, res) => {
 app.use("/api/v1", categoryRoutes);
 app.use("/api/v1", productRoutes);
 app.use("/api/v1", authRoutes);
+app.use("/api/v1", forgotPasswordRoutes);
+app.use("/api/auth", forgotPasswordRoutes);
 app.use("/api/v1", orderRoutes);
 app.use("/api/v1", bannerRoutes);
 app.use("/api/v1", paymentRoutes);
