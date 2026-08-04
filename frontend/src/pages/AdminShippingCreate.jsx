@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router";
 import api from "../api/axios";
 import { toast } from "sonner";
-import { AdminSidebar } from "../components/admin/AdminSidebar";
+import { AdminSidebar } from "../components/layout/AdminSidebar";
 import { ArrowLeft, Save, Printer } from "lucide-react";
 
 const emptyAddress = {

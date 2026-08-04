@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
 import api from "../api/axios";
 import { toast } from "sonner";
-import { AdminSidebar } from "../components/admin/AdminSidebar";
+import { AdminSidebar } from "../components/layout/AdminSidebar";
 import { ArrowLeft, Plus, Pencil, Trash2, ToggleLeft, ToggleRight, Truck } from "lucide-react";
 
 export const AdminCouriers = () => {

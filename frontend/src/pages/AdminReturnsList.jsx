@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import api from "../api/axios";
 import { toast } from "sonner";
-import { AdminReturnCard } from "../components/returns/AdminReturnCard";
-import { AdminSidebar } from "../components/admin/AdminSidebar";
+import { AdminReturnCard } from "../components/common/returns/AdminReturnCard";
+import { AdminSidebar } from "../components/layout/AdminSidebar";
 import { CheckCircle2, Clock, Truck, RotateCcw, Package, XCircle, Search, FilterX, RefreshCcw, Repeat } from "lucide-react";
 
 export const AdminReturnsList = () => {

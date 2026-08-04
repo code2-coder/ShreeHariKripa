@@ -8,12 +8,12 @@ import { useAuth } from "../context/AuthContext";
 import { useCurrency } from "../context/CurrencyContext";
 import { toast } from "sonner";
 import api from "../api/axios";
-import { AddressBook } from "../components/AddressBook";
-import { AddressForm } from "../components/AddressForm";
+import { AddressBook } from "../components/common/AddressBook";
+import { AddressForm } from "../components/forms/AddressForm";
 import {
   ShippingMethodSelector,
   PackagingSelector,
-} from "../components/ShippingAndPackaging";
+} from "../components/common/ShippingAndPackaging";
 import { convertPrice, DEFAULT_CURRENCY, formatPrice } from "../utils/currencyUtils";
 
 const Footer = lazy(() => import("../components/layout/Footer").then(m => ({ default: m.Footer })));

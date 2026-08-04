@@ -1,7 +1,7 @@
 import { useWishlist } from "../context/WishlistContext";
 import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";
-import { ProductCard } from "../components/ProductCard";
+import { ProductCard } from "../components/common/ProductCard";
 import { Link } from "react-router";
 import { Heart } from "lucide-react";
 

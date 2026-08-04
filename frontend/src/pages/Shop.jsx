@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef, lazy, Suspense } from "react";
 import { useSearchParams, Link } from "react-router";
 import { Header } from "../components/layout/Header";
-import { ProductCard } from "../components/ProductCard";
+import { ProductCard } from "../components/common/ProductCard";
 import { useCategory } from "../context/CategoryContext";
 import { useCurrency } from "../context/CurrencyContext";
 import { SUPPORTED_CURRENCIES } from "../utils/currencyUtils";

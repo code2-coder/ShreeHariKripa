@@ -1,6 +1,6 @@
 import { useLocation, Link, Navigate } from "react-router";
 import { Header } from "../components/layout/Header";
-import { ProductCard } from "../components/ProductCard";
+import { ProductCard } from "../components/common/ProductCard";
 import { useSEO } from "../hooks/useSEO";
 import { ArrowLeft, Sparkles } from "lucide-react";
 

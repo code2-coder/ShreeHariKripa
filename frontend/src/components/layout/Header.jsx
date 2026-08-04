@@ -26,7 +26,7 @@ import { useCategory } from "../../context/CategoryContext";
 import { useState, useEffect, useRef } from "react";
 import api from "../../api/axios";
 import { useCurrency } from "../../context/CurrencyContext";
-import { DropdownMenu } from "../ui/DropdownMenu";
+import { DropdownMenu } from "./AccountDropdown";
 import {
   Select,
   SelectContent,

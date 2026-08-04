@@ -1,6 +1,6 @@
 import express from "express";
 import authController from "../controllers/AuthController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { protect } from "../middleware/auth.js";
 import { validate } from "../middleware/validator.js";
 import {
   registerSchema,
@@ -8,7 +8,7 @@ import {
   verifyOtpSchema,
   resetPasswordSchema,
   updatePasswordSchema
-} from "../validators/authValidator.js";
+} from "../validations/authValidator.js";
 import passport from "passport";
 
 const router = express.Router();

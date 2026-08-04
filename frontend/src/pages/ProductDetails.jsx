@@ -20,17 +20,17 @@ import {
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { toast } from "sonner";
-import { ProductCard } from "../components/ProductCard";
+import { ProductCard } from "../components/common/ProductCard";
 import { useAuth } from "../context/AuthContext";
 import { useSEO } from "../hooks/useSEO";
-import { ProductSchema } from "../components/ProductSchema";
+import { ProductSchema } from "../components/common/ProductSchema";
 import { motion } from "motion/react";
 import { useCategory } from "../context/CategoryContext";
-import { CollectionCard } from "../components/CollectionCard";
+import { CollectionCard } from "../components/common/CollectionCard";
 import { useCurrency } from "../context/CurrencyContext";
-import { PackagingInfo } from "../components/ShippingAndPackaging";
+import { PackagingInfo } from "../components/common/ShippingAndPackaging";
 import { getPackagingText } from "../api/shippingService";
-import ProductReviewsSection from "../components/reviews/ProductReviewsSection";
+import ProductReviewsSection from "../components/common/reviews/ProductReviewsSection";
 
 export function ProductDetails() {
   const { id } = useParams();

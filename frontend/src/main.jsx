@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import store from "./store/store.js";
 import App from "./App.jsx";
 import "./styles/index.css";
-import ErrorBoundary from "./components/ErrorBoundary.jsx";
+import ErrorBoundary from "./components/common/ErrorBoundary.jsx";
 
 createRoot(document.getElementById("root")).render(
   <ErrorBoundary>

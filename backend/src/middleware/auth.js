@@ -50,3 +50,7 @@ export const authorizeRoles = (...roles) => {
     next();
   };
 };
+
+// Unified alias for protect middleware
+export const protect = isAuthenticatedUser;
+

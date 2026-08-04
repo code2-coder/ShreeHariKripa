@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import api from "../api/axios";
 import { toast } from "sonner";
-import { ReturnStatusBadge } from "../components/returns/ReturnStatusBadge";
-import { ReturnTimeline } from "../components/returns/ReturnTimeline";
-import { AdminSidebar } from "../components/admin/AdminSidebar";
+import { ReturnStatusBadge } from "../components/common/returns/ReturnStatusBadge";
+import { ReturnTimeline } from "../components/common/returns/ReturnTimeline";
+import { AdminSidebar } from "../components/layout/AdminSidebar";
 import { ArrowLeft, User, Package, HelpCircle, FileText, Camera, Video, Calendar, Save, Truck, CreditCard, RefreshCw } from "lucide-react";
 
 export const AdminReturnDetails = () => {

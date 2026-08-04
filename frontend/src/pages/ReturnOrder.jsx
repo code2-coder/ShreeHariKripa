@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { toast } from "sonner";
-import { MediaUploader } from "../components/returns/MediaUploader";
+import { MediaUploader } from "../components/common/returns/MediaUploader";
 import api from "../api/axios";
 import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";

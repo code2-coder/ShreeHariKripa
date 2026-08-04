@@ -7,17 +7,17 @@ import { Search, Bell, HelpCircle } from "lucide-react";
 
 
 // Import Refactored Components
-import { AdminSidebar } from "../components/admin/AdminSidebar";
-import { DashboardTab } from "../components/admin/DashboardTab";
-import { OrdersTab } from "../components/admin/OrdersTab";
-import { ProductsTab } from "../components/admin/ProductsTab";
-import { BannersTab } from "../components/admin/BannersTab";
-import { CategoriesTab } from "../components/admin/CategoriesTab";
-import { AdPostersTab } from "../components/admin/AdPostersTab";
-import { AdminSettingsPanel } from "../components/AdminSettingsPanel";
-import { PagesTab } from "../components/admin/PagesTab";
-import { CurrencyTab } from "../components/admin/CurrencyTab";
-import { ReviewsTab } from "../components/admin/ReviewsTab";
+import { AdminSidebar } from "../components/layout/AdminSidebar";
+import { DashboardTab } from "../components/common/admin/DashboardTab";
+import { OrdersTab } from "../components/common/admin/OrdersTab";
+import { ProductsTab } from "../components/common/admin/ProductsTab";
+import { BannersTab } from "../components/common/admin/BannersTab";
+import { CategoriesTab } from "../components/common/admin/CategoriesTab";
+import { AdPostersTab } from "../components/common/admin/AdPostersTab";
+import { AdminSettingsPanel } from "../components/common/AdminSettingsPanel";
+import { PagesTab } from "../components/common/admin/PagesTab";
+import { CurrencyTab } from "../components/common/admin/CurrencyTab";
+import { ReviewsTab } from "../components/common/admin/ReviewsTab";
 
 export function Admin() {
   const { user, isAdmin } = useAuth();

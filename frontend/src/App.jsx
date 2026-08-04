@@ -6,7 +6,7 @@ import { WishlistProvider } from "./context/WishlistContext";
 import { Toaster } from "sonner";
 import { router } from "./routes";
 import { CurrencyProvider } from "./context/CurrencyContext";
-import { WhatsAppButton } from "./components/WhatsAppButton";
+import { WhatsAppButton } from "./components/common/WhatsAppButton";
 
 export default function App() {
   return (

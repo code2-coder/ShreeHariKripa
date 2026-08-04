@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link, useLocation } from "react-router";
 import api from "../api/axios";
 import { toast } from "sonner";
-import { AdminSidebar } from "../components/admin/AdminSidebar";
-import { ShipmentStatusBadge, formatDate, formatDateTime, SHIPMENT_STATUSES } from "../components/shipping/shippingUtils";
+import { AdminSidebar } from "../components/layout/AdminSidebar";
+import { ShipmentStatusBadge, formatDate, formatDateTime, SHIPMENT_STATUSES } from "../components/common/shipping/shippingUtils";
 import { useAuth } from "../context/AuthContext";
 import {
   ArrowLeft, User, MapPin, Package, Truck, Clock, Save, Printer,

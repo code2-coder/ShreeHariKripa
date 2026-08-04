@@ -31,9 +31,9 @@ const AdminShippingDetails = lazy(() => import("../pages/AdminShippingDetails").
 const AdminShippingLabel = lazy(() => import("../pages/AdminShippingLabel").then(m => ({ default: m.AdminShippingLabel })));
 const AdminCouriers = lazy(() => import("../pages/AdminCouriers").then(m => ({ default: m.AdminCouriers })));
 
-import { ProtectedRoute } from "../components/ProtectedRoute";
+import { ProtectedRoute } from "../components/common/ProtectedRoute";
 
-import { GlobalErrorBoundary } from "../components/GlobalErrorBoundary";
+import { GlobalErrorBoundary } from "../components/common/GlobalErrorBoundary";
 
 const LoadingFallback = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
