@@ -18,6 +18,7 @@ import { AdminSettingsPanel } from "../components/common/AdminSettingsPanel";
 import { PagesTab } from "../components/common/admin/PagesTab";
 import { CurrencyTab } from "../components/common/admin/CurrencyTab";
 import { ReviewsTab } from "../components/common/admin/ReviewsTab";
+import { PriceRangesTab } from "../components/common/admin/PriceRangesTab";
 
 export function Admin() {
   const { user, isAdmin } = useAuth();
@@ -37,6 +38,7 @@ export function Admin() {
   const [banners, setBanners] = useState([]);
   const [adPosters, setAdPosters] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [priceRanges, setPriceRanges] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [attributes, setAttributes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,7 +67,7 @@ export function Admin() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [ordersRes, productsRes, bannersRes, categoriesRes, adPostersRes, sizesRes, attributesRes] = await Promise.all([
+        const [ordersRes, productsRes, bannersRes, categoriesRes, adPostersRes, sizesRes, attributesRes, priceRangesRes] = await Promise.all([
           api.get("/admin/orders"),
           api.get("/admin/products"),
           api.get("/banners"),
@@ -75,7 +77,8 @@ export function Admin() {
              console.warn("Sizes API not available on this server yet.");
              return { data: { sizes: [] } };
           }),
-          api.get("/attributes").catch(err => ({ data: { attributes: [] } }))
+          api.get("/attributes").catch(err => ({ data: { attributes: [] } })),
+          api.get("/price-ranges").catch(err => ({ data: { priceRanges: [] } }))
         ]);
         const ordersData = ordersRes.data.data?.orders || ordersRes.data.orders || [];
         setOrders([...ordersData].reverse());
@@ -83,6 +86,7 @@ export function Admin() {
         setBanners(bannersRes.data.data?.banners || bannersRes.data.banners || []);
         setAdPosters(adPostersRes.data.data?.adPosters || adPostersRes.data.adPosters || []);
         setCategories(categoriesRes.data.data?.categories || categoriesRes.data.categories || []);
+        setPriceRanges(priceRangesRes.data.data?.priceRanges || priceRangesRes.data.priceRanges || []);
         setSizes(sizesRes.data.data?.sizes || sizesRes.data.sizes || []);
         setAttributes(attributesRes.data.data?.attributes || attributesRes.data.attributes || []);
       } catch (error) {
@@ -238,6 +242,13 @@ export function Admin() {
                    categories={categories} 
                    setCategories={setCategories} 
                    globalSearch={globalSearch}
+                />
+              )}
+
+              {activeTab === "price-ranges" && (
+                <PriceRangesTab 
+                   priceRanges={priceRanges} 
+                   setPriceRanges={setPriceRanges}
                 />
               )}
 

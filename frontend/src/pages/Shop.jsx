@@ -54,7 +54,7 @@ const CheckboxRow = ({ label, checked, onChange, count, disabled }) => (
       <div
         onClick={disabled ? undefined : onChange}
         className={`w-4 h-4 rounded-[4px] border flex items-center justify-center transition-colors flex-shrink-0
-          ${checked ? "bg-obsidian border-obsidian" : "border-gray-300 group-hover:border-obsidian"}`}
+          ${checked ? "bg-[#800000] border-[#800000]" : "border-gray-300 group-hover:border-[#800000]"}`}
       >
         {checked && <Check className="w-2.5 h-2.5 text-white" />}
       </div>
@@ -130,17 +130,22 @@ const SidebarContent = ({
 
   // Selected price range (compare min+max together)
   const selectedPriceIdx = priceRanges.findIndex(
-    r => r.min === activeFilters.priceGte && r.max === activeFilters.priceLte
+    r => String(r.min) === String(activeFilters.priceGte) && 
+         String(r.max || "") === String(activeFilters.priceLte || "")
   );
 
   const handlePriceToggle = (range, idx) => {
     if (selectedPriceIdx === idx) {
       // Deselect
-      updateFilter("price[gte]", "");
-      updateFilter("price[lte]", "");
+      updateFilter({
+        "price[gte]": "",
+        "price[lte]": ""
+      });
     } else {
-      updateFilter("price[gte]", range.min);
-      updateFilter("price[lte]", range.max);
+      updateFilter({
+        "price[gte]": String(range.min),
+        "price[lte]": range.max ? String(range.max) : ""
+      });
     }
   };
 
@@ -167,20 +172,27 @@ const SidebarContent = ({
 
       {/* Collections */}
       <FilterBlock title="Collections">
-        {categories.filter(c => !c.parentCategory).map(cat => {
-          const count = countMap[cat._id?.toString()] ?? 0;
-          const isActive = activeFilters.category.includes(cat._id?.toString() || cat.name);
-          return (
-            <CheckboxRow
-              key={cat._id}
-              label={cat.name}
-              checked={isActive}
-              count={count}
-              disabled={count === 0 && !isActive}
-              onChange={() => toggleArrayFilter("category", cat._id?.toString())}
-            />
-          );
-        })}
+        {categories
+          .filter(c => !c.parentCategory)
+          .filter(cat => {
+            const count = countMap[cat._id?.toString()] ?? 0;
+            const isActive = activeFilters.category.includes(cat._id?.toString() || cat.name);
+            return count > 0 || isActive;
+          })
+          .map(cat => {
+            const count = countMap[cat._id?.toString()] ?? 0;
+            const isActive = activeFilters.category.includes(cat._id?.toString() || cat.name);
+            return (
+              <CheckboxRow
+                key={cat._id}
+                label={cat.name}
+                checked={isActive}
+                count={count}
+                disabled={count === 0 && !isActive}
+                onChange={() => toggleArrayFilter("category", cat._id?.toString())}
+              />
+            );
+          })}
       </FilterBlock>
 
       {/* Price */}
@@ -233,7 +245,7 @@ const SidebarContent = ({
               <div
                 onClick={() => toggleArrayFilter("colors", c)}
                 className={`w-4 h-4 rounded-[4px] border flex items-center justify-center transition-colors flex-shrink-0
-                  ${activeFilters.colors.includes(c) ? "bg-obsidian border-obsidian" : "border-gray-300 group-hover:border-obsidian"}`}
+                  ${activeFilters.colors.includes(c) ? "bg-[#800000] border-[#800000]" : "border-gray-300 group-hover:border-[#800000]"}`}
               >
                 {activeFilters.colors.includes(c) && <Check className="w-2.5 h-2.5 text-white" />}
               </div>
@@ -251,7 +263,7 @@ const SidebarContent = ({
           <div
             onClick={() => updateFilter("inStock", activeFilters.inStock ? "" : "true")}
             className={`w-4 h-4 rounded-[4px] border flex items-center justify-center transition-colors flex-shrink-0
-              ${activeFilters.inStock ? "bg-obsidian border-obsidian" : "border-gray-300 group-hover:border-obsidian"}`}
+              ${activeFilters.inStock ? "bg-[#800000] border-[#800000]" : "border-gray-300 group-hover:border-[#800000]"}`}
           >
             {activeFilters.inStock && <Check className="w-2.5 h-2.5 text-white" />}
           </div>
@@ -279,10 +291,33 @@ export function Shop() {
   const { currency, getFormattedPrice } = useCurrency();
   const currencySymbol = SUPPORTED_CURRENCIES[currency]?.symbol || "₹";
 
+  const [dbPriceRanges, setDbPriceRanges] = useState([]);
+
+  // Fetch price ranges
+  useEffect(() => {
+    const fetchPriceRanges = async () => {
+      try {
+        const { data } = await api.get("/price-ranges");
+        setDbPriceRanges(data.priceRanges || []);
+      } catch (e) {
+        console.error("Failed to load price ranges:", e);
+      }
+    };
+    fetchPriceRanges();
+  }, []);
+
   const priceRanges = useMemo(() => {
-    return PRICE_RANGES_BASE.map(range => {
+    const sourceRanges = dbPriceRanges.length > 0 ? dbPriceRanges : PRICE_RANGES_BASE;
+    return sourceRanges.map(range => {
+      if (range.label) {
+        return {
+          label: range.label,
+          min: String(range.min),
+          max: range.max !== null && range.max !== undefined && range.max !== "" ? String(range.max) : ""
+        };
+      }
       const minFormatted = getFormattedPrice(range.min).replace(/\.00$/, '');
-      if (range.max === null) {
+      if (range.max === null || range.max === undefined || range.max === "") {
         return {
           label: `Above ${minFormatted}`,
           min: String(range.min),
@@ -297,7 +332,7 @@ export function Shop() {
         };
       }
     });
-  }, [getFormattedPrice]);
+  }, [dbPriceRanges, getFormattedPrice]);
 
   // ── State ────────────────────────────────────────────────────────────────
   const [products, setProducts] = useState([]);
@@ -407,12 +442,22 @@ export function Shop() {
   }, [page, fetchProducts]);
 
   // ── URL helpers ───────────────────────────────────────────────────────────
-  const updateFilter = useCallback((key, value) => {
+  const updateFilter = useCallback((keyOrUpdates, value) => {
     const newParams = new window.URLSearchParams(searchParams);
-    if (value) {
-      newParams.set(key, value);
+    if (typeof keyOrUpdates === "object" && keyOrUpdates !== null) {
+      Object.entries(keyOrUpdates).forEach(([k, v]) => {
+        if (v !== undefined && v !== null && v !== "") {
+          newParams.set(k, v);
+        } else {
+          newParams.delete(k);
+        }
+      });
     } else {
-      newParams.delete(key);
+      if (value !== undefined && value !== null && value !== "") {
+        newParams.set(keyOrUpdates, value);
+      } else {
+        newParams.delete(keyOrUpdates);
+      }
     }
     newParams.delete("page");
     setSearchParams(newParams, { replace: true });
@@ -462,7 +507,10 @@ export function Shop() {
     activeFilters.homeSection.forEach(hs => chips.push({ key: "homeSection", val: hs, label: hs }));
 
     if (activeFilters.priceGte || activeFilters.priceLte) {
-      const matched = priceRanges.find(r => r.min === activeFilters.priceGte && r.max === activeFilters.priceLte);
+      const matched = priceRanges.find(
+        r => String(r.min) === String(activeFilters.priceGte) && 
+             String(r.max || "") === String(activeFilters.priceLte || "")
+      );
       
       const formatFallback = (val) => val ? getFormattedPrice(Number(val)).replace(/\.00$/, '') : "";
       
@@ -504,7 +552,7 @@ export function Shop() {
       <Header />
 
       {/* Page Header */}
-      <div className="pt-[100px] md:pt-[130px] pb-5 px-4 md:px-8 bg-white border-b border-gray-100">
+      <div className="pt-[100px] md:pt-[130px] pb-6 px-4 md:px-8 bg-gradient-to-b from-[#FCFAF8] to-white border-b border-[#B8934E]/20">
         <div className="max-w-[90rem] mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-3">
           <div>
             <div className="flex items-center space-x-2 text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-3">
@@ -513,8 +561,11 @@ export function Shop() {
               <span className="text-obsidian">Shop</span>
             </div>
             <h1 className="text-3xl lg:text-4xl font-serif text-obsidian tracking-wide">The Collection</h1>
+            <p className="text-xs sm:text-sm text-stone-500 font-sans tracking-wide mt-2 max-w-3xl font-light leading-relaxed">
+              Explore our curated treasury of premium deity shringar ornaments, hand-designed with precious AD stones, cubic zirconia, and authentic gold-plated work.
+            </p>
           </div>
-          <p className="text-sm text-gray-400 font-medium pb-1">
+          <p className="text-sm text-gray-400 font-medium pb-1 whitespace-nowrap">
             {loading ? "Searching…" : `${totalResults.toLocaleString()} ${totalResults === 1 ? "piece" : "pieces"} found`}
           </p>
         </div>

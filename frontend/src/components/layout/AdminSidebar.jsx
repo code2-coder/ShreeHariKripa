@@ -32,6 +32,7 @@ import {
       { id: "reviews", label: "Reviews", icon: Star },
       { id: "ad-posters", label: "Ads Posters", icon: FileText },
       { id: "categories", label: "Categories", icon: Tags },
+      { id: "price-ranges", label: "Price Ranges", icon: Coins },
       { id: "pages", label: "Manage Terms & Conditions", icon: FileText },
       { id: "currency", label: "Currency Settings", icon: Coins },
     ];

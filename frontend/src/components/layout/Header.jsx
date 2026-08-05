@@ -58,6 +58,8 @@ export function Header() {
   const [loadingCategory, setLoadingCategory] = useState(null);
   const lastScrollY = useRef(0);
   const [searchHistory, setSearchHistory] = useState([]);
+  const [newArrivals, setNewArrivals] = useState([]);
+  const [loadingNewArrivals, setLoadingNewArrivals] = useState(false);
 
   useEffect(() => {
     const history = JSON.parse(localStorage.getItem("searchHistory") || "[]");
@@ -76,6 +78,23 @@ export function Header() {
     localStorage.removeItem("searchHistory");
     setSearchHistory([]);
   };
+
+  useEffect(() => {
+    if (showSearchDropdown && newArrivals.length === 0 && !loadingNewArrivals) {
+      const fetchNewArrivals = async () => {
+        try {
+          setLoadingNewArrivals(true);
+          const { data } = await api.get("/products?homeSection=New Arrival&limit=6");
+          setNewArrivals(data.products || []);
+        } catch (err) {
+          console.error("Error fetching new arrivals for search dropdown:", err);
+        } finally {
+          setLoadingNewArrivals(false);
+        }
+      };
+      fetchNewArrivals();
+    }
+  }, [showSearchDropdown]);
 
   useEffect(() => {
     let ticking = false;
@@ -339,7 +358,7 @@ export function Header() {
       ).slice(0, 5)
     : [];
 
-  const shouldShowDropdown = showSearchDropdown && (searchQuery.trim().length > 0 || searchHistory.length > 0);
+  const shouldShowDropdown = showSearchDropdown;
 
   const searchDropdownContent = shouldShowDropdown && (
     <div className="absolute top-full left-0 w-full mt-3 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-[60] animate-in fade-in slide-in-from-top-2 duration-300">
@@ -436,9 +455,11 @@ export function Header() {
                             );
                           })()}
                         </span>
-                        {displayPrice && (
-                          <span className="text-xs text-[#800000] mt-1 font-semibold">{getFormattedPrice(displayPrice)}</span>
-                        )}
+                        <span className="text-xs text-[#800000] mt-1 font-semibold">
+                          {displayPrice !== undefined && displayPrice !== null ? (
+                            displayPrice > 0 ? getFormattedPrice(displayPrice) : "Price on Request"
+                          ) : "Price on Request"}
+                        </span>
                       </div>
                       <div className="w-7 h-7 rounded-full bg-white border border-gray-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:-translate-x-1 shadow-sm">
                         <ArrowUpRight className="w-3.5 h-3.5 text-gray-600" />
@@ -505,6 +526,88 @@ export function Header() {
               </div>
             </div>
           )}
+
+          {/* ── New Arrivals ── */}
+          <div className={`px-5 py-4 ${searchHistory.length > 0 ? "border-t border-gray-100" : ""}`}>
+            <div className="flex items-center justify-between px-1 mb-3">
+              <span className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-[#800000] flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#B8934E] animate-pulse"></span>
+                New Arrivals
+              </span>
+              <Link
+                to="/shop?sort=newest"
+                onClick={() => setShowSearchDropdown(false)}
+                className="text-[11px] font-bold text-[#B8934E] hover:text-[#800000] transition-colors tracking-wide flex items-center gap-0.5 group"
+              >
+                View All
+                <ArrowUpRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
+            </div>
+
+            {loadingNewArrivals ? (
+              <div className="flex flex-col gap-2.5">
+                {[1, 2, 3, 4].map((idx) => (
+                  <div key={idx} className="flex items-center gap-3 p-2 rounded-2xl animate-pulse bg-gray-50/50">
+                    <div className="w-12 h-12 rounded-xl bg-gray-200/80 flex-shrink-0"></div>
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3 bg-gray-200/80 rounded w-2/3"></div>
+                      <div className="h-3 bg-gray-200/80 rounded w-1/3"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : newArrivals.length > 0 ? (
+              <div className="flex flex-col gap-2 max-h-[380px] overflow-y-auto pr-1 custom-scrollbar">
+                {newArrivals.map((product) => {
+                  const variantPrice = product.variants?.[0]?.sizes?.[0]?.price || product.sizes?.[0]?.price;
+                  const displayPrice = variantPrice !== undefined ? variantPrice : product.price;
+
+                  return (
+                    <Link
+                      key={product._id}
+                      to={`/product/${product._id}`}
+                      onClick={() => setShowSearchDropdown(false)}
+                      className="flex items-center gap-4 p-2.5 rounded-2xl hover:bg-[#FAF9F6] border-l-2 border-transparent hover:border-l-[#B8934E] transition-all duration-300 group"
+                    >
+                      <div className="w-12 h-12 rounded-xl overflow-hidden border border-gray-100/60 flex-shrink-0 bg-gray-50 shadow-sm group-hover:shadow-md transition-all duration-500 relative">
+                        <img
+                          src={product.images?.[0]?.url || product.image || "/placeholder.jpg"}
+                          alt=""
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                        />
+                      </div>
+                      <div className="flex flex-col min-w-0 flex-1 justify-center">
+                        {(() => {
+                          const catId = product.category?._id || product.category;
+                          const catName = categories?.find(c => c._id === catId)?.name;
+                          return catName ? (
+                            <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#B8934E] mb-1">
+                              {catName}
+                            </span>
+                          ) : null;
+                        })()}
+                        <span className="text-[13px] font-semibold text-gray-900 group-hover:text-[#800000] transition-colors leading-tight truncate">
+                          {product.name}
+                        </span>
+                        <span className="text-[11px] text-[#800000] mt-0.5 font-semibold">
+                          {displayPrice !== undefined && displayPrice !== null ? (
+                            displayPrice > 0 ? getFormattedPrice(displayPrice) : "Price on Request"
+                          ) : "Price on Request"}
+                        </span>
+                      </div>
+                      <div className="w-7 h-7 rounded-full bg-white border border-gray-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-sm mr-1 transform translate-x-1 group-hover:translate-x-0">
+                        <ArrowUpRight className="w-3.5 h-3.5 text-[#B8934E]" />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="py-8 text-center bg-gray-50/30 rounded-2xl">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">No products found</p>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

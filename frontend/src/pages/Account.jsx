@@ -76,32 +76,36 @@ export function Account() {
       }
    };
 
-   // Helper for Input Field
+   // Helper for Input Field with Premium Styling
    const InputField = ({ label, icon: Icon, value, onChange, placeholder, type = "text" }) => (
-      <div className="flex flex-col gap-1.5">
-         <label className="text-sm font-semibold text-gray-700 ml-1">{label}</label>
+      <div className="flex flex-col gap-2">
+         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">{label}</label>
          <div className="relative group">
-            {Icon && <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gray-900 transition-colors"><Icon className="w-5 h-5" /></div>}
+            {Icon && (
+               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#B8934E] transition-colors duration-300">
+                  <Icon className="w-4 h-4" />
+               </div>
+            )}
             <input 
                type={type}
                value={value}
                onChange={onChange}
                placeholder={placeholder}
-               className={`w-full bg-white border border-gray-300 text-gray-900 rounded-xl px-4 py-3 outline-none transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 hover:border-gray-400 shadow-sm ${Icon ? 'pl-11' : ''}`}
+               className={`w-full bg-white/50 border border-gray-200/80 text-gray-900 text-sm rounded-xl px-4 py-3 outline-none transition-all duration-300 focus:bg-white focus:ring-4 focus:ring-[#B8934E]/5 focus:border-[#B8934E] hover:border-gray-300 shadow-sm font-medium ${Icon ? 'pl-11' : ''}`}
             />
          </div>
       </div>
    );
 
-   // Helper for Display Field
+   // Helper for Display Field with Premium Styling
    const DisplayField = ({ label, icon: Icon, value }) => (
-      <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100 transition-all duration-300">
-         <div className="p-3 bg-white text-gray-500 rounded-lg shadow-sm border border-gray-100">
-            <Icon className="w-5 h-5" />
+      <div className="flex items-center gap-4 p-4 rounded-2xl bg-[#FAF9F6]/30 border border-[#B8934E]/5 hover:border-[#B8934E]/20 hover:bg-[#FAF9F6]/80 hover:shadow-sm transition-all duration-500 group">
+         <div className="p-3 bg-white text-[#B8934E] rounded-xl shadow-[0_4px_10px_rgba(184,147,78,0.08)] border border-gray-100/60 group-hover:scale-105 transition-all duration-500">
+            <Icon className="w-4 h-4" />
          </div>
-         <div className="flex-1">
-            <p className="text-[11px] font-bold tracking-wider text-gray-500 uppercase mb-0.5">{label}</p>
-            <p className="text-sm font-medium text-gray-900">{value || <span className="text-gray-400 italic">Not provided</span>}</p>
+         <div className="flex-1 min-w-0">
+            <p className="text-[9px] font-extrabold tracking-[0.18em] text-gray-400 uppercase mb-0.5">{label}</p>
+            <p className="text-sm font-semibold text-gray-800 truncate">{value || <span className="text-gray-300 font-normal italic">Not provided</span>}</p>
          </div>
       </div>
    );
@@ -110,57 +114,63 @@ export function Account() {
       { id: "profile", label: "My Profile", icon: User, active: true, desc: "Personal settings" },
       { id: "orders", label: "My Orders", icon: Package, onClick: () => navigate("/orders"), desc: "View & track orders" },
       { id: "returns", label: "My Returns", icon: RotateCcw, onClick: () => navigate("/account/returns"), desc: "View return requests" },
-
       { id: "cart", label: "Shopping Cart", icon: ShoppingCart, onClick: () => navigate("/cart"), desc: "Checkout items" },
       ...(user.role === "admin" ? [{ id: "admin", label: "Admin Panel", icon: Shield, onClick: () => navigate("/admin"), desc: "Store management" }] : [])
    ];
 
    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col font-sans relative">
+      <div className="min-h-screen bg-gradient-to-br from-[#FAF9F6] via-[#FAF9F6] to-[#E8D5DA]/15 flex flex-col font-sans relative">
+         {/* Decorative background blurs */}
+         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+            <div className="absolute top-[10%] left-[-10%] w-[35%] h-[35%] rounded-full bg-[#B8934E]/5 blur-[120px]"></div>
+            <div className="absolute bottom-[20%] right-[-10%] w-[45%] h-[45%] rounded-full bg-[#800000]/5 blur-[150px]"></div>
+         </div>
+
          <Header />
 
-         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-10 sm:pb-16 pt-[160px] lg:pt-[180px]">
+         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-10 sm:pb-16 pt-[160px] lg:pt-[180px] relative z-10">
             <div className="flex flex-col lg:flex-row gap-8">
                
                {/* Sidebar Navigation */}
                <div className="lg:w-80 flex-shrink-0 flex flex-col gap-6">
                   {/* User Card */}
-                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
+                  <div className="bg-white/70 backdrop-blur-md p-8 rounded-3xl shadow-[0_24px_50px_-20px_rgba(0,0,0,0.04)] border border-white/80 flex flex-col items-center text-center relative overflow-hidden group">
                      <div className="relative mb-5">
-                        <div className="w-24 h-24 rounded-full bg-gray-100 p-1.5 shadow-sm border border-gray-200">
-                           <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center overflow-hidden">
-                              <span className="text-3xl font-bold text-white">
+                        <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-[#B8934E] via-[#E8D0A5] to-[#B8934E] p-0.5 shadow-lg relative group/avatar">
+                           <div className="w-full h-full rounded-full bg-stone-900 flex items-center justify-center overflow-hidden relative">
+                              <span className="text-4xl font-serif italic text-[#E8D0A5] select-none">
                                  {user.name?.charAt(0)?.toUpperCase() || 'U'}
                               </span>
+                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                 <Camera className="w-6 h-6 text-white" />
+                              </div>
                            </div>
                         </div>
-                        <button className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-sm text-gray-500 hover:text-gray-900 transition-colors border border-gray-200 hover:scale-105 active:scale-95">
-                           <Camera className="w-4 h-4" />
-                        </button>
                      </div>
-                     <h2 className="text-xl font-bold text-gray-900">{user.name}</h2>
+                     <h2 className="text-xl font-bold text-[#2D0D18]">{user.name}</h2>
                      <p className="text-sm text-gray-500 mt-1">{user.email}</p>
-                     <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold uppercase tracking-wider">
-                        <Shield className="w-3.5 h-3.5" /> {user.role}
+                     
+                     <div className="mt-4 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#B8934E]/10 text-[#B8934E] text-[10px] font-bold uppercase tracking-widest border border-[#B8934E]/15">
+                        <Shield className="w-3.5 h-3.5" strokeWidth={2.5} /> {user.role}
                      </div>
                   </div>
 
                   {/* Navigation Links */}
-                  <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
+                  <div className="bg-white/70 backdrop-blur-md p-4 rounded-3xl shadow-[0_24px_50px_-20px_rgba(0,0,0,0.04)] border border-white/80 flex flex-col gap-2">
                      {navItems.map((item) => (
                         <button 
                            key={item.id}
                            onClick={item.onClick}
-                           className={`flex items-center gap-4 w-full p-3 rounded-xl transition-all duration-200 group ${item.active ? 'bg-gray-900 text-white' : 'hover:bg-gray-50 text-gray-700'}`}
+                           className={`flex items-center gap-4 w-full p-3 rounded-2xl transition-all duration-305 group ${item.active ? 'bg-gradient-to-r from-[#800000] to-[#5C0000] text-white shadow-lg shadow-[#800000]/15' : 'hover:bg-[#FAF9F6]/80 text-gray-700'}`}
                         >
-                           <div className={`p-2 rounded-lg transition-colors ${item.active ? 'bg-gray-800 text-white' : 'bg-white text-gray-500 shadow-sm border border-gray-200 group-hover:text-gray-900 group-hover:border-gray-300'}`}>
-                              <item.icon className="w-5 h-5" />
+                           <div className={`p-2 rounded-xl transition-all duration-300 ${item.active ? 'bg-[#9A1C1C]/40 text-[#FAF9F6] border border-[#B8934E]/25' : 'bg-white text-gray-500 shadow-sm border border-gray-100 group-hover:text-[#800000] group-hover:border-[#B8934E]/30 group-hover:shadow-sm'}`}>
+                              <item.icon className="w-4.5 h-4.5" strokeWidth={item.active ? 2.5 : 2} />
                            </div>
                            <div className="flex-1 text-left">
-                              <p className={`font-semibold text-sm ${item.active ? 'text-white' : 'text-gray-900'}`}>{item.label}</p>
-                              <p className={`text-xs mt-0.5 ${item.active ? 'text-gray-300' : 'text-gray-500'}`}>{item.desc}</p>
+                              <p className={`font-bold text-[13.5px] ${item.active ? 'text-white' : 'text-[#2D0D18] group-hover:text-[#800000] transition-colors'}`}>{item.label}</p>
+                              <p className={`text-[11px] mt-0.5 ${item.active ? 'text-pink-100/70' : 'text-gray-400'}`}>{item.desc}</p>
                            </div>
-                           {!item.active && <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-transform group-hover:translate-x-1" />}
+                           {!item.active && <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#800000] transition-all group-hover:translate-x-1" />}
                         </button>
                      ))}
 
@@ -168,14 +178,14 @@ export function Account() {
                      
                      <button 
                         onClick={logout}
-                        className="flex items-center gap-4 w-full p-3 rounded-xl transition-all duration-200 hover:bg-red-50 group"
+                        className="flex items-center gap-4 w-full p-3 rounded-2xl transition-all duration-300 hover:bg-red-50/50 group"
                      >
-                        <div className="p-2 rounded-lg bg-white text-red-500 shadow-sm border border-red-100 group-hover:bg-red-100 transition-colors">
-                           <LogOut className="w-5 h-5" />
+                        <div className="p-2 rounded-xl bg-white text-red-500 shadow-sm border border-red-100 group-hover:bg-red-100 transition-colors">
+                           <LogOut className="w-4.5 h-4.5" />
                         </div>
                         <div className="flex-1 text-left">
-                           <p className="font-semibold text-sm text-red-600 group-hover:text-red-700">Sign Out</p>
-                           <p className="text-xs mt-0.5 text-red-400">End your session</p>
+                           <p className="font-bold text-[13.5px] text-red-600 group-hover:text-red-700">Sign Out</p>
+                           <p className="text-[11px] mt-0.5 text-red-400">End your session</p>
                         </div>
                      </button>
                   </div>
@@ -183,19 +193,19 @@ export function Account() {
 
                {/* Main Content Area */}
                <div className="flex-1 flex flex-col">
-                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex-1 relative">
+                  <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow-[0_24px_60px_-15px_rgba(0,0,0,0.05)] border border-white/80 overflow-hidden flex-1 relative">
                      
                      {/* Header */}
-                     <div className="px-6 sm:px-10 py-8 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                     <div className="px-6 sm:px-10 py-8 border-b border-gray-100/80 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                         <div>
-                           <h1 className="text-2xl font-bold text-gray-900">Profile Settings</h1>
+                           <h1 className="text-2xl font-serif text-[#2D0D18] tracking-wide">Profile Settings</h1>
                            <p className="text-sm text-gray-500 mt-1">Manage your personal information and delivery addresses.</p>
                         </div>
                         
                         {!isEditing ? (
                            <button 
                               onClick={() => setIsEditing(true)} 
-                              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gray-900 text-white font-medium text-sm rounded-xl hover:bg-black transition-colors shadow-sm"
+                              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[#800000] hover:bg-[#6C0000] text-white font-semibold text-xs uppercase tracking-wider rounded-xl transition-all duration-300 hover:shadow-md hover:shadow-[#800000]/10"
                            >
                               <Edit3 className="w-4 h-4" /> Edit Profile
                            </button>
@@ -203,14 +213,14 @@ export function Account() {
                            <div className="flex items-center gap-3">
                               <button 
                                  onClick={() => { setIsEditing(false); resetForm(); }} 
-                                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white text-gray-700 font-medium text-sm rounded-xl border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
+                                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white hover:bg-stone-50 border border-stone-200 text-stone-600 font-semibold text-xs uppercase tracking-wider rounded-xl transition-all duration-300"
                               >
                                  <X className="w-4 h-4" /> Cancel
                               </button>
                               <button 
                                  onClick={handleUpdateProfile}
                                  disabled={isSaving}
-                                 className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gray-900 text-white font-medium text-sm rounded-xl hover:bg-black transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
+                                 className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-[#800000] hover:bg-[#6C0000] text-white font-semibold text-xs uppercase tracking-wider rounded-xl transition-all duration-300 hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
                               >
                                  {isSaving ? (
                                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -223,19 +233,19 @@ export function Account() {
                      </div>
 
                      {/* Content Body */}
-                     <div className="p-6 sm:px-10 sm:py-10 animate-in fade-in duration-300">
+                     <div className="p-6 sm:px-10 sm:py-10 animate-in fade-in duration-500">
                         {isEditing ? (
                            <div className="space-y-10">
                               {/* Form Section 1 */}
                               <div>
-                                 <h3 className="text-sm font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                                    <User className="w-4 h-4 text-gray-400" /> Personal Information
+                                 <h3 className="text-sm font-bold text-[#2D0D18] mb-6 flex items-center gap-2 uppercase tracking-widest text-[11px]">
+                                    <User className="w-4.5 h-4.5 text-[#B8934E]" /> Personal Information
                                  </h3>
                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                                     <InputField label="Full Name" icon={User} value={profileForm.name} onChange={e => setProfileForm({ ...profileForm, name: e.target.value })} placeholder="John Doe" />
                                     <InputField label="Email Address" icon={Mail} value={profileForm.email} onChange={e => setProfileForm({ ...profileForm, email: e.target.value })} placeholder="john@example.com" type="email" />
-                                    <InputField label="Primary Phone" icon={Phone} value={profileForm.phoneNumber} onChange={e => setProfileForm({ ...profileForm, phoneNumber: e.target.value })} placeholder="+1 234 567 890" />
-                                    <InputField label="Alternate Phone" icon={Phone} value={profileForm.altPhoneNumber} onChange={e => setProfileForm({ ...profileForm, altPhoneNumber: e.target.value })} placeholder="+1 098 765 432" />
+                                    <InputField label="Primary Phone" icon={Phone} value={profileForm.phoneNumber} onChange={e => setProfileForm({ ...profileForm, phoneNumber: e.target.value })} placeholder="+91 XXXXX XXXXX" />
+                                    <InputField label="Alternate Phone" icon={Phone} value={profileForm.altPhoneNumber} onChange={e => setProfileForm({ ...profileForm, altPhoneNumber: e.target.value })} placeholder="+91 XXXXX XXXXX" />
                                  </div>
                               </div>
 
@@ -243,8 +253,8 @@ export function Account() {
 
                               {/* Form Section 2 */}
                               <div>
-                                 <h3 className="text-sm font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                                    <MapPin className="w-4 h-4 text-gray-400" /> Default Shipping Address
+                                 <h3 className="text-sm font-bold text-[#2D0D18] mb-6 flex items-center gap-2 uppercase tracking-widest text-[11px]">
+                                    <MapPin className="w-4.5 h-4.5 text-[#B8934E]" /> Default Shipping Address
                                  </h3>
                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                                     <div className="md:col-span-2">
@@ -261,7 +271,7 @@ export function Account() {
                            <div className="space-y-10">
                               {/* View Section 1 */}
                               <div>
-                                 <h3 className="text-sm font-semibold text-gray-900 mb-6">
+                                 <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[#2D0D18] mb-6 border-b border-[#B8934E]/10 pb-2">
                                     Basic Information
                                  </h3>
                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -272,36 +282,38 @@ export function Account() {
                                  </div>
                               </div>
 
-                              <div className="h-px w-full bg-gray-100"></div>
-
                               {/* View Section 2 */}
                               <div>
-                                 <h3 className="text-sm font-semibold text-gray-900 mb-6">
+                                 <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[#2D0D18] mb-6 border-b border-[#B8934E]/10 pb-2">
                                     Shipping Address
                                  </h3>
-                                 <div className="p-6 sm:p-8 rounded-2xl bg-gray-50 border border-gray-100 relative">
+                                 <div className="p-6 sm:p-8 rounded-2xl bg-[#FAF9F6]/30 border border-[#B8934E]/5 shadow-sm relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#B8934E]/5 rounded-full blur-3xl group-hover:bg-[#B8934E]/10 transition-colors duration-500 -mr-16 -mt-16 pointer-events-none"></div>
                                     {(profileForm.street || profileForm.city || profileForm.state || profileForm.pinCode || profileForm.landmark) ? (
                                        <div className="relative z-10 flex flex-col sm:flex-row gap-6 items-start">
-                                          <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center border border-gray-100 shrink-0">
-                                             <MapPin className="w-6 h-6 text-gray-400" />
+                                          <div className="w-12 h-12 rounded-xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.03)] flex items-center justify-center border border-gray-100 shrink-0 text-[#B8934E]">
+                                             <MapPin className="w-5 h-5" />
                                           </div>
                                           <div>
-                                             <p className="font-bold text-gray-900 mb-2">{profileForm.name}</p>
-                                             <p className="text-gray-600 text-sm leading-relaxed max-w-md">
+                                             <p className="font-bold text-[#2D0D18] text-base mb-1.5">{profileForm.name}</p>
+                                             <p className="text-gray-600 text-sm leading-relaxed max-w-md font-medium">
                                                 {profileForm.street && <>{profileForm.street}<br/></>}
-                                                {profileForm.landmark && <><span className="text-gray-500">Landmark:</span> {profileForm.landmark}<br/></>}
-                                                {[profileForm.city, profileForm.state, profileForm.pinCode].filter(Boolean).join(", ")}
+                                                {profileForm.landmark && <><span className="text-gray-400 font-bold uppercase tracking-wider text-[10px]">Landmark:</span> {profileForm.landmark}<br/></>}
+                                                <span className="text-gray-800">{[profileForm.city, profileForm.state, profileForm.pinCode].filter(Boolean).join(", ")}</span>
                                              </p>
                                           </div>
                                        </div>
                                     ) : (
-                                       <div className="relative z-10 text-center py-6">
-                                          <div className="w-16 h-16 mx-auto bg-white shadow-sm border border-gray-100 rounded-full flex items-center justify-center text-gray-400 mb-4">
-                                             <Map className="w-8 h-8" />
+                                       <div className="relative z-10 text-center py-8">
+                                          <div className="w-16 h-16 mx-auto bg-white shadow-sm border border-gray-100 rounded-full flex items-center justify-center text-[#B8934E] mb-4">
+                                             <Map className="w-7 h-7" />
                                           </div>
-                                          <p className="text-gray-900 font-semibold mb-1">No address provided yet.</p>
-                                          <p className="text-gray-500 text-sm mb-6">Add your shipping details for faster checkout.</p>
-                                          <button onClick={() => setIsEditing(true)} className="px-6 py-2.5 bg-white border border-gray-300 shadow-sm rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                                          <p className="text-[#2D0D18] font-bold mb-1">No default shipping address found</p>
+                                          <p className="text-gray-500 text-sm mb-6 max-w-xs mx-auto">Add your shipping details for a faster, one-click checkout experience.</p>
+                                          <button 
+                                             onClick={() => setIsEditing(true)} 
+                                             className="px-6 py-2.5 bg-white border border-[#B8934E]/20 text-[#B8934E] hover:bg-[#FAF9F6] hover:border-[#B8934E] hover:shadow-md shadow-sm rounded-xl text-sm font-semibold transition-all duration-300"
+                                          >
                                              Add Address
                                           </button>
                                        </div>
@@ -321,4 +333,3 @@ export function Account() {
       </div>
    );
 }
-
