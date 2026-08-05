@@ -58,6 +58,10 @@ export const convertPrice = (price, targetCurrency = DEFAULT_CURRENCY, rates = n
     convertedPrice = price * rate;
   }
 
+  if (targetCurrency === 'AUD') {
+    return Math.round(convertedPrice);
+  }
+
   return convertedPrice;
 };
 
@@ -71,12 +75,17 @@ export const convertPrice = (price, targetCurrency = DEFAULT_CURRENCY, rates = n
  * @returns {string} Formatted price string
  */
 export const formatPrice = (price, targetCurrency = DEFAULT_CURRENCY, rates = null, baseCurrency = DEFAULT_CURRENCY, options = {}) => {
-  const {
+  let {
     showCurrency = true,
     minimumFractionDigits = 2,
     maximumFractionDigits = 2,
     compact = false,
   } = options;
+
+  if (targetCurrency === 'AUD') {
+    minimumFractionDigits = 0;
+    maximumFractionDigits = 0;
+  }
 
   const convertedPrice = convertPrice(price, targetCurrency, rates, baseCurrency);
 
@@ -90,7 +99,9 @@ export const formatPrice = (price, targetCurrency = DEFAULT_CURRENCY, rates = nu
 
   // Compact format option (e.g., "A$1.5K" instead of "A$1500")
   if (compact && convertedPrice >= 1000) {
-    const k = (convertedPrice / 1000).toFixed(1);
+    const k = targetCurrency === 'AUD'
+      ? Math.round(convertedPrice / 1000)
+      : (convertedPrice / 1000).toFixed(1);
     const symbol = SUPPORTED_CURRENCIES[targetCurrency]?.symbol || targetCurrency;
     formatted = `${symbol}${k}K`;
   }
@@ -107,9 +118,10 @@ export const formatPrice = (price, targetCurrency = DEFAULT_CURRENCY, rates = nu
 export const formatPriceSymbol = (price, targetCurrency = DEFAULT_CURRENCY) => {
   const currencyInfo = SUPPORTED_CURRENCIES[targetCurrency];
   const symbol = currencyInfo?.symbol || targetCurrency;
+  const maxDecimals = targetCurrency === 'AUD' ? 0 : 2;
   const formatted = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
+    maximumFractionDigits: maxDecimals,
   }).format(price);
 
   return `${symbol}${formatted}`;
@@ -133,7 +145,7 @@ export const getConversionInfo = (basePrice, baseCurrency = 'INR', targetCurrenc
     baseCurrency,
     targetCurrency,
     rate: Number(rate.toFixed(4)),
-    convertedPrice: Number(convertedPrice.toFixed(2)),
+    convertedPrice: targetCurrency === 'AUD' ? Math.round(convertedPrice) : Number(convertedPrice.toFixed(2)),
     baseFormatted: formatPrice(basePrice, baseCurrency, rates, baseCurrency),
     targetFormatted: formatPrice(basePrice, targetCurrency, rates, baseCurrency),
     conversionText: `1 ${SUPPORTED_CURRENCIES[baseCurrency]?.symbol} = ${rate.toFixed(4)} ${SUPPORTED_CURRENCIES[targetCurrency]?.symbol}`,
@@ -154,7 +166,7 @@ export const getPriceInMultipleCurrencies = (price, baseCurrency = 'INR', rates 
   Object.keys(SUPPORTED_CURRENCIES).forEach(currency => {
     const convertedPrice = convertPrice(price, currency, rateToUse, baseCurrency);
     result[currency] = {
-      value: Number(convertedPrice.toFixed(2)),
+      value: currency === 'AUD' ? Math.round(convertedPrice) : Number(convertedPrice.toFixed(2)),
       formatted: formatPrice(price, currency, rateToUse, baseCurrency),
       symbol: SUPPORTED_CURRENCIES[currency].symbol,
     };

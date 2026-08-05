@@ -27,20 +27,21 @@ export const calculateShipping = async (
     let shippingDetails = "";
 
     const countryLower = (country || "").toLowerCase();
+    const decimals = countryLower === "australia" ? 0 : 2;
 
     if (countryLower === "australia") {
         if (shippingMethod === "express") {
-            shippingAmount = settings.australiaShipping.expressShippingPrice;
-            shippingDetails = `Express Post: A$${shippingAmount.toFixed(2)}`;
+            shippingAmount = Math.round(settings.australiaShipping.expressShippingPrice);
+            shippingDetails = `Express Post: A$${shippingAmount.toFixed(decimals)}`;
         } else {
             // Standard shipping
             if (orderTotal >= settings.australiaShipping.freeShippingThreshold) {
                 shippingAmount = 0;
                 isFreeShipping = true;
-                shippingDetails = `Standard Delivery: FREE (Order over A$${settings.australiaShipping.freeShippingThreshold})`;
+                shippingDetails = `Standard Delivery: FREE (Order over A$${Math.round(settings.australiaShipping.freeShippingThreshold).toFixed(decimals)})`;
             } else {
-                shippingAmount = settings.australiaShipping.standardShippingPrice;
-                shippingDetails = `Standard Delivery: A$${shippingAmount.toFixed(2)}`;
+                shippingAmount = Math.round(settings.australiaShipping.standardShippingPrice);
+                shippingDetails = `Standard Delivery: A$${shippingAmount.toFixed(decimals)}`;
             }
         }
     } else if (countryLower === "india") {
@@ -55,13 +56,13 @@ export const calculateShipping = async (
     } else {
         // Default for other countries
         shippingAmount = 15;
-        shippingDetails = `International Shipping: A$${shippingAmount.toFixed(2)}`;
+        shippingDetails = `International Shipping: A$${shippingAmount.toFixed(decimals)}`;
     }
 
     return {
         country,
         shippingMethod,
-        shippingAmount: Number(shippingAmount.toFixed(2)),
+        shippingAmount: Number(shippingAmount.toFixed(decimals)),
         isFreeShipping,
         shippingDetails,
         freeShippingThreshold:
@@ -95,7 +96,7 @@ export const calculatePackaging = async (packagingOption = "standard") => {
     return {
         packagingOption,
         packagingName,
-        packagingAmount: Number(packagingAmount.toFixed(2)),
+        packagingAmount: Math.round(packagingAmount),
     };
 };
 
@@ -113,24 +114,25 @@ export const calculateOrderTotals = (
     shippingAmount = 0,
     packagingAmount = 0
 ) => {
-    const taxAmount = Number((itemsPrice * taxRate).toFixed(2));
-    const totalAmount = Number(
-        (itemsPrice + taxAmount + shippingAmount + packagingAmount).toFixed(2)
-    );
+    const roundedItems = Math.round(itemsPrice);
+    const roundedShipping = Math.round(shippingAmount);
+    const roundedPackaging = Math.round(packagingAmount);
+    const taxAmount = Math.round(roundedItems * taxRate);
+    const totalAmount = roundedItems + taxAmount + roundedShipping + roundedPackaging;
 
     return {
-        itemsPrice: Number(itemsPrice.toFixed(2)),
+        itemsPrice: roundedItems,
         taxAmount,
         taxRate: taxRate * 100 + "%",
-        shippingAmount,
-        packagingAmount,
+        shippingAmount: roundedShipping,
+        packagingAmount: roundedPackaging,
         totalAmount,
         breakdown: {
-            items: `A$${itemsPrice.toFixed(2)}`,
-            tax: `A$${taxAmount.toFixed(2)} (${taxRate * 100}%)`,
-            shipping: `A$${shippingAmount.toFixed(2)}`,
-            packaging: `A$${packagingAmount.toFixed(2)}`,
-            total: `A$${totalAmount.toFixed(2)}`,
+            items: `A$${roundedItems}`,
+            tax: `A$${taxAmount} (${taxRate * 100}%)`,
+            shipping: `A$${roundedShipping}`,
+            packaging: `A$${roundedPackaging}`,
+            total: `A$${totalAmount}`,
         },
     };
 };
@@ -209,8 +211,9 @@ export const validateOrderPrices = async (reqBody) => {
     }
 
     // 2. Convert items total to checkout currency
+    const decimals = checkoutCurrency === "AUD" ? 0 : 2;
     const expectedItemsPrice = Number(
-        convertPrice(calculatedItemsPriceInINR, checkoutCurrency, rates).toFixed(2)
+        convertPrice(calculatedItemsPriceInINR, checkoutCurrency, rates).toFixed(decimals)
     );
 
     // 3. Calculate shipping in AUD base first, then convert
@@ -225,7 +228,7 @@ export const validateOrderPrices = async (reqBody) => {
             shippingInfoCalculated.shippingAmount,
             checkoutCurrency,
             rates
-        ).toFixed(2)
+        ).toFixed(decimals)
     );
 
     // 4. Calculate packaging in AUD base, then convert (no packaging upgrade for India)
@@ -237,7 +240,7 @@ export const validateOrderPrices = async (reqBody) => {
                 packagingInfoCalculated.packagingAmount,
                 checkoutCurrency,
                 rates
-            ).toFixed(2)
+            ).toFixed(decimals)
         );
     }
 
@@ -247,7 +250,7 @@ export const validateOrderPrices = async (reqBody) => {
             expectedItemsPrice +
             expectedShippingAmount +
             expectedPackagingAmount
-        ).toFixed(2)
+        ).toFixed(decimals)
     );
 
     // 6. Tolerance checks (allow small diff due to rounding / cache mismatch)

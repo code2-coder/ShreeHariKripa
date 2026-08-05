@@ -126,7 +126,7 @@ export const convertPrice = catchAsyncErrors(async (req, res, next) => {
       targetCurrency,
       rate,
       convertedAmount,
-      rounded: Math.round(convertedAmount * 100) / 100,
+      rounded: targetCurrency === 'AUD' ? Math.round(convertedAmount) : Math.round(convertedAmount * 100) / 100,
     });
   } catch (error) {
     console.error("Price Conversion DB Error:", error);

@@ -147,13 +147,13 @@ export const getShippingCost = catchAsyncErrors(async (req, res, next) => {
 
     if (country.toLowerCase() === "australia") {
         if (shippingMethod === "express") {
-            shippingAmount = settings.australiaShipping.expressShippingPrice;
+            shippingAmount = Math.round(settings.australiaShipping.expressShippingPrice);
         } else {
             // Standard shipping
             if (orderTotal >= settings.australiaShipping.freeShippingThreshold) {
                 shippingAmount = 0; // FREE
             } else {
-                shippingAmount = settings.australiaShipping.standardShippingPrice;
+                shippingAmount = Math.round(settings.australiaShipping.standardShippingPrice);
             }
         }
     } else if (country.toLowerCase() === "india") {

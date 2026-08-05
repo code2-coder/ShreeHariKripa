@@ -110,12 +110,13 @@ export function Cart() {
     const itemsPrice = convertedCartTotal;
     const shippingAmount = displayShippingAmount;
     const packagingAmount = displayPackagingAmount;
+    const decimals = currency === "AUD" ? 0 : 2;
     return {
       orderItems: cart.map(item => {
         const itemPrice = item.price !== undefined ? item.price : item.product.price;
         const price = currency === DEFAULT_CURRENCY
           ? itemPrice
-          : Number(convertPrice(itemPrice, currency, rates, DEFAULT_CURRENCY).toFixed(2));
+          : Number(convertPrice(itemPrice, currency, rates, DEFAULT_CURRENCY).toFixed(decimals));
 
         return {
           product: item.product._id || item.product.id,
@@ -142,7 +143,7 @@ export function Cart() {
       packagingAmount,
       shippingMethod: selectedShipping?.id || "standard",
       packagingOption: selectedPackaging?.id || "standard",
-      totalAmount: Number((itemsPrice + shippingAmount + packagingAmount).toFixed(2)),
+      totalAmount: Number((itemsPrice + shippingAmount + packagingAmount).toFixed(decimals)),
       currency: currency
     };
   };
@@ -435,10 +436,16 @@ export function Cart() {
 
             {/* Right Column: Order Summary & Payment */}
             <div className="lg:col-span-5 lg:sticky lg:top-[160px]">
-              <div className="bg-white border border-neutral-200/80 rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
-                <h2 className="text-lg font-sans font-bold text-neutral-800 mb-6 border-b border-neutral-100 pb-4 flex items-center justify-between">
-                  <span>Order Summary</span>
-                  <span className="text-[10px] font-bold text-[#B8934E] uppercase tracking-wider bg-[#FAF9F6] border border-[#B8934E]/30 px-3 py-1 rounded-full">{cart.length} {cart.length === 1 ? 'Item' : 'Items'}</span>
+              <div className="bg-white border border-neutral-200/80 rounded-3xl p-6 sm:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.03)] relative overflow-hidden group/summary-card">
+                {/* Brand Gold Top Accent Line */}
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#5C1A1B] via-[#B8934E] to-[#800000]"></div>
+
+                <h2 className="text-base font-sans font-bold text-neutral-800 mb-6 border-b border-neutral-100 pb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-5 h-5 text-[#B8934E]" strokeWidth={1.5} />
+                    <span className="uppercase tracking-widest text-xs font-bold text-neutral-800">Order Summary</span>
+                  </div>
+                  <span className="text-[9px] font-bold text-[#B8934E] uppercase tracking-widest bg-[#FAF9F6] border border-[#B8934E]/25 px-3 py-1 rounded-full">{cart.length} {cart.length === 1 ? 'Item' : 'Items'}</span>
                 </h2>
 
                 <div className="space-y-6 mb-8">
@@ -459,13 +466,16 @@ export function Cart() {
                   )}
 
                   {!canShowShippingOptions && displayCountry.toLowerCase() !== "india" && (
-                    <div className="rounded-2xl border border-neutral-200 bg-[#FCFAF8] p-5 text-xs text-neutral-500 text-center flex flex-col items-center justify-center gap-2">
-                      <MapPin className="w-5 h-5 text-[#B8934E]" />
-                      <span className="font-sans font-semibold">Select a delivery address to view shipping and packaging options.</span>
+                    <div className="rounded-2xl border border-neutral-200/80 bg-[#FCFAF8] p-6 text-xs text-neutral-500 text-center flex flex-col items-center justify-center gap-3">
+                      <div className="p-3 bg-white rounded-full border border-neutral-100 shadow-sm">
+                        <MapPin className="w-5 h-5 text-[#B8934E]" strokeWidth={1.5} />
+                      </div>
+                      <span className="font-sans font-semibold text-neutral-600">Select a delivery address to view shipping and packaging options.</span>
                     </div>
                   )}
                   {!canShowShippingOptions && displayCountry.toLowerCase() === "india" && (
-                    <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4.5 text-xs text-emerald-800 text-center flex flex-col items-center justify-center gap-2 font-sans font-semibold">
+                    <div className="rounded-2xl border border-emerald-100 bg-emerald-50/40 p-5 text-xs text-emerald-800 text-center flex flex-col items-center justify-center gap-2.5 font-sans font-semibold shadow-sm">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                       <span>Free delivery and premium packaging within India.</span>
                     </div>
                   )}
@@ -473,80 +483,90 @@ export function Cart() {
 
                 <div className="space-y-4 mb-8 text-xs font-sans">
                   <div className="flex justify-between items-center text-neutral-600">
-                    <span className="font-semibold text-neutral-550">Subtotal</span>
+                    <span className="font-semibold text-neutral-500 uppercase tracking-widest text-[9px]">Subtotal</span>
                     <span className="font-bold text-neutral-900 text-sm">{getFormattedPrice(cartTotal)}</span>
                   </div>
                   <div className="flex justify-between items-center text-neutral-600">
-                    <span className="font-semibold text-neutral-550">Shipping</span>
+                    <span className="font-semibold text-neutral-550 uppercase tracking-widest text-[9px]">Shipping</span>
                     <span className="font-bold text-neutral-900 text-sm">
                       {selectedShipping ? (
                         selectedShipping.isFree
-                          ? <span className="text-emerald-700 font-bold uppercase text-[10px] tracking-wider bg-emerald-150/60 px-2 py-0.5 rounded">FREE</span>
+                          ? <span className="text-emerald-700 font-bold uppercase text-[9px] tracking-widest bg-emerald-100/50 border border-emerald-150/40 px-2 py-0.5 rounded-full">FREE</span>
                           : formatPrice(displayShippingAmount, currency, rates, currency)
                       ) : (
                         currency === "INR" 
-                          ? <span className="text-emerald-700 font-bold uppercase text-[10px] tracking-wider bg-emerald-150/60 px-2 py-0.5 rounded">FREE</span> 
+                          ? <span className="text-emerald-700 font-bold uppercase text-[9px] tracking-widest bg-emerald-100/50 border border-emerald-150/40 px-2 py-0.5 rounded-full">FREE</span> 
                           : "—"
                       )}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-neutral-600">
-                    <span className="font-semibold text-neutral-550">Packaging</span>
+                    <span className="font-semibold text-neutral-550 uppercase tracking-widest text-[9px]">Packaging</span>
                     <span className="font-bold text-neutral-900 text-sm">
                       {displayPackagingAmount > 0
                         ? <span className="text-amber-700">+{formatPrice(displayPackagingAmount, currency, rates, currency)}</span>
-                        : <span className="text-emerald-700 font-bold uppercase text-[10px] tracking-wider bg-emerald-150/60 px-2 py-0.5 rounded">Included</span>}
+                        : <span className="text-emerald-700 font-bold uppercase text-[9px] tracking-widest bg-emerald-100/50 border border-emerald-150/40 px-2.5 py-0.5 rounded-full">Included</span>}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-neutral-600">
-                    <span className="font-semibold text-neutral-550">Taxes</span>
-                    <span className="font-bold text-neutral-900 text-sm">Included</span>
+                    <span className="font-semibold text-neutral-550 uppercase tracking-widest text-[9px]">Taxes</span>
+                    <span className="font-bold text-neutral-900 text-sm uppercase tracking-widest text-[10px] text-neutral-400">Included</span>
                   </div>
 
-                  <div className="border-t border-neutral-100 pt-5 mt-5">
+                  {/* Total Amount Premium Invoice Block */}
+                  <div className="bg-gradient-to-br from-[#FAF9F6] to-[#FFFDF9] border border-[#B8934E]/15 rounded-2xl p-5 mt-6 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold uppercase tracking-wider text-neutral-450 font-sans">Total</span>
-                      <div className="text-right">
-                        <span className="text-2xl sm:text-3xl font-sans font-extrabold text-neutral-900 block leading-none tracking-tight">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#B8934E] block mb-1">Total Amount</span>
+                        <span className="text-[9px] text-neutral-450 font-bold uppercase tracking-wider">Including all taxes & duties</span>
+                      </div>
+                      <div className="text-right font-sans">
+                        <span className="text-2xl sm:text-3xl font-sans font-extrabold text-neutral-900 block tracking-tight">
                           {formatPrice(totalAmountWithExtras, currency, rates, currency)}
                         </span>
-                        <p className="text-[9px] text-neutral-400 font-bold uppercase tracking-wider mt-2 font-sans">Including GST</p>
+                        <span className="inline-block text-[8px] font-bold text-emerald-800 bg-emerald-100/50 border border-emerald-150/40 px-2.5 py-0.5 rounded-full uppercase tracking-wider mt-1.5">Including GST</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {chosenAddress && !isDeliveryAvailable && (
-                  <div className="mb-6 p-4 bg-red-50/60 border border-red-100 rounded-2xl text-red-700 text-xs font-semibold leading-relaxed font-sans">
-                    Delivery only available to {[isIndiaEnabled && "India", isAustraliaEnabled && "Australia"].filter(Boolean).join(" and ") || "none at this time"}. Selected country: <span className="font-bold">{chosenAddress.country}</span>
+                  <div className="mb-6 p-4 bg-red-50/60 border border-red-100 rounded-2xl text-red-700 text-xs font-semibold leading-relaxed font-sans shadow-sm flex items-start gap-2.5">
+                    <Info className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                    <span>Delivery only available to {[isIndiaEnabled && "India", isAustraliaEnabled && "Australia"].filter(Boolean).join(" and ") || "none at this time"}. Selected country: <span className="font-bold">{chosenAddress.country}</span></span>
                   </div>
                 )}
 
                 {chosenAddress && isDeliveryAvailable && isCheckingServiceability && (
-                  <div className="mb-6 p-4 bg-blue-50/60 border border-blue-100 rounded-2xl text-blue-700 text-xs font-semibold flex items-center space-x-3 font-sans">
+                  <div className="mb-6 p-4 bg-blue-50/60 border border-blue-100 rounded-2xl text-blue-700 text-xs font-semibold flex items-center space-x-3 font-sans shadow-sm">
                     <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
                     <span>Verifying delivery serviceability...</span>
                   </div>
                 )}
 
                 {chosenAddress && isDeliveryAvailable && !isCheckingServiceability && serviceability && !serviceability.isServiceable && (
-                  <div className="mb-6 p-4 bg-red-50/60 border border-red-100 rounded-2xl text-red-700 text-xs font-semibold leading-relaxed font-sans">
-                    Sorry, delivery is currently not available to pincode <span className="font-bold">{chosenAddress.zipCode}</span>.
+                  <div className="mb-6 p-4 bg-red-50/60 border border-red-100 rounded-2xl text-red-700 text-xs font-semibold leading-relaxed font-sans shadow-sm flex items-start gap-2.5">
+                    <Info className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                    <span>Sorry, delivery is currently not available to pincode <span className="font-bold">{chosenAddress.zipCode}</span>.</span>
                   </div>
                 )}
 
                 {chosenAddress && isDeliveryAvailable && !isCheckingServiceability && serviceability && serviceability.isServiceable && paymentMethod === "COD" && !serviceability.cod && (
-                  <div className="mb-6 p-4 bg-orange-50/60 border border-orange-100 rounded-2xl text-orange-700 text-xs font-semibold leading-relaxed font-sans">
-                    Cash on Delivery is not available for pincode <span className="font-bold">{chosenAddress.zipCode}</span>. Please choose online payment.
+                  <div className="mb-6 p-4 bg-orange-50/60 border border-orange-100 rounded-2xl text-orange-700 text-xs font-semibold leading-relaxed font-sans shadow-sm flex items-start gap-2.5">
+                    <Info className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
+                    <span>Cash on Delivery is not available for pincode <span className="font-bold">{chosenAddress.zipCode}</span>. Please choose online payment.</span>
                   </div>
                 )}
 
                 {/* Payment Selection */}
                 <div className="mb-8">
-                  <h3 className="text-[10px] font-bold uppercase tracking-wider text-neutral-450 mb-4 font-sans">Payment Method</h3>
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-neutral-450 mb-4 font-sans">Payment Method</h3>
                   <div className="space-y-3">
 
-                    <label className={`relative flex items-center p-4 rounded-2xl cursor-pointer border transition-all duration-300 ${paymentMethod === "Stripe" ? "border-[#B8934E] bg-[#FAF9F6] ring-1 ring-[#B8934E]/20" : "border-neutral-200 bg-white hover:border-[#B8934E]/30 hover:bg-[#FCFAF8]"}`}>
+                    <label className={`relative flex items-center p-5 rounded-2xl cursor-pointer border transition-all duration-300 group
+                      ${paymentMethod === "Stripe" 
+                        ? "border-[#B8934E] bg-gradient-to-br from-[#FAF9F6] to-[#FFFDF9] ring-1 ring-[#B8934E]/25 shadow-[0_8px_16px_rgba(184,147,78,0.04)]" 
+                        : "border-neutral-200 bg-white hover:border-[#B8934E]/40 hover:bg-[#FCFAF8]"}`}>
                       <input
                         type="radio"
                         value="Stripe"
@@ -554,19 +574,23 @@ export function Cart() {
                         onChange={() => setPaymentMethod("Stripe")}
                         className="sr-only"
                       />
-                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center mr-4 transition-colors ${paymentMethod === "Stripe" ? "border-[#B8934E]" : "border-neutral-300"}`}>
-                        {paymentMethod === "Stripe" && <div className="w-2 h-2 rounded-full bg-[#B8934E]"></div>}
+                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center mr-4 transition-all duration-300 
+                        ${paymentMethod === "Stripe" ? "border-[#B8934E] bg-white ring-1 ring-[#B8934E]/30 scale-105" : "border-neutral-300 bg-white group-hover:border-neutral-400"}`}>
+                        {paymentMethod === "Stripe" && <div className="w-2.5 h-2.5 rounded-full bg-[#B8934E] shadow-[0_0_6px_rgba(184,147,78,0.4)]"></div>}
                       </div>
                       <div className="flex-1 font-sans">
-                        <span className="block text-xs font-bold text-neutral-800 uppercase tracking-wider">Pay Online (Secure)</span>
-                        <span className="block text-[10px] text-neutral-400 font-semibold mt-0.5">Credit / Debit Cards / Netbanking</span>
+                        <span className="block text-xs font-bold text-neutral-800 uppercase tracking-widest">Pay Online (Secure)</span>
+                        <span className="block text-[10px] text-neutral-450 font-semibold mt-1">Credit / Debit Cards / Netbanking</span>
                       </div>
-                      <CreditCard className={`w-4.5 h-4.5 ${paymentMethod === "Stripe" ? "text-[#B8934E]" : "text-neutral-450"}`} />
+                      <CreditCard className={`w-5 h-5 transition-colors ${paymentMethod === "Stripe" ? "text-[#B8934E]" : "text-neutral-400 group-hover:text-neutral-500"}`} strokeWidth={1.5} />
                     </label>
 
                     {/* COD — India only */}
                     {isCODAvailable && (
-                      <label className={`relative flex items-center p-4 rounded-2xl cursor-pointer border transition-all duration-300 ${paymentMethod === "COD" ? "border-[#B8934E] bg-[#FAF9F6] ring-1 ring-[#B8934E]/20" : "border-neutral-200 bg-white hover:border-[#B8934E]/30 hover:bg-[#FCFAF8]"}`}>
+                      <label className={`relative flex items-center p-5 rounded-2xl cursor-pointer border transition-all duration-300 group
+                        ${paymentMethod === "COD" 
+                          ? "border-[#B8934E] bg-gradient-to-br from-[#FAF9F6] to-[#FFFDF9] ring-1 ring-[#B8934E]/25 shadow-[0_8px_16px_rgba(184,147,78,0.04)]" 
+                          : "border-neutral-200 bg-white hover:border-[#B8934E]/40 hover:bg-[#FCFAF8]"}`}>
                         <input
                           type="radio"
                           value="COD"
@@ -574,14 +598,15 @@ export function Cart() {
                           onChange={() => setPaymentMethod("COD")}
                           className="sr-only"
                         />
-                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center mr-4 transition-colors ${paymentMethod === "COD" ? "border-[#B8934E]" : "border-neutral-300"}`}>
-                          {paymentMethod === "COD" && <div className="w-2 h-2 rounded-full bg-[#B8934E]"></div>}
+                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center mr-4 transition-all duration-300 
+                          ${paymentMethod === "COD" ? "border-[#B8934E] bg-white ring-1 ring-[#B8934E]/30 scale-105" : "border-neutral-300 bg-white group-hover:border-neutral-400"}`}>
+                          {paymentMethod === "COD" && <div className="w-2.5 h-2.5 rounded-full bg-[#B8934E] shadow-[0_0_6px_rgba(184,147,78,0.4)]"></div>}
                         </div>
                         <div className="flex-1 font-sans">
-                          <span className="block text-xs font-bold text-neutral-800 uppercase tracking-wider">Cash on Delivery</span>
-                          <span className="block text-[10px] text-neutral-400 font-semibold mt-0.5">Pay at your doorstep (India only)</span>
+                          <span className="block text-xs font-bold text-neutral-800 uppercase tracking-widest">Cash on Delivery</span>
+                          <span className="block text-[10px] text-neutral-450 font-semibold mt-1">Pay at your doorstep (India only)</span>
                         </div>
-                        <Banknote className={`w-4.5 h-4.5 ${paymentMethod === "COD" ? "text-[#B8934E]" : "text-neutral-450"}`} />
+                        <Banknote className={`w-5 h-5 transition-colors ${paymentMethod === "COD" ? "text-[#B8934E]" : "text-neutral-400 group-hover:text-neutral-500"}`} strokeWidth={1.5} />
                       </label>
                     )}
                   </div>
@@ -590,8 +615,11 @@ export function Cart() {
                 <button
                   onClick={handleCheckout}
                   disabled={isCheckoutDisabled}
-                  className="w-full relative overflow-hidden bg-gradient-to-r from-[#5C1A1B] to-[#800000] text-white border border-[#B8934E]/20 rounded-2xl font-bold uppercase tracking-widest text-[11px] py-4 hover:shadow-[0_12px_24px_rgba(128,0,0,0.15)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center space-x-2.5 disabled:from-neutral-100 disabled:to-neutral-100 disabled:text-neutral-400 disabled:border-neutral-200 disabled:cursor-not-allowed disabled:shadow-none disabled:-translate-y-0 mb-6 group/checkout cursor-pointer font-sans"
+                  className="w-full relative overflow-hidden bg-gradient-to-r from-[#5C1A1B] to-[#800000] text-white border border-[#B8934E]/20 rounded-2xl font-bold uppercase tracking-widest text-[11px] py-4.5 hover:shadow-[0_12px_28px_rgba(128,0,0,0.18)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center space-x-2.5 disabled:from-neutral-100 disabled:to-neutral-100 disabled:text-neutral-400 disabled:border-neutral-200 disabled:cursor-not-allowed disabled:shadow-none disabled:-translate-y-0 mb-6 group/checkout cursor-pointer font-sans"
                 >
+                  {/* Sweep Metallic Shine Animation */}
+                  <div className="absolute inset-0 w-1/2 h-full bg-white/15 transform -skew-x-12 -translate-x-full group-hover/checkout:animate-shine pointer-events-none"></div>
+
                   {isProcessing ? (
                     <div className="flex items-center space-x-2">
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -600,7 +628,7 @@ export function Cart() {
                   ) : (
                     <>
                       <span>{(paymentMethod === "Card" || paymentMethod === "Stripe") ? `Pay ${formatPrice(totalAmountWithExtras, currency, rates, currency)}` : `Place Order`}</span>
-                      <ArrowRight className="w-4 h-4 group-hover/checkout:translate-x-1.5 transition-transform duration-300" />
+                      <ArrowRight className="w-4 h-4 group-hover/checkout:translate-x-1.5 transition-transform duration-300" strokeWidth={2} />
                     </>
                   )}
                 </button>
@@ -609,9 +637,9 @@ export function Cart() {
                 <div className="pt-6 border-t border-neutral-150 flex flex-col items-center gap-2 font-sans">
                   <div className="flex items-center space-x-2 text-[#B8934E]">
                     <ShieldCheck className="w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
-                    <span className="text-[10px] text-neutral-800 font-extrabold uppercase tracking-wider">Secure Checkout Guarantee</span>
+                    <span className="text-[10px] text-neutral-800 font-extrabold uppercase tracking-widest">Secure Checkout Guarantee</span>
                   </div>
-                  <p className="text-[10px] text-neutral-400 font-semibold text-center leading-normal">
+                  <p className="text-[10px] text-neutral-450 font-semibold text-center leading-normal">
                     100% Insured Delivery · Safe Credit & Debit Payments
                   </p>
                 </div>

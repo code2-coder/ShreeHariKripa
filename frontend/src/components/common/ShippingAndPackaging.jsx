@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Gift, Truck, CheckCircle2, Info } from 'lucide-react';
+import { Package, Gift, Truck, CheckCircle2, Info, Zap } from 'lucide-react';
 import { getPackagingOptions, getShippingOptions } from '../../api/shippingService';
 import { useCurrency } from '../../context/CurrencyContext';
 import { formatPrice } from '../../utils/currencyUtils';
@@ -62,20 +62,23 @@ export const PackagingSelector = ({
 
     return (
         <div className={`space-y-4 ${className}`}>
-            <h3 className="text-[10px] font-bold uppercase tracking-wider text-neutral-450 flex items-center gap-2 font-sans">
-                <Gift className="w-4 h-4 text-[#B8934E]" strokeWidth={2} />
-                Select Packaging
-            </h3>
+            <div className="flex items-center justify-between">
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-neutral-450 flex items-center gap-2 font-sans">
+                    <Gift className="w-4 h-4 text-[#B8934E]" strokeWidth={1.5} />
+                    Select Packaging
+                </h3>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {options.map((option) => {
                     const isSelected = selectedOption === option.id;
+                    const isPremium = option.id === 'exquisite' || option.id === 'premium';
                     return (
                         <label
                             key={option.id}
-                            className={`relative flex flex-col p-5 border rounded-2xl cursor-pointer transition-all duration-300 group
+                            className={`relative flex flex-col p-6 border rounded-2xl cursor-pointer transition-all duration-300 group overflow-hidden
                                 ${isSelected 
-                                    ? 'border-[#B8934E] bg-[#FAF9F6] ring-1 ring-[#B8934E]/20 shadow-sm scale-[1.005]' 
-                                    : 'border-neutral-200 bg-white hover:border-[#B8934E]/30 hover:bg-[#FCFAF8]'}`}
+                                    ? 'border-[#B8934E] bg-gradient-to-br from-[#FAF9F6] to-[#FFFDF9] ring-1 ring-[#B8934E]/25 shadow-[0_12px_24px_rgba(184,147,78,0.06)] scale-[1.005]' 
+                                    : 'border-neutral-200 bg-white hover:border-[#B8934E]/40 hover:bg-[#FCFAF8] hover:shadow-[0_8px_16px_rgba(0,0,0,0.015)]'}`}
                         >
                             <input
                                 type="radio"
@@ -86,29 +89,39 @@ export const PackagingSelector = ({
                                 className="hidden"
                             />
                             {isSelected && (
-                                <div className="absolute top-4 right-4 text-[#B8934E] animate-fade-in">
-                                    <CheckCircle2 className="w-5 h-5" />
+                                <div className="absolute top-5 right-5 text-[#B8934E] animate-fade-in">
+                                    <CheckCircle2 className="w-5 h-5" strokeWidth={2.5} />
                                 </div>
                             )}
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className={`p-2 rounded-xl transition-all ${isSelected ? 'bg-[#B8934E]/10 text-[#B8934E]' : 'bg-[#FCFAF8] text-neutral-400 group-hover:bg-[#B8934E]/10 group-hover:text-[#B8934E]'}`}>
-                                    {option.id === 'premium' ? (
-                                        <Gift className="w-5 h-5" />
+                            
+                            {isPremium && (
+                                <div className="absolute -right-16 -top-16 w-32 h-32 bg-[#B8934E]/5 rounded-full blur-2xl pointer-events-none"></div>
+                            )}
+
+                            <div className="flex items-center gap-3.5 mb-4">
+                                <div className={`p-2.5 rounded-xl transition-all ${isSelected ? 'bg-[#B8934E]/12 text-[#B8934E]' : 'bg-[#FCFAF8] text-neutral-400 group-hover:bg-[#B8934E]/10 group-hover:text-[#B8934E]'}`}>
+                                    {isPremium ? (
+                                        <Gift className="w-5 h-5" strokeWidth={1.5} />
                                     ) : (
-                                        <Package className="w-5 h-5" />
+                                        <Package className="w-5 h-5" strokeWidth={1.5} />
                                     )}
                                 </div>
-                                <div className="font-sans font-bold text-sm uppercase tracking-wider text-neutral-800">{option.name}</div>
+                                <div className="space-y-0.5">
+                                    <div className="font-sans font-bold text-[11px] sm:text-xs uppercase tracking-widest text-neutral-800">{option.name}</div>
+                                    {isPremium && (
+                                        <span className="inline-block text-[8px] font-bold text-[#B8934E] bg-[#B8934E]/10 border border-[#B8934E]/20 px-2 py-0.5 rounded-full uppercase tracking-wider font-sans">Premium Choice</span>
+                                    )}
+                                </div>
                             </div>
                             {option.description && (
-                                <div className="text-xs text-neutral-450 font-sans font-semibold flex-1 mb-4 leading-relaxed">{option.description}</div>
+                                <div className="text-xs text-neutral-450 font-sans font-semibold flex-1 mb-5 leading-relaxed pr-6">{option.description}</div>
                             )}
                             <div className="mt-auto pt-4 border-t border-neutral-100 flex items-center justify-between font-sans">
-                                <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">Price</span>
+                                <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">Price</span>
                                 {option.price > 0 ? (
                                     <div className="font-bold text-sm text-[#B8934E] font-sans">+{formatPrice(option.price, currency, rates, "AUD")}</div>
                                 ) : (
-                                    <div className="text-[9px] font-bold text-emerald-750 uppercase tracking-wider bg-emerald-100/60 px-2.5 py-0.5 rounded-md">Included</div>
+                                    <div className="text-[9px] font-bold text-emerald-700 uppercase tracking-widest bg-emerald-100/50 border border-emerald-150/40 px-3 py-1 rounded-full font-sans">Included</div>
                                 )}
                             </div>
                         </label>
@@ -193,33 +206,34 @@ export const ShippingMethodSelector = ({
 
     return (
         <div className={`space-y-4 ${className}`}>
-            <h3 className="text-[10px] font-bold uppercase tracking-wider text-neutral-450 flex items-center gap-2 font-sans">
-                <Truck className="w-4 h-4 text-[#B8934E]" strokeWidth={2} />
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-neutral-450 flex items-center gap-2 font-sans">
+                <Truck className="w-4 h-4 text-[#B8934E]" strokeWidth={1.5} />
                 Shipping Method
             </h3>
             
             {options[0]?.freeThreshold && country.toLowerCase() === 'australia' && (
-                <div className="flex items-center gap-2.5 p-3.5 bg-emerald-50 border border-emerald-100 rounded-2xl text-xs font-semibold text-emerald-800 font-sans">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                    <span>Free standard shipping on orders over <strong className="font-bold">{formatPrice(options[0].freeThreshold, currency, rates, "AUD")}</strong></span>
+                <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-50/60 to-teal-50/40 border border-emerald-100/70 rounded-2xl text-xs font-semibold text-emerald-800 font-sans shadow-sm">
+                    <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600 flex-shrink-0" strokeWidth={2} />
+                    <span>Free standard shipping on orders over <strong className="font-bold text-emerald-900">{formatPrice(options[0].freeThreshold, currency, rates, "AUD")}</strong></span>
                 </div>
             )}
 
             <div className="space-y-3">
                 {options.map((option) => {
                     const isSelected = selectedMethod === option.id;
+                    const isExpress = option.id === 'express';
                     return (
                         <label
                             key={option.id}
-                            className={`flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all duration-300
+                            className={`flex items-center justify-between p-5 border rounded-2xl cursor-pointer transition-all duration-300 group
                                 ${isSelected 
-                                    ? 'border-[#B8934E] bg-[#FAF9F6] ring-1 ring-[#B8934E]/20 shadow-sm scale-[1.005]' 
-                                    : 'border-neutral-200 bg-white hover:border-[#B8934E]/30 hover:bg-[#FCFAF8]'}`}
+                                    ? 'border-[#B8934E] bg-gradient-to-br from-[#FAF9F6] to-[#FFFDF9] ring-1 ring-[#B8934E]/25 shadow-[0_12px_24px_rgba(184,147,78,0.06)] scale-[1.005]' 
+                                    : 'border-neutral-200 bg-white hover:border-[#B8934E]/40 hover:bg-[#FCFAF8] hover:shadow-[0_8px_16px_rgba(0,0,0,0.015)]'}`}
                         >
-                            <div className="flex items-center gap-4">
-                                <div className={`flex flex-shrink-0 items-center justify-center w-5 h-5 rounded-full border transition-colors
-                                    ${isSelected ? 'border-[#B8934E] bg-white' : 'border-neutral-300'}`}>
-                                    {isSelected && <div className="w-2.5 h-2.5 bg-[#B8934E] rounded-full"></div>}
+                            <div className="flex items-center gap-4 flex-1">
+                                <div className={`flex flex-shrink-0 items-center justify-center w-5 h-5 rounded-full border transition-all duration-300
+                                    ${isSelected ? 'border-[#B8934E] bg-white ring-1 ring-[#B8934E]/30' : 'border-neutral-300'}`}>
+                                    {isSelected && <div className="w-2.5 h-2.5 bg-[#B8934E] rounded-full shadow-[0_0_6px_rgba(184,147,78,0.4)]"></div>}
                                 </div>
                                 <input
                                     type="radio"
@@ -229,12 +243,21 @@ export const ShippingMethodSelector = ({
                                     onChange={() => handleChange(option.id)}
                                     className="hidden"
                                 />
+                                
+                                <div className={`p-2.5 rounded-xl transition-all ${isSelected ? 'bg-[#B8934E]/12 text-[#B8934E]' : 'bg-[#FCFAF8] text-neutral-400 group-hover:bg-[#B8934E]/10 group-hover:text-[#B8934E]'}`}>
+                                    {isExpress ? (
+                                        <Zap className="w-4 h-4" strokeWidth={1.5} />
+                                    ) : (
+                                        <Truck className="w-4 h-4" strokeWidth={1.5} />
+                                    )}
+                                </div>
+
                                 <div className="flex flex-col justify-center font-sans">
-                                    <div className="font-sans font-bold text-sm uppercase tracking-wider text-neutral-800">{option.name}</div>
+                                    <div className="font-sans font-bold text-xs uppercase tracking-widest text-neutral-850">{option.name}</div>
                                     <div className="text-xs text-neutral-450 mt-1 font-semibold leading-normal">{option.description}</div>
                                     {option.deliveryDays && (
                                         <div className="mt-2.5">
-                                            <span className="text-[9px] font-bold text-[#800000] bg-red-50 border border-[#800000]/15 px-2.5 py-0.5 rounded-md">
+                                            <span className="inline-block text-[8px] font-bold text-[#800000] bg-[#800000]/5 border border-[#800000]/12 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                                                 Est: {option.deliveryDays}
                                             </span>
                                         </div>
@@ -243,7 +266,7 @@ export const ShippingMethodSelector = ({
                             </div>
                             <div className="text-right pl-4 font-sans">
                                 {option.isFree ? (
-                                    <div className="text-[9px] font-bold text-emerald-750 uppercase tracking-wider bg-emerald-100/60 px-2.5 py-0.5 rounded-md font-sans">Free</div>
+                                    <div className="text-[9px] font-bold text-emerald-700 uppercase tracking-widest bg-emerald-100/50 border border-emerald-150/40 px-3 py-1 rounded-full font-sans">Free</div>
                                 ) : (
                                     <div className="text-sm font-bold text-neutral-900 font-sans">{formatPrice(option.price, currency, rates, "AUD")}</div>
                                 )}

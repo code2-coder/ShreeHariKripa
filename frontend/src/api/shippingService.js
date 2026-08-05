@@ -199,5 +199,5 @@ export const formatShippingDisplay = (shippingInfo) => {
         return `${shippingMethod === 'express' ? 'Express Post' : 'Standard Delivery'} - FREE`;
     }
 
-    return `${shippingMethod === 'express' ? 'Express Post' : 'Standard Delivery'} - A$${shippingAmount.toFixed(2)}`;
+    return `${shippingMethod === 'express' ? 'Express Post' : 'Standard Delivery'} - A$${shippingAmount.toFixed(0)}`;
 };

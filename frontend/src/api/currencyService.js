@@ -144,8 +144,8 @@ export const convertProductPrice = async (product, targetCurrency = 'AUD', rates
     return {
       ...product,
       priceINR: product.price,
-      price: convertedPrice,
-      displayPrice: `${targetCurrency === 'AUD' ? 'A$' : targetCurrency}${convertedPrice.toFixed(2)}`,
+      price: targetCurrency === 'AUD' ? Math.round(convertedPrice) : convertedPrice,
+      displayPrice: `${targetCurrency === 'AUD' ? 'A$' : targetCurrency}${targetCurrency === 'AUD' ? Math.round(convertedPrice) : convertedPrice.toFixed(2)}`,
       currency: targetCurrency,
     };
   } catch (error) {

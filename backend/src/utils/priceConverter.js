@@ -63,7 +63,11 @@ export const convertPrice = (priceInINR, targetCurrency = 'AUD', rates = null) =
         return priceInINR;
     }
 
-    return priceInINR * rate;
+    const converted = priceInINR * rate;
+    if (targetCurrency === 'AUD') {
+        return Math.round(converted);
+    }
+    return converted;
 };
 
 /**
@@ -83,8 +87,9 @@ export const formatCurrency = (price, currency = 'AUD') => {
     };
 
     const symbol = currencySymbols[currency] || currency;
+    const maxDigits = currency === 'AUD' ? 0 : 2;
     const formatted = typeof price === 'number'
-        ? price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+        ? price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: maxDigits })
         : '0';
 
     return `${symbol}${formatted}`;
