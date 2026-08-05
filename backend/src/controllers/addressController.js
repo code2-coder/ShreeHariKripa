@@ -2,6 +2,9 @@ import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import User from "../models/User.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import { checkServiceability } from "../utils/delhiveryService.js";
+import OtpService from "../services/OtpService.js";
+import EmailService from "../services/EmailService.js";
+import crypto from "crypto";
 
 //
 // 📌 GET ALL ADDRESSES
@@ -191,5 +194,124 @@ export const setDefaultAddress = catchAsyncErrors(async (req, res, next) => {
     success: true,
     message: "Default address updated",
     addresses: user.addresses,
+  });
+});
+
+//
+// 📌 SEND ADDRESS OTP
+//
+export const sendAddressOtp = catchAsyncErrors(async (req, res, next) => {
+  const { phoneNo } = req.body;
+  if (!phoneNo) {
+    return next(new ErrorHandler("Phone number is required", 400));
+  }
+
+  const result = await OtpService.sendOtp(phoneNo);
+  if (!result.success) {
+    return next(new ErrorHandler(result.error || "Failed to send OTP", 500));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: result.message || "OTP sent successfully to phone number",
+  });
+});
+
+//
+// 📌 VERIFY ADDRESS OTP
+//
+export const verifyAddressOtp = catchAsyncErrors(async (req, res, next) => {
+  const { phoneNo, otp } = req.body;
+  if (!phoneNo || !otp) {
+    return next(new ErrorHandler("Phone number and OTP are required", 400));
+  }
+
+  const result = await OtpService.verifyOtp(phoneNo, otp);
+  if (!result.success) {
+    return next(new ErrorHandler(result.message || "Invalid OTP", 400));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: result.message || "Phone number verified successfully",
+  });
+});
+
+//
+// 📌 SEND ADDRESS EMAIL OTP
+//
+export const sendAddressEmailOtp = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  // Generate 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+  user.addressVerificationOTP = otpHash;
+  user.addressVerificationOTPExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+  await user.save({ validateBeforeSave: false });
+
+  // Fallback for local development if ZeptoMail isn't configured
+  if (!process.env.ZEPTOMAIL_API_KEY) {
+    console.log(`[EMAIL MOCK] Sending Address OTP ${otp} to email: ${user.email}`);
+    res.status(200).json({
+      success: true,
+      message: "Mock Email OTP sent successfully.",
+    });
+    return;
+  }
+
+  // Send email
+  try {
+    await EmailService.sendAddressVerificationEmail(user.email, user.name, otp);
+  } catch (emailError) {
+    console.error("Address verification email failed:", emailError.message);
+    return next(new ErrorHandler(`Failed to send verification email: ${emailError.message}`, 500));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "OTP sent successfully to your email address",
+  });
+});
+
+//
+// 📌 VERIFY ADDRESS EMAIL OTP
+//
+export const verifyAddressEmailOtp = catchAsyncErrors(async (req, res, next) => {
+  const { otp } = req.body;
+  if (!otp) {
+    return next(new ErrorHandler("OTP code is required", 400));
+  }
+
+  const user = await User.findById(req.user._id).select("+addressVerificationOTP +addressVerificationOTPExpires");
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  if (!user.addressVerificationOTP || !user.addressVerificationOTPExpires) {
+    return next(new ErrorHandler("No OTP found. Please request a new verification OTP.", 400));
+  }
+
+  if (user.addressVerificationOTPExpires < Date.now()) {
+    return next(new ErrorHandler("OTP has expired. Please request a new one.", 400));
+  }
+
+  const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+  if (user.addressVerificationOTP !== otpHash) {
+    return next(new ErrorHandler("Invalid OTP", 400));
+  }
+
+  // Clear OTP fields
+  user.addressVerificationOTP = undefined;
+  user.addressVerificationOTPExpires = undefined;
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    success: true,
+    message: "Email OTP verified successfully",
   });
 });

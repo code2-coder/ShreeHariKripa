@@ -251,6 +251,30 @@ export class EmailService {
     });
   }
 
+  async sendAddressVerificationEmail(email, name, otp) {
+    const htmlContent = this.getEmailLayout({
+      name,
+      title: "Confirm Your Delivery Address",
+      bodyContent: `<p style="margin-bottom: 20px;">Please use the following One-Time Password (OTP) to confirm your delivery address and complete saving it:</p>`,
+      otpBlock: `
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 24px 0;">
+          <tr>
+            <td align="center" style="background-color: #fafaf9; border: 1px dashed #d6d3d1; border-radius: 12px; padding: 24px;">
+              <span style="font-family: 'Courier New', Courier, monospace; font-size: 38px; font-weight: bold; color: #1c1917; letter-spacing: 10px; padding-left: 10px; display: inline-block;">${otp}</span>
+            </td>
+          </tr>
+        </table>
+      `,
+      noteBlock: `<p style="font-size: 13px; color: #78716c; text-align: center; margin-top: 16px;">This code is valid for <strong style="color: #1c1917;">10 minutes</strong>. Please do not share this OTP with anyone.</p>`
+    });
+
+    return this.sendEmail({
+      to: email,
+      subject: `Confirm your delivery address - ${this.appName}`,
+      html: htmlContent
+    });
+  }
+
   async sendEmail({ to, subject, html }) {
     const url = process.env.ZEPTOMAIL_API_URL || 'https://api.zeptomail.in/v1.1/email';
     const key = process.env.ZEPTOMAIL_API_KEY;

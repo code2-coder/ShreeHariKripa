@@ -7,7 +7,7 @@
   "type": "module",
   "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon --exec tsx src/server.js",
+    "dev": "nodemon --no-stdin --exec tsx src/server.js",
     "start": "node src/server.js"
   },
   "dependencies": {

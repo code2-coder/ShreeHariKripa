@@ -79,6 +79,14 @@ const userSchema = new mongoose.Schema(
       type: Date,
       select: false,
     },
+    addressVerificationOTP: {
+      type: String,
+      select: false,
+    },
+    addressVerificationOTPExpires: {
+      type: Date,
+      select: false,
+    },
     resetPasswordToken: {
       type: String,
       select: false,

@@ -62,8 +62,8 @@ export const PackagingSelector = ({
 
     return (
         <div className={`space-y-4 ${className}`}>
-            <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2">
-                <Gift className="w-4 h-4 text-[#B8934E]" strokeWidth={2.5} />
+            <h3 className="text-[10px] font-bold uppercase tracking-wider text-neutral-450 flex items-center gap-2 font-sans">
+                <Gift className="w-4 h-4 text-[#B8934E]" strokeWidth={2} />
                 Select Packaging
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -74,8 +74,8 @@ export const PackagingSelector = ({
                             key={option.id}
                             className={`relative flex flex-col p-5 border rounded-2xl cursor-pointer transition-all duration-300 group
                                 ${isSelected 
-                                    ? 'border-[#B8934E] bg-[#FAF9F6] ring-1 ring-[#B8934E]/25 shadow-md scale-[1.01]' 
-                                    : 'border-gray-200 bg-white hover:border-[#B8934E]/40 hover:bg-[#FCFAF8]'}`}
+                                    ? 'border-[#B8934E] bg-[#FAF9F6] ring-1 ring-[#B8934E]/20 shadow-sm scale-[1.005]' 
+                                    : 'border-neutral-200 bg-white hover:border-[#B8934E]/30 hover:bg-[#FCFAF8]'}`}
                         >
                             <input
                                 type="radio"
@@ -91,24 +91,24 @@ export const PackagingSelector = ({
                                 </div>
                             )}
                             <div className="flex items-center gap-3 mb-3">
-                                <div className={`p-2 rounded-xl transition-all ${isSelected ? 'bg-[#B8934E]/10 text-[#B8934E]' : 'bg-gray-100 text-gray-400 group-hover:bg-[#B8934E]/10 group-hover:text-[#B8934E]'}`}>
+                                <div className={`p-2 rounded-xl transition-all ${isSelected ? 'bg-[#B8934E]/10 text-[#B8934E]' : 'bg-[#FCFAF8] text-neutral-400 group-hover:bg-[#B8934E]/10 group-hover:text-[#B8934E]'}`}>
                                     {option.id === 'premium' ? (
                                         <Gift className="w-5 h-5" />
                                     ) : (
                                         <Package className="w-5 h-5" />
                                     )}
                                 </div>
-                                <div className="font-serif font-semibold text-base text-[#0B0F19]">{option.name}</div>
+                                <div className="font-sans font-bold text-sm uppercase tracking-wider text-neutral-800">{option.name}</div>
                             </div>
                             {option.description && (
-                                <div className="text-xs text-gray-400/80 flex-1 mb-4 leading-relaxed font-sans">{option.description}</div>
+                                <div className="text-xs text-neutral-450 font-sans font-semibold flex-1 mb-4 leading-relaxed">{option.description}</div>
                             )}
-                            <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Price</span>
+                            <div className="mt-auto pt-4 border-t border-neutral-100 flex items-center justify-between font-sans">
+                                <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">Price</span>
                                 {option.price > 0 ? (
-                                    <div className="font-bold text-base text-[#B8934E]">+{formatPrice(option.price, currency, rates, "AUD")}</div>
+                                    <div className="font-bold text-sm text-[#B8934E] font-sans">+{formatPrice(option.price, currency, rates, "AUD")}</div>
                                 ) : (
-                                    <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest bg-emerald-100/60 px-2 py-0.5 rounded-md">Included</div>
+                                    <div className="text-[9px] font-bold text-emerald-750 uppercase tracking-wider bg-emerald-100/60 px-2.5 py-0.5 rounded-md">Included</div>
                                 )}
                             </div>
                         </label>
@@ -172,9 +172,9 @@ export const ShippingMethodSelector = ({
 
     if (!country || orderTotal <= 0) {
         return (
-            <div className={`p-8 border border-dashed border-gray-300 rounded-2xl bg-gray-50/50 text-center flex flex-col items-center justify-center ${className}`}>
-                <Info className="w-8 h-8 text-gray-400 mb-3" />
-                <p className="text-sm text-gray-500 font-medium max-w-sm">Add items to your cart and select a delivery address to view available shipping options.</p>
+            <div className={`p-8 border border-dashed border-neutral-300 rounded-2xl bg-[#FCFAF8] text-center flex flex-col items-center justify-center ${className}`}>
+                <Info className="w-8 h-8 text-neutral-400 mb-3" />
+                <p className="text-xs text-neutral-500 font-semibold max-w-sm font-sans leading-relaxed">Add items to your cart and select a delivery address to view available shipping options.</p>
             </div>
         );
     }
@@ -193,8 +193,8 @@ export const ShippingMethodSelector = ({
 
     return (
         <div className={`space-y-4 ${className}`}>
-            <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2">
-                <Truck className="w-4 h-4 text-[#B8934E]" strokeWidth={2.5} />
+            <h3 className="text-[10px] font-bold uppercase tracking-wider text-neutral-450 flex items-center gap-2 font-sans">
+                <Truck className="w-4 h-4 text-[#B8934E]" strokeWidth={2} />
                 Shipping Method
             </h3>
             
@@ -214,11 +214,11 @@ export const ShippingMethodSelector = ({
                             className={`flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all duration-300
                                 ${isSelected 
                                     ? 'border-[#B8934E] bg-[#FAF9F6] ring-1 ring-[#B8934E]/20 shadow-sm scale-[1.005]' 
-                                    : 'border-gray-200 bg-white hover:border-[#B8934E]/40 hover:bg-[#FCFAF8]'}`}
+                                    : 'border-neutral-200 bg-white hover:border-[#B8934E]/30 hover:bg-[#FCFAF8]'}`}
                         >
                             <div className="flex items-center gap-4">
-                                <div className={`flex flex-shrink-0 items-center justify-center w-5 h-5 rounded-full border-2 transition-colors
-                                    ${isSelected ? 'border-[#B8934E] bg-white' : 'border-gray-300'}`}>
+                                <div className={`flex flex-shrink-0 items-center justify-center w-5 h-5 rounded-full border transition-colors
+                                    ${isSelected ? 'border-[#B8934E] bg-white' : 'border-neutral-300'}`}>
                                     {isSelected && <div className="w-2.5 h-2.5 bg-[#B8934E] rounded-full"></div>}
                                 </div>
                                 <input
@@ -229,23 +229,23 @@ export const ShippingMethodSelector = ({
                                     onChange={() => handleChange(option.id)}
                                     className="hidden"
                                 />
-                                <div className="flex flex-col justify-center">
-                                    <div className="font-serif font-semibold text-[#0B0F19] text-base">{option.name}</div>
-                                    <div className="text-xs text-gray-400 mt-0.5 font-sans font-medium">{option.description}</div>
+                                <div className="flex flex-col justify-center font-sans">
+                                    <div className="font-sans font-bold text-sm uppercase tracking-wider text-neutral-800">{option.name}</div>
+                                    <div className="text-xs text-neutral-450 mt-1 font-semibold leading-normal">{option.description}</div>
                                     {option.deliveryDays && (
-                                        <div className="mt-2">
-                                            <span className="text-[10px] font-bold text-[#800000] bg-red-50 border border-[#800000]/15 px-2 py-0.5 rounded-md font-sans">
+                                        <div className="mt-2.5">
+                                            <span className="text-[9px] font-bold text-[#800000] bg-red-50 border border-[#800000]/15 px-2.5 py-0.5 rounded-md">
                                                 Est: {option.deliveryDays}
                                             </span>
                                         </div>
                                     )}
                                 </div>
                             </div>
-                            <div className="text-right pl-4">
+                            <div className="text-right pl-4 font-sans">
                                 {option.isFree ? (
-                                    <div className="text-sm font-bold text-emerald-700 uppercase tracking-wider bg-emerald-100/60 px-2.5 py-1 rounded-md">Free</div>
+                                    <div className="text-[9px] font-bold text-emerald-750 uppercase tracking-wider bg-emerald-100/60 px-2.5 py-0.5 rounded-md font-sans">Free</div>
                                 ) : (
-                                    <div className="text-base font-bold text-[#0B0F19] font-sans">{formatPrice(option.price, currency, rates, "AUD")}</div>
+                                    <div className="text-sm font-bold text-neutral-900 font-sans">{formatPrice(option.price, currency, rates, "AUD")}</div>
                                 )}
                             </div>
                         </label>
@@ -272,51 +272,51 @@ export const OrderSummary = ({
     const totalAmount = itemsPrice + taxAmount + shippingAmount + packagingAmount;
 
     return (
-        <div className={`bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-2xl p-6 md:p-7 space-y-6 ${className}`}>
-            <h3 className="text-xl font-serif font-bold text-gray-900 border-b border-gray-100 pb-4">Order Summary</h3>
+        <div className={`bg-white border border-neutral-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-2xl p-6 md:p-7 space-y-6 ${className}`}>
+            <h3 className="text-sm font-sans font-bold text-neutral-800 border-b border-neutral-100 pb-4">Order Summary</h3>
 
             {showBreakdown && (
-                <div className="space-y-3.5 text-sm">
-                    <div className="flex justify-between items-center text-gray-600">
-                        <span className="font-medium">Subtotal</span>
-                        <span className="font-bold text-gray-900 text-base">{formatPrice(itemsPrice, currency, rates, currency)}</span>
+                <div className="space-y-4 text-xs font-sans">
+                    <div className="flex justify-between items-center text-neutral-600">
+                        <span className="font-semibold text-neutral-550 font-sans">Subtotal</span>
+                        <span className="font-bold text-neutral-900 text-sm font-sans">{formatPrice(itemsPrice, currency, rates, currency)}</span>
                     </div>
 
                     {taxAmount > 0 && (
-                        <div className="flex justify-between items-center text-gray-600">
-                            <span className="font-medium">Estimated Tax (10%)</span>
-                            <span className="font-bold text-gray-900 text-base">{formatPrice(taxAmount, currency, rates, currency)}</span>
+                        <div className="flex justify-between items-center text-neutral-600">
+                            <span className="font-semibold text-neutral-550 font-sans">Estimated Tax (10%)</span>
+                            <span className="font-bold text-neutral-900 text-sm font-sans">{formatPrice(taxAmount, currency, rates, currency)}</span>
                         </div>
                     )}
 
                     {shippingAmount > 0 ? (
-                        <div className="flex justify-between items-center text-gray-600">
-                            <span className="font-medium">Shipping</span>
-                            <span className="font-bold text-gray-900 text-base">{formatPrice(shippingAmount, currency, rates, currency)}</span>
+                        <div className="flex justify-between items-center text-neutral-600 font-sans">
+                            <span className="font-semibold text-neutral-550 font-sans">Shipping</span>
+                            <span className="font-bold text-neutral-900 text-sm font-sans">{formatPrice(shippingAmount, currency, rates, currency)}</span>
                         </div>
                     ) : (
-                        <div className="flex justify-between items-center">
-                            <span className="font-medium text-gray-600">Shipping</span>
-                            <span className="font-bold text-emerald-700 uppercase text-xs tracking-wider bg-emerald-100/60 px-2 py-1 rounded-md">Free</span>
+                        <div className="flex justify-between items-center text-neutral-600 font-sans">
+                            <span className="font-semibold text-neutral-550 font-sans">Shipping</span>
+                            <span className="font-bold text-emerald-700 uppercase text-[10px] tracking-wider bg-emerald-150/60 px-2 py-0.5 rounded">Free</span>
                         </div>
                     )}
 
                     {packagingAmount > 0 && (
-                        <div className="flex justify-between items-center text-gray-600">
-                            <span className="font-medium">Premium Packaging</span>
-                            <span className="font-bold text-amber-700 text-base">+{formatPrice(packagingAmount, currency, rates, currency)}</span>
+                        <div className="flex justify-between items-center text-neutral-600">
+                            <span className="font-semibold text-neutral-550 font-sans">Premium Packaging</span>
+                            <span className="font-bold text-amber-700 text-sm font-sans">+{formatPrice(packagingAmount, currency, rates, currency)}</span>
                         </div>
                     )}
                 </div>
             )}
 
-            <div className="border-t-2 border-dashed border-gray-200 pt-5">
-                <div className="flex justify-between items-end">
+            <div className="border-t border-neutral-100 pt-5 mt-5">
+                <div className="flex justify-between items-center">
                     <div>
-                        <span className="block text-sm font-semibold text-gray-500 uppercase tracking-widest mb-1">Total</span>
-                        <span className="text-xs text-gray-400 font-medium">Including all taxes</span>
+                        <span className="block text-xs font-bold text-neutral-450 uppercase tracking-wider mb-0.5 font-sans">Total</span>
+                        <span className="text-[10px] text-neutral-400 font-semibold font-sans">Including all taxes</span>
                     </div>
-                    <span className="text-3xl font-serif font-black text-gray-900 tracking-tight">{formatPrice(totalAmount, currency, rates, currency)}</span>
+                    <span className="text-2xl font-sans font-extrabold text-neutral-900 tracking-tight">{formatPrice(totalAmount, currency, rates, currency)}</span>
                 </div>
             </div>
         </div>
@@ -333,13 +333,13 @@ export const PackagingInfo = ({
     className = '',
 }) => {
     return (
-        <div className={`flex items-start gap-4 p-5 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/60 rounded-2xl ${className}`}>
+        <div className={`flex items-start gap-4 p-5 bg-[#FCFAF8] border border-neutral-200/60 rounded-2xl ${className} font-sans`}>
             {showIcon && (
-                <div className="p-2.5 bg-white rounded-xl shadow-sm border border-amber-100 flex-shrink-0">
+                <div className="p-2.5 bg-white rounded-xl shadow-sm border border-neutral-100 flex-shrink-0">
                     <Gift className="w-5 h-5 text-amber-600" />
                 </div>
             )}
-            <p className="text-sm font-medium text-amber-900/80 leading-relaxed pt-1">{text}</p>
+            <p className="text-xs font-semibold text-neutral-500 leading-relaxed pt-1">{text}</p>
         </div>
     );
 };
