@@ -1,6 +1,7 @@
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import Settings from "../models/settings.js";
+import { clearCache } from "../middleware/cache.js";
 
 // Initialize settings on first call
 const initSettings = async () => {
@@ -113,6 +114,11 @@ export const updateSettings = catchAsyncErrors(async (req, res, next) => {
     }
 
     await settings.save();
+
+    clearCache("/api/v1/settings");
+    clearCache("/api/v1/settings/packaging-options");
+    clearCache("/api/v1/settings/packaging-text");
+    clearCache("shk:settings");
 
     res.status(200).json({
         success: true,

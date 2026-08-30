@@ -8,11 +8,13 @@ import {
   deletePage
 } from "../controllers/pageController.js";
 
+import { cacheMiddleware } from "../middleware/cache.js";
+
 const router = express.Router();
 
 // Public endpoints
-router.get("/pages", getPages);
-router.get("/pages/:slug", getPageBySlug);
+router.get("/pages", cacheMiddleware(3600), getPages);
+router.get("/pages/:slug", cacheMiddleware(3600), getPageBySlug);
 
 // Protected admin endpoints
 router.post("/pages", isAuthenticatedUser, authorizeRoles("admin"), createPage);

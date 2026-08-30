@@ -1,11 +1,4 @@
-class ErrorHandler extends Error {
-  constructor(message, statusCode) {
-    super(message);
-    this.statusCode = statusCode;
+import { ApiError } from "./ApiError.js";
 
-    // Create stack property
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-
-export default ErrorHandler;
+export const ErrorHandler = ApiError;
+export default ApiError;

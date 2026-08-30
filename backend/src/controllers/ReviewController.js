@@ -6,6 +6,7 @@ import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import { sendResponse } from "../helpers/response.js";
 import mongoose from "mongoose";
+import { clearCache } from "../middleware/cache.js";
 
 // Utility function to escape HTML tags and protect against XSS
 const sanitizeHtml = (str) => {
@@ -38,6 +39,12 @@ const recalculateProductRatings = async (productId) => {
     ratings: averageRating,
     numOfReviews: numOfReviews,
   });
+
+  await Promise.all([
+    clearCache("/api/v1/products"),
+    clearCache(`/api/v1/products/${productId}`),
+    clearCache(`/api/v1/reviews/product/${productId}`),
+  ]);
 };
 
 export class ReviewController {

@@ -31,6 +31,8 @@ export const createCategory = catchAsyncErrors(async (req, res, next) => {
   const category = await Category.create(catPayload);
   
   clearCache("/api/v1/categories");
+  clearCache("/api/v1/products/filter-options");
+  clearCache("shk:categories");
 
   res.status(201).json({ 
     success: true, 
@@ -102,6 +104,8 @@ export const updateCategory = catchAsyncErrors(async (req, res, next) => {
   });
   
   clearCache("/api/v1/categories");
+  clearCache("/api/v1/products/filter-options");
+  clearCache("shk:categories");
 
   res.status(200).json({ 
     success: true, 
@@ -136,6 +140,8 @@ export const deleteCategory = catchAsyncErrors(async (req, res, next) => {
   await category.deleteOne();
 
   clearCache("/api/v1/categories");
+  clearCache("/api/v1/products/filter-options");
+  clearCache("shk:categories");
 
   res.status(200).json({ 
     success: true, 

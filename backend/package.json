@@ -7,7 +7,7 @@
   "type": "module",
   "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon --no-stdin --exec tsx src/server.js",
+    "dev": "tsx watch src/server.js",
     "start": "node src/server.js"
   },
   "dependencies": {
@@ -22,10 +22,10 @@
     "express-rate-limit": "^8.5.2",
     "helmet": "^8.1.0",
     "hpp": "^0.2.3",
+    "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.3.3",
     "morgan": "^1.10.1",
-    "node-cache": "^5.1.2",
     "nodemailer": "^9.0.2",
     "nodemon": "^3.1.14",
     "passport": "^0.7.0",

@@ -22,20 +22,13 @@ export class ZeptoMailService {
     const fromEmail = process.env.ZEPTOMAIL_FROM_EMAIL || 'Not Configured';
     const fromName = process.env.ZEPTOMAIL_FROM_NAME || 'Not Configured';
     const keyExists = !!process.env.ZEPTOMAIL_API_KEY;
-    let keyPreview = 'Not Configured';
-    
-    if (keyExists) {
-      const key = process.env.ZEPTOMAIL_API_KEY;
-      keyPreview = key.length > 8 ? `${key.substring(0, 8)}********` : `${key}********`;
-    }
 
-    console.log('--- ZeptoMail Service Debug Configuration ---');
-    console.log(`API Endpoint : ${url}`);
-    console.log(`Sender Name  : ${fromName}`);
-    console.log(`Sender Email : ${fromEmail}`);
-    console.log(`API Key Exists: ${keyExists}`);
-    console.log(`API Key      : ${keyPreview}`);
-    console.log('--------------------------------------------');
+    console.log('--- ZeptoMail Service Configuration ---');
+    console.log(`API Endpoint     : ${url}`);
+    console.log(`Sender Name      : ${fromName}`);
+    console.log(`Sender Email     : ${fromEmail}`);
+    console.log(`ZeptoMail Config : ${keyExists ? 'Ready (API Key Present)' : 'Missing Key'}`);
+    console.log('---------------------------------------');
   }
 
   static validateConfig() {

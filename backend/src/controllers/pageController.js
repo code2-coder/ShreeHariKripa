@@ -1,6 +1,7 @@
 import Page from "../models/page.js";
 import catchAsyncErrors from "../middleware/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
+import { clearCache } from "../middleware/cache.js";
 
 // GET all pages (slugs and basic info)
 export const getPages = catchAsyncErrors(async (req, res, next) => {
@@ -46,6 +47,8 @@ export const createPage = catchAsyncErrors(async (req, res, next) => {
     sections: sections || [],
   });
 
+  clearCache("/api/v1/pages");
+
   res.status(201).json({
     success: true,
     page,
@@ -69,6 +72,8 @@ export const updatePage = catchAsyncErrors(async (req, res, next) => {
 
   await page.save();
 
+  clearCache("/api/v1/pages");
+
   res.status(200).json({
     success: true,
     page,
@@ -84,6 +89,8 @@ export const deletePage = catchAsyncErrors(async (req, res, next) => {
   }
 
   await page.deleteOne();
+
+  clearCache("/api/v1/pages");
 
   res.status(200).json({
     success: true,

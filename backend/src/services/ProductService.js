@@ -21,41 +21,45 @@ export class ProductService {
   async getProducts(queryStr) {
     const DEFAULT_PER_PAGE = 12;
 
-    // ── Resolve category names → ObjectIds ─────────────────────────────────────
-    // The frontend sends category names (e.g. "Mukut,Earrings"). We must convert
-    // them to ObjectIds before passing to APIFilters, because the Product schema
-    // has category as an ObjectId ref.
+    // ── Parallel resolution of category names & keyword categories ──────────────
+    const resolutionPromises = [];
+
     if (queryStr.category) {
       const categoryNames = queryStr.category.split(',').map(c => c.trim()).filter(Boolean);
-      
-      // Check if any value looks like an ObjectId already
       const areObjectIds = categoryNames.every(n => mongoose.Types.ObjectId.isValid(n));
       
       if (!areObjectIds) {
-        // Resolve names → ObjectIds
-        const matched = await Category.find({
-          name: { $in: categoryNames.map(n => new RegExp(`^${n}$`, 'i')) }
-        }).select('_id').lean();
-        
-        queryStr.resolvedCategoryIds = matched.map(c => c._id);
+        resolutionPromises.push(
+          Category.find({
+            name: { $in: categoryNames.map(n => new RegExp(`^${n}$`, 'i')) }
+          }).select('_id').lean().then(matched => {
+            queryStr.resolvedCategoryIds = matched.map(c => c._id);
+          })
+        );
       } else {
         queryStr.resolvedCategoryIds = categoryNames.map(id => new mongoose.Types.ObjectId(id));
       }
     }
 
-    // ── Keyword → category match ────────────────────────────────────────────────
     if (queryStr.keyword) {
       const regex = new RegExp(queryStr.keyword.trim(), 'i');
-      const matchedCategories = await Category.find({ name: { $regex: regex } }).select('_id').lean();
-      if (matchedCategories.length > 0) {
-        queryStr.matchedCategories = matchedCategories.map(c => c._id);
-      }
+      resolutionPromises.push(
+        Category.find({ name: { $regex: regex } }).select('_id').lean().then(matchedCategories => {
+          if (matchedCategories.length > 0) {
+            queryStr.matchedCategories = matchedCategories.map(c => c._id);
+          }
+        })
+      );
+    }
+
+    if (resolutionPromises.length > 0) {
+      await Promise.all(resolutionPromises);
     }
 
     // ── Base query: published products only ─────────────────────────────────────
     const baseFilter = { status: "published" };
 
-    // ── Paginated results ───────────────────────────────────────────────────────
+    // ── Paginated results & Filtered count in parallel ──────────────────────────
     const baseQuery = Product.find(baseFilter);
     const apiFilters = new APIFilters(baseQuery, queryStr)
       .search()
@@ -63,22 +67,21 @@ export class ProductService {
       .sort()
       .pagination(DEFAULT_PER_PAGE);
 
-    const products = await apiFilters.query
-      .select("name price description images category ratings stock variants sizes numOfReviews homeSection features status color material stoneType")
-      .populate("category", "name")
-      .lean();
-
-    products.forEach(p => { if (!p.features) p.features = []; });
-
-    // ── Filtered total count (mirrors the same filters, without pagination) ──────
-    // Build the same filter conditions to get an accurate count
     const countFilters = new APIFilters(Product.find(baseFilter), queryStr)
       .search()
       .filters();
-    
-    const filteredTotal = await Product.countDocuments(
-      countFilters.query.getFilter()
-    );
+
+    const [products, filteredTotal] = await Promise.all([
+      apiFilters.query
+        .select("name price description images category ratings stock variants sizes numOfReviews homeSection features status color material stoneType")
+        .populate("category", "name")
+        .lean(),
+      Product.countDocuments(countFilters.query.getFilter())
+    ]);
+
+    for (let i = 0; i < products.length; i++) {
+      if (!products[i].features) products[i].features = [];
+    }
 
     return {
       products,

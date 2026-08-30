@@ -1,41 +1,67 @@
-import NodeCache from "node-cache";
+import cacheService from "../cache/cache.service.js";
 
-// StdTTL sets standard time to live in seconds. Default is 5 minutes (300 seconds).
-const cache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
-
-export const cacheMiddleware = (duration) => {
-  return (req, res, next) => {
+/**
+ * Express Middleware for API Response Caching with Redis & Fallback
+ * @param {number} durationSeconds - Cache TTL in seconds (default 300)
+ * @param {string|Function} customKeyOrBuilder - Optional custom key string or generator function
+ */
+export const cacheMiddleware = (durationSeconds = 300, customKeyOrBuilder = null) => {
+  return async (req, res, next) => {
+    // Only cache GET requests
     if (req.method !== "GET") {
       return next();
     }
 
-    // Generate a unique key based on URL and query params
-    const key = req.originalUrl;
-    const cachedResponse = cache.get(key);
-
-    if (cachedResponse) {
-      res.setHeader("X-Cache", "HIT");
-      return res.status(200).json(cachedResponse);
+    let key;
+    if (typeof customKeyOrBuilder === "function") {
+      key = customKeyOrBuilder(req);
+    } else if (typeof customKeyOrBuilder === "string") {
+      key = customKeyOrBuilder;
     } else {
+      // Normalize URL key
+      key = `shk:route:${req.originalUrl || req.url}`;
+    }
+
+    try {
+      const cachedResponse = await cacheService.get(key);
+
+      if (cachedResponse) {
+        res.setHeader("X-Cache", "HIT");
+        return res.status(200).json(cachedResponse);
+      }
+
       res.setHeader("X-Cache", "MISS");
-      
-      // Override res.json to cache the response before sending it
-      const originalSend = res.json;
+
+      // Hook res.json to capture response body
+      const originalJson = res.json.bind(res);
       res.json = (body) => {
-        // Only cache successful responses
+        // Cache only successful 2xx responses
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          cache.set(key, body, duration);
+          cacheService.set(key, body, durationSeconds).catch(() => {});
         }
-        originalSend.call(res, body);
+        return originalJson(body);
       };
-      
+
+      next();
+    } catch (error) {
+      // On any unexpected error in cache middleware, proceed to controller
       next();
     }
   };
 };
 
+/**
+ * Helper to invalidate cached routes or keys by prefix
+ * @param {string} prefix - Key prefix or route pattern
+ */
 export const clearCache = (prefix) => {
-  const keys = cache.keys();
-  const keysToDelete = keys.filter(key => key.startsWith(prefix));
-  cache.del(keysToDelete);
+  if (!prefix) return Promise.resolve();
+  // Support both legacy route prefixes like /api/v1/products and shk:* keys
+  const pattern = prefix.startsWith("shk:") ? prefix : `shk:route:${prefix}`;
+  return cacheService.invalidatePrefix(pattern);
+};
+
+export default {
+  cacheMiddleware,
+  clearCache,
 };

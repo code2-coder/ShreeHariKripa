@@ -5,10 +5,12 @@ import {
   updateCurrencySettings,
 } from "../controllers/currencySettingController.js";
 
+import { cacheMiddleware } from "../middleware/cache.js";
+
 const router = express.Router();
 
 // Public: Get currently configured exchange rates
-router.get("/currency-settings", getCurrencySettings);
+router.get("/currency-settings", cacheMiddleware(3600), getCurrencySettings);
 
 // Admin: Update configured exchange rates
 router.put(

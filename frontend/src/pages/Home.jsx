@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router";
 import { Header } from "../components/layout/Header";
 import { lazy, Suspense } from "react";
@@ -174,20 +174,22 @@ export function Home() {
     fetchBannersAndAds();
   }, []);
 
-  const featuredSectionGroups = [
-    { title: "New Arrival", key: "new-arrival", products: [] },
-    { title: "Best Seller", key: "best-seller", products: [] },
-    { title: "Trending Product", key: "trending-product", products: [] },
-  ];
+  const visibleFeaturedSections = useMemo(() => {
+    const featuredSectionGroups = [
+      { title: "New Arrival", key: "new-arrival", products: [] },
+      { title: "Best Seller", key: "best-seller", products: [] },
+      { title: "Trending Product", key: "trending-product", products: [] },
+    ];
 
-  products.forEach((product) => {
-    const target = featuredSectionGroups.find((group) => group.title === product.homeSection);
-    if (target) {
-      target.products.push(product);
-    }
-  });
+    products.forEach((product) => {
+      const target = featuredSectionGroups.find((group) => group.title === product.homeSection);
+      if (target) {
+        target.products.push(product);
+      }
+    });
 
-  const visibleFeaturedSections = featuredSectionGroups.filter((section) => section.products.length > 0);
+    return featuredSectionGroups.filter((section) => section.products.length > 0);
+  }, [products]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-pink-100/50 to-[#800000]/10 relative overflow-hidden">

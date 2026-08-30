@@ -22,7 +22,9 @@ export const createBanner = async (req, res) => {
       link,
     });
 
+    clearCache("/api/v1/banners");
     clearCache("/api/v1/banner");
+    clearCache("shk:banners");
 
     res.status(201).json({
       success: true,
@@ -103,7 +105,9 @@ export const updateBanner = async (req, res) => {
       new: true,
     });
 
+    clearCache("/api/v1/banners");
     clearCache("/api/v1/banner");
+    clearCache("shk:banners");
 
     res.status(200).json({
       success: true,
@@ -131,7 +135,9 @@ export const deleteBanner = async (req, res) => {
 
     await banner.deleteOne();
 
+    clearCache("/api/v1/banners");
     clearCache("/api/v1/banner");
+    clearCache("shk:banners");
 
     res.status(200).json({
       success: true,

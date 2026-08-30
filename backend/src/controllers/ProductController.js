@@ -48,7 +48,11 @@ export class ProductController {
   async createProduct(req, res, next) {
     try {
       const product = await ProductService.createProduct(req.body, req.user._id);
-      clearCache("/api/v1/products");
+      await Promise.all([
+        clearCache("/api/v1/products"),
+        clearCache("/api/v1/products/filter-options"),
+        clearCache("shk:products"),
+      ]);
       return sendResponse(res, 201, true, "Product created successfully", { product });
     } catch (error) {
       next(error);
@@ -58,7 +62,13 @@ export class ProductController {
   async updateProduct(req, res, next) {
     try {
       const product = await ProductService.updateProduct(req.params.id, req.body);
-      clearCache("/api/v1/products");
+      await Promise.all([
+        clearCache("/api/v1/products"),
+        clearCache("/api/v1/products/filter-options"),
+        clearCache(`/api/v1/products/${req.params.id}`),
+        clearCache("shk:products"),
+        clearCache(`shk:product:id:${req.params.id}`),
+      ]);
       return sendResponse(res, 200, true, "Product updated successfully", { product });
     } catch (error) {
       next(error);
@@ -68,7 +78,13 @@ export class ProductController {
   async deleteProduct(req, res, next) {
     try {
       await ProductService.deleteProduct(req.params.id);
-      clearCache("/api/v1/products");
+      await Promise.all([
+        clearCache("/api/v1/products"),
+        clearCache("/api/v1/products/filter-options"),
+        clearCache(`/api/v1/products/${req.params.id}`),
+        clearCache("shk:products"),
+        clearCache(`shk:product:id:${req.params.id}`),
+      ]);
       return sendResponse(res, 200, true, "Product deleted successfully");
     } catch (error) {
       next(error);

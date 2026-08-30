@@ -158,5 +158,9 @@ const orderSchema = new mongoose.Schema(
 );
 
 orderSchema.index({ user: 1, createdAt: -1 });
+orderSchema.index({ orderStatus: 1, createdAt: -1 });
+orderSchema.index({ "paymentInfo.id": 1 }, { sparse: true });
+orderSchema.index({ trackingId: 1 }, { sparse: true });
+orderSchema.index({ awbNumber: 1 }, { sparse: true });
 
 export default mongoose.model("Order", orderSchema);

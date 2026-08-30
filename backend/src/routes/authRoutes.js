@@ -8,7 +8,7 @@ import {
   verifyOtpSchema,
   resetPasswordSchema,
   updatePasswordSchema
-} from "../validations/authValidator.js";
+} from "../validators/auth.validator.js";
 import passport from "passport";
 
 const router = express.Router();

@@ -22,7 +22,9 @@ export const createAdPoster = async (req, res) => {
       link,
     });
 
+    clearCache("/api/v1/ad-posters");
     clearCache("/api/v1/ad-poster");
+    clearCache("shk:adposters");
 
     res.status(201).json({
       success: true,
@@ -103,7 +105,9 @@ export const updateAdPoster = async (req, res) => {
       new: true,
     });
 
+    clearCache("/api/v1/ad-posters");
     clearCache("/api/v1/ad-poster");
+    clearCache("shk:adposters");
 
     res.status(200).json({
       success: true,
@@ -131,7 +135,9 @@ export const deleteAdPoster = async (req, res) => {
 
     await adPoster.deleteOne();
 
+    clearCache("/api/v1/ad-posters");
     clearCache("/api/v1/ad-poster");
+    clearCache("shk:adposters");
 
     res.status(200).json({
       success: true,

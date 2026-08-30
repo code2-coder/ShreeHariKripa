@@ -1,7 +1,4 @@
 import { v2 as cloudinary } from "cloudinary";
-import dotenv from "dotenv";
-
-dotenv.config({ path: "./.env" });
 
 const urlStr = process.env.CLOUDINARY_URL || "";
 if (urlStr.startsWith("cloudinary://")) {

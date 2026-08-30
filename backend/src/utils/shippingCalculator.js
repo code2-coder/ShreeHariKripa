@@ -200,10 +200,20 @@ export const validateOrderPrices = async (reqBody) => {
         }
 
         let basePrice = product.price;
-        if (item.size && product.variants && product.variants.length > 0) {
-            const variant = product.variants.find((v) => v.size === item.size);
-            if (variant) {
-                basePrice = variant.price;
+        if (item.size) {
+            // Check root sizes first
+            const rootSizeObj = product.sizes?.find((s) => s.size === item.size);
+            if (rootSizeObj && rootSizeObj.price) {
+                basePrice = rootSizeObj.price;
+            } else if (product.variants && product.variants.length > 0) {
+                // Check within variant sizes
+                for (const variant of product.variants) {
+                    const variantSizeObj = variant.sizes?.find((s) => s.size === item.size);
+                    if (variantSizeObj && variantSizeObj.price) {
+                        basePrice = variantSizeObj.price;
+                        break;
+                    }
+                }
             }
         }
 

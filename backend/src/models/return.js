@@ -156,4 +156,9 @@ const returnSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+returnSchema.index({ user: 1, createdAt: -1 });
+returnSchema.index({ order: 1 });
+returnSchema.index({ status: 1 });
+returnSchema.index({ orderItemId: 1, user: 1 });
+
 export default mongoose.model("Return", returnSchema);

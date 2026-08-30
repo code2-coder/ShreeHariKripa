@@ -6,11 +6,12 @@ import {
   deleteAttribute,
 } from "../controllers/attributeController.js";
 import { isAuthenticatedUser, authorizeRoles } from "../middleware/auth.js";
+import { cacheMiddleware } from "../middleware/cache.js";
 
 const router = express.Router();
 
 // Public route
-router.route("/attributes").get(getAttributes);
+router.route("/attributes").get(cacheMiddleware(3600), getAttributes);
 
 // Admin routes
 router

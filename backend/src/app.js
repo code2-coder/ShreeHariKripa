@@ -1,13 +1,19 @@
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import helmet from "helmet";
 import path from "path";
 import { fileURLToPath } from "url";
+import hpp from "hpp";
+import mongoose from "mongoose";
 import passport from "./config/passport.js";
-import errorMiddleware from "./middleware/errors.js";
+import { isRedisReady } from "./config/redis.js";
+import errorMiddleware from "./middleware/error.middleware.js";
+import { apiLimiter } from "./middleware/rateLimit.middleware.js";
+
+// Routes
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -30,8 +36,6 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import pageRoutes from "./routes/pageRoutes.js";
 import currencySettingRoutes from "./routes/currencySettingRoutes.js";
-import rateLimit from "express-rate-limit";
-import hpp from "hpp";
 
 const app = express();
 
@@ -41,7 +45,7 @@ const __dirname = path.dirname(__filename);
 // Trust proxy for Render/Vercel (required for rate limiting and secure cookies)
 app.set("trust proxy", 1);
 
-// Middleware config
+// Allowed Origins for CORS
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
@@ -54,29 +58,30 @@ const allowedOrigins = [
   "https://www.shreeharikripa.com",
   "https://shreeharikripa.onrender.com",
   "https://shree-hari-kripa.vercel.app",
-  process.env.CLIENT_URL
+  process.env.CLIENT_URL,
+  process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl)
       if (!origin) return callback(null, true);
 
-      // Allow any localhost/127.0.0.1 port in development mode
-      const isLocalhost = origin.startsWith("http://localhost:") || 
-                          origin.startsWith("http://127.0.0.1:") || 
-                          origin === "http://localhost" || 
-                          origin === "http://127.0.0.1";
+      const isLocalhost =
+        origin.startsWith("http://localhost:") ||
+        origin.startsWith("http://127.0.0.1:") ||
+        origin === "http://localhost" ||
+        origin === "http://127.0.0.1";
 
-      if ((process.env.NODE_ENV || "development") === "development" && isLocalhost) {
+      const isDev = (process.env.NODE_ENV || "development").toLowerCase() === "development";
+      if (isDev && isLocalhost) {
         return callback(null, true);
       }
 
-      if (allowedOrigins.indexOf(origin) !== -1) {
+      if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       } else {
-        return callback(new Error("Not allowed by CORS"));
+        return callback(new Error(`Origin ${origin} not allowed by CORS`));
       }
     },
     credentials: true,
@@ -105,8 +110,27 @@ app.use(
   })
 );
 
-app.use(compression());
-app.use(morgan('dev'));
+app.disable("x-powered-by");
+
+app.use(
+  compression({
+    level: 6,
+    threshold: 1024,
+    filter: (req, res) => {
+      if (req.headers["x-no-compression"]) return false;
+      return compression.filter(req, res);
+    },
+  })
+);
+
+if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "PRODUCTION") {
+  app.use(
+    morgan("dev", {
+      skip: (req) => req.url === "/health" || req.originalUrl === "/health",
+    })
+  );
+}
+
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
@@ -116,27 +140,38 @@ app.use(passport.initialize());
 app.use(hpp());
 
 // API Rate Limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 500, // Limit each IP to 500 requests per windowMs
-  message: "Too many requests from this IP, please try again after 15 minutes"
-});
-app.use("/api", limiter);
+app.use("/api", apiLimiter);
 
 // DB readiness flag — set to true in server.js after MongoDB connects
 let _dbReady = false;
-export const setDbReady = () => { _dbReady = true; };
+export const setDbReady = () => {
+  _dbReady = true;
+};
 
-// Health check — returns 503 until DB is connected so wait-port.js waits correctly
+// Standardized Health check endpoint
 app.get("/health", (req, res) => {
-  if (_dbReady) {
-    res.status(200).json({ status: "ready", db: "connected" });
+  const redisConnected = isRedisReady();
+  const dbConnected = mongoose.connection.readyState === 1 || _dbReady;
+  if (dbConnected) {
+    res.status(200).json({
+      success: true,
+      status: "ok",
+      database: "connected",
+      redis: redisConnected ? "connected" : "in_memory_fallback",
+      timestamp: new Date().toISOString(),
+    });
   } else {
-    res.status(503).json({ status: "starting", db: "connecting" });
+    res.status(503).json({
+      success: false,
+      status: "starting",
+      database: "connecting",
+      redis: redisConnected ? "connected" : "in_memory_fallback",
+      timestamp: new Date().toISOString(),
+    });
   }
 });
 
-// Register routes
+// Register API Routes
 app.use("/api/v1", categoryRoutes);
 app.use("/api/v1", productRoutes);
 app.use("/api/v1", authRoutes);
@@ -186,7 +221,7 @@ if (
   });
 }
 
-// Register global error handler middleware (must be last)
+// Register global centralized error handler middleware (must be last)
 app.use(errorMiddleware);
 
 export default app;

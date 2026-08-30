@@ -1,5 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
 
 const API_TOKEN = process.env.DELHIVERY_API_TOKEN;
 const DELHIVERY_BASE_URL = process.env.DELHIVERY_BASE_URL || "https://track.delhivery.com/c/api";

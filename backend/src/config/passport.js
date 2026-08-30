@@ -1,9 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/User.js";
-import dotenv from "dotenv";
-
-dotenv.config({ path: "./.env" });
 
 const callbackURL = process.env.GOOGLE_CALLBACK_URL || "https://shreeharikripa.onrender.com/api/v1/auth/google/callback";
 

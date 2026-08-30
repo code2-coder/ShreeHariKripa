@@ -11,11 +11,13 @@ router.post("/reviews", isAuthenticatedUser, reviewController.createReview);
 router.post("/reviews/upload-media", isAuthenticatedUser, reviewController.uploadReviewMedia);
 router.get("/reviews/check-eligibility", isAuthenticatedUser, reviewController.checkReviewEligibility);
 
+import { cacheMiddleware } from "../middleware/cache.js";
+
 //
 // 👁️ PUBLIC PRODUCT REVIEWS & SUMMARIES
 //
-router.get("/reviews/product/:id", reviewController.getProductReviews);
-router.get("/reviews/product/:id/summary", reviewController.getProductReviewsSummary);
+router.get("/reviews/product/:id", cacheMiddleware(300), reviewController.getProductReviews);
+router.get("/reviews/product/:id/summary", cacheMiddleware(300), reviewController.getProductReviewsSummary);
 
 //
 // 👑 ADMIN PANEL MODERATION
